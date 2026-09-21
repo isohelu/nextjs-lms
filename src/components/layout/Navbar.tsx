@@ -1,43 +1,48 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import Link from 'next/link'
-import {
-  Menu,
-  X,
-  Search,
-  Moon,
-  Sun,
-  Bell,
-  ShoppingCart,
-  Globe,
-  User,
-  ChevronDown,
-} from 'lucide-react'
+import { ChevronDown, Menu } from 'lucide-react'
 import AppLogo from '@/components/common/AppLogo'
 import { Button } from '@/components/ui/button'
+import Appearance from '@/components/common/Appearance'
+import Language from '@/components/common/Language'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
-export const navItems = [
-  { id: 1, title: 'Courses', href: '/courses/all' },
-  { id: 2, title: 'Exams', href: '/exams/all' },
-  { id: 3, title: 'Store', href: '/products' },
-  { id: 4, title: 'About Us', href: '/about-us' },
-  { id: 5, title: 'Our Team', href: '/our-team' },
-  { id: 6, title: 'Careers', href: '/careers' },
-  { id: 7, title: 'Blogs', href: '/blogs/all' },
+export interface NavItem {
+  id: number
+  title: string
+  href?: string
+  value?: string
+  type: 'url' | 'dropdown'
+  active?: boolean
+  items?: { title: string; url: string }[]
+}
+
+export const navItems: NavItem[] = [
+  { id: 1, title: 'Courses', href: '/courses/all', value: '/courses/all', type: 'url', active: true },
+  { id: 2, title: 'Exams', href: '/exams/all', value: '/exams/all', type: 'url', active: true },
+  { id: 3, title: 'Store', href: '/products', value: '/products', type: 'url', active: true },
+  { id: 4, title: 'About Us', href: '/about-us', value: '/about-us', type: 'url', active: true },
+  { id: 5, title: 'Our Team', href: '/our-team', value: '/our-team', type: 'url', active: true },
+  { id: 6, title: 'Careers', href: '/careers', value: '/careers', type: 'url', active: true },
+  { id: 7, title: 'Blogs', href: '/blogs/all', value: '/blogs/all', type: 'url', active: true },
 ]
 
 export default function Navbar() {
   const [isSticky, setIsSticky] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) {
+      const scrollPosition = window.scrollY
+      if (scrollPosition > 100) {
         setIsSticky(true)
       } else {
         setIsSticky(false)
@@ -48,117 +53,81 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Theme toggle
-  const toggleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(nextTheme)
-    if (nextTheme === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
+  const renderNavItems = (item: NavItem) => {
+    if (item.type === 'url') {
+      return (
+        <Link
+          key={item.id}
+          href={item.value || item.href || ''}
+          className="text-sm font-normal"
+        >
+          {item.title}
+        </Link>
+      )
     }
+
+    if (item.type === 'dropdown') {
+      return (
+        <DropdownMenu key={item.id}>
+          <DropdownMenuTrigger className="flex cursor-pointer items-center gap-1 text-sm font-normal">
+            {item.title}
+            <ChevronDown className="ml-1 h-4 w-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-20">
+            {item.items?.map((subItem, idx) => (
+              <DropdownMenuItem
+                key={idx}
+                asChild
+                className="cursor-pointer px-5"
+              >
+                <Link href={subItem.url}>{subItem.title}</Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    }
+
+    return null
   }
 
   return (
     <>
-      <header className="fixed top-0 z-30 w-full transition-all duration-300">
+      <div className="fixed top-0 z-30 w-full">
         <div
           className={cn(
             'container mt-0 flex h-[72px] items-center justify-between gap-1 !px-4 transition-all duration-200 md:gap-6',
             isSticky &&
-              'mx-auto mt-4 h-16 w-full rounded-2xl bg-background/95 shadow-card backdrop-blur md:!max-w-6xl'
+              'mx-auto mt-4 h-16 w-full rounded-2xl bg-background shadow-card md:!max-w-6xl'
           )}
         >
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/">
             <AppLogo />
           </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden gap-5 md:flex md:items-center">
+          <div className="hidden gap-4 md:flex md:items-center">
             {navItems.map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className="text-sm font-medium text-foreground/80 transition-colors hover:text-secondary-foreground"
-              >
-                {item.title}
-              </Link>
+              <Fragment key={item.id}>{renderNavItems(item)}</Fragment>
             ))}
-          </nav>
+          </div>
 
-          {/* Right Action Icons & Auth */}
           <div className="flex items-center gap-2">
-            {/* Search Trigger */}
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-9 w-9 text-muted-foreground hover:text-foreground"
-              onClick={() => setSearchOpen(!searchOpen)}
-              aria-label="Search"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
+            <div className="hidden items-center gap-2 md:flex">
+              <div className="flex items-center gap-2">
+                <Appearance />
+                <Language />
+              </div>
 
-            {/* Theme Toggle */}
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-9 w-9 text-muted-foreground hover:text-foreground"
-              onClick={toggleTheme}
-              aria-label="Toggle Theme"
-            >
-              {theme === 'dark' ? (
-                <Sun className="h-4 w-4 text-amber-400" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-
-            {/* Notification */}
-            <Button
-              size="icon"
-              variant="ghost"
-              className="relative h-9 w-9 text-muted-foreground hover:text-foreground"
-              aria-label="Notifications"
-            >
-              <Bell className="h-4 w-4" />
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive" />
-            </Button>
-
-            {/* Cart */}
-            <Button
-              size="icon"
-              variant="ghost"
-              className="relative h-9 w-9 text-muted-foreground hover:text-foreground"
-              aria-label="Cart"
-            >
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
-
-            {/* Language Selector */}
-            <div className="hidden items-center gap-1 text-xs text-muted-foreground lg:flex">
-              <Globe className="h-3.5 w-3.5" />
-              <span>EN</span>
+              <div className="space-x-2">
+                <Button asChild variant="outline">
+                  <Link href="/register">Sign up</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/login">Log in</Link>
+                </Button>
+              </div>
             </div>
 
-            {/* Login / Auth Button */}
-            <Button
-              asChild
-              variant="outline"
-              className="hidden border-border font-medium hover:border-primary sm:flex"
-            >
-              <Link href="/auth">Log in</Link>
-            </Button>
-
-            <Button
-              asChild
-              className="hidden bg-primary text-primary-foreground hover:bg-primary/90 sm:flex"
-            >
-              <Link href="/auth">Sign up</Link>
-            </Button>
-
-            {/* Mobile Menu Button */}
             <Button
               size="icon"
               variant="secondary"
@@ -166,37 +135,12 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(true)}
               aria-label="Open menu"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-6 w-6" />
             </Button>
           </div>
         </div>
+      </div>
 
-        {/* Expandable Search Input Bar */}
-        {searchOpen && (
-          <div className="border-b border-border bg-background px-4 py-3 shadow-sm">
-            <div className="container mx-auto flex max-w-4xl items-center gap-3">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search courses, mentors, certifications, and skills..."
-                className="w-full bg-transparent text-sm focus:outline-none"
-                autoFocus
-              />
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setSearchOpen(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* Height Spacer matching Laravel */}
       <div className="relative z-20 h-[72px] bg-transparent" />
 
       {/* Mobile Menu Drawer */}
@@ -214,7 +158,7 @@ export default function Navbar() {
                 variant="ghost"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <X className="h-5 w-5" />
+                <span className="text-xl">×</span>
               </Button>
             </div>
 
@@ -222,9 +166,9 @@ export default function Navbar() {
               {navItems.map((item) => (
                 <Link
                   key={item.id}
-                  href={item.href}
+                  href={item.value || item.href || ''}
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-base font-medium text-foreground transition-colors hover:text-secondary-foreground"
+                  className="text-base font-normal text-foreground transition-colors hover:text-secondary-foreground"
                 >
                   {item.title}
                 </Link>
@@ -232,14 +176,18 @@ export default function Navbar() {
             </nav>
 
             <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-border">
+              <div className="flex items-center justify-around py-2">
+                <Appearance />
+                <Language />
+              </div>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
-                  Log in
+                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                  Sign up
                 </Link>
               </Button>
-              <Button asChild className="w-full bg-primary text-primary-foreground">
-                <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
-                  Sign up
+              <Button asChild className="w-full">
+                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                  Log in
                 </Link>
               </Button>
             </div>

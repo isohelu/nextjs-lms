@@ -11,24 +11,24 @@ interface AppLogoProps {
 export default function AppLogo({ className, theme }: AppLogoProps) {
   const logoDark = '/assets/icons/logo-dark.png'
   const logoLight = '/assets/icons/logo-light.png'
-  const siteName = 'Mentor Learning Management System'
+  const siteName = 'Mentor'
 
-  if (theme === 'dark') {
-    return (
-      <img
-        src={logoLight}
-        alt={siteName}
-        className={cn('block h-7 w-auto', className)}
-      />
-    )
-  }
-
-  if (theme === 'light') {
+  if (theme && theme === 'dark') {
     return (
       <img
         src={logoDark}
         alt={siteName}
-        className={cn('block h-7 w-auto', className)}
+        className={cn('block h-6 w-auto', className)}
+      />
+    )
+  }
+
+  if (theme && theme === 'light') {
+    return (
+      <img
+        src={logoLight}
+        alt={siteName}
+        className={cn('block h-6 w-auto', className)}
       />
     )
   }
@@ -39,13 +39,13 @@ export default function AppLogo({ className, theme }: AppLogoProps) {
         id="app-logo"
         src={logoDark}
         alt={siteName}
-        className={cn('block h-7 w-auto dark:hidden', className)}
+        className={cn('block h-6 w-auto dark:hidden', className)}
       />
       <img
         id="app-logo-dark"
         src={logoLight}
         alt={siteName}
-        className={cn('hidden h-7 w-auto dark:block', className)}
+        className={cn('hidden h-6 w-auto dark:block', className)}
       />
     </>
   )
