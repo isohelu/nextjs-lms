@@ -34,34 +34,32 @@ export default function Overview() {
   ]
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4 text-center">
-        <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat, index) => {
-            const IconComponent = stat.icon
-            return (
+    <section className="container py-20 text-center">
+      <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat, index) => {
+          const IconComponent = stat.icon
+          return (
+            <div
+              key={index}
+              className={`rounded-3xl border-none ${stat.bgColor} px-6 py-10 shadow-none! transition-transform duration-300 hover:-translate-y-1 md:py-12`}
+            >
               <div
-                key={index}
-                className={`rounded-3xl border-none ${stat.bgColor} px-6 py-10 !shadow-none transition-transform duration-300 hover:-translate-y-1 md:py-12`}
+                className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full ${stat.iconBg} text-white shadow-md`}
               >
-                <div
-                  className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full ${stat.iconBg} text-white shadow-md`}
-                >
-                  <IconComponent className="h-7 w-7" />
-                </div>
-
-                <div className="mt-6 space-y-2">
-                  <h3 className="text-4xl font-bold tracking-tight text-foreground md:text-[44px]">
-                    {stat.value}
-                  </h3>
-                  <p className="mt-4 text-sm font-medium text-muted-foreground leading-relaxed">
-                    {stat.label}
-                  </p>
-                </div>
+                <IconComponent className="h-7 w-7" />
               </div>
-            )
-          })}
-        </div>
+
+              <div className="mt-6 space-y-2">
+                <h3 className="text-4xl font-bold tracking-tight text-foreground md:text-[44px]">
+                  {stat.value}
+                </h3>
+                <p className="mt-4 text-sm font-medium text-muted-foreground leading-relaxed">
+                  {stat.label}
+                </p>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </section>
   )

@@ -1,0 +1,2940 @@
+{
+  "App\\Http\\Controllers\\HomeController": [
+    {
+      "method": "index",
+      "uri": "/",
+      "httpMethod": "GET|HEAD",
+      "name": "home"
+    },
+    {
+      "method": "sort_section",
+      "uri": "dashboard/page/section/sort",
+      "httpMethod": "POST",
+      "name": "page.section.sort"
+    },
+    {
+      "method": "update_section",
+      "uri": "dashboard/page/section/update/{id}",
+      "httpMethod": "POST",
+      "name": "page.section.update"
+    },
+    {
+      "method": "demo",
+      "uri": "demo/{slug}",
+      "httpMethod": "GET|HEAD",
+      "name": "home.demo"
+    },
+    {
+      "method": "inner_page",
+      "uri": "{slug}",
+      "httpMethod": "GET|HEAD",
+      "name": "inner.page"
+    }
+  ],
+  "Modules\\Frontend\\Http\\Controllers\\Api\\FrontendCollectionController": [
+    {
+      "method": "index",
+      "uri": "api/collections",
+      "httpMethod": "GET|HEAD",
+      "name": "api."
+    },
+    {
+      "method": "show",
+      "uri": "api/collections/{type}/{category}",
+      "httpMethod": "GET|HEAD",
+      "name": "api."
+    },
+    {
+      "method": "update",
+      "uri": "api/collections/{type}/{category}",
+      "httpMethod": "PUT|PATCH",
+      "name": "api."
+    },
+    {
+      "method": "toggle",
+      "uri": "api/collections/{type}/{category}/toggle",
+      "httpMethod": "POST",
+      "name": "api."
+    },
+    {
+      "method": "storePage",
+      "uri": "api/store-page/{slug}",
+      "httpMethod": "POST",
+      "name": "api.store-page"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/frontend/api",
+      "httpMethod": "GET|HEAD",
+      "name": "frontend.api"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/frontend/api",
+      "httpMethod": "PUT",
+      "name": "frontend.api.update"
+    },
+    {
+      "method": "seeder",
+      "uri": "frontend/seeder",
+      "httpMethod": "GET|HEAD",
+      "name": "frontend.seeder"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\AssignmentSubmissionController": [
+    {
+      "method": "store",
+      "uri": "assignment/submission",
+      "httpMethod": "POST",
+      "name": "assignment-submissions.store"
+    },
+    {
+      "method": "getStudentSubmissions",
+      "uri": "assignment/submission/{assignmentId}/student",
+      "httpMethod": "GET|HEAD",
+      "name": "assignment-submissions.student"
+    },
+    {
+      "method": "show",
+      "uri": "assignment/submission/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "assignment-submissions.show"
+    },
+    {
+      "method": "update",
+      "uri": "assignment/submission/{id}",
+      "httpMethod": "PUT",
+      "name": "assignment-submissions.update"
+    }
+  ],
+  "App\\Http\\Controllers\\Auth\\GoogleAuthController": [
+    {
+      "method": "show",
+      "uri": "auth/google",
+      "httpMethod": "GET|HEAD",
+      "name": "google-auth.show"
+    },
+    {
+      "method": "callback",
+      "uri": "auth/google/callback",
+      "httpMethod": "GET|HEAD",
+      "name": "google-auth.callback"
+    }
+  ],
+  "App\\Http\\Controllers\\InstructorController": [
+    {
+      "method": "store",
+      "uri": "become-instructor",
+      "httpMethod": "POST",
+      "name": "become-instructor.store"
+    },
+    {
+      "method": "update",
+      "uri": "become-instructor/{id}",
+      "httpMethod": "POST",
+      "name": "become-instructor.update"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/instructors",
+      "httpMethod": "GET|HEAD",
+      "name": "instructors.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/instructors",
+      "httpMethod": "POST",
+      "name": "instructors.store"
+    },
+    {
+      "method": "applications",
+      "uri": "dashboard/instructors/applications",
+      "httpMethod": "GET|HEAD",
+      "name": "instructors.applications"
+    },
+    {
+      "method": "create",
+      "uri": "dashboard/instructors/create",
+      "httpMethod": "GET|HEAD",
+      "name": "instructors.create"
+    },
+    {
+      "method": "status",
+      "uri": "dashboard/instructors/status/{id}",
+      "httpMethod": "PUT",
+      "name": "instructors.status"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/instructors/{instructor}",
+      "httpMethod": "DELETE",
+      "name": "instructors.destroy"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/instructors/{instructor}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "instructors.edit"
+    },
+    {
+      "method": "show",
+      "uri": "instructors/{instructor}",
+      "httpMethod": "GET|HEAD",
+      "name": "instructors.show"
+    }
+  ],
+  "Modules\\Blog\\Http\\Controllers\\BlogCommentController": [
+    {
+      "method": "store",
+      "uri": "blogs/comments",
+      "httpMethod": "POST",
+      "name": "blogs.comments.store"
+    },
+    {
+      "method": "update",
+      "uri": "blogs/comments/{id}",
+      "httpMethod": "PUT",
+      "name": "blogs.comments.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "blogs/comments/{id}",
+      "httpMethod": "DELETE",
+      "name": "blogs.comments.destroy"
+    }
+  ],
+  "Modules\\Blog\\Http\\Controllers\\BlogLikeDislikeController": [
+    {
+      "method": "toggle",
+      "uri": "blogs/like-dislike/toggle",
+      "httpMethod": "POST",
+      "name": "blogs.like-dislike"
+    }
+  ],
+  "Modules\\Blog\\Http\\Controllers\\BlogController": [
+    {
+      "method": "guest_blogs",
+      "uri": "blogs/{category}",
+      "httpMethod": "GET|HEAD",
+      "name": "blogs.visit"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/blogs",
+      "httpMethod": "GET|HEAD",
+      "name": "blogs.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/blogs",
+      "httpMethod": "POST",
+      "name": "blogs.store"
+    },
+    {
+      "method": "create",
+      "uri": "dashboard/blogs/create",
+      "httpMethod": "GET|HEAD",
+      "name": "blogs.create"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/blogs/{blog}",
+      "httpMethod": "DELETE",
+      "name": "blogs.destroy"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/blogs/{blog}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "blogs.edit"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/blogs/{id}",
+      "httpMethod": "POST",
+      "name": "blogs.update"
+    },
+    {
+      "method": "preview",
+      "uri": "preview/blogs/{uuid}",
+      "httpMethod": "GET|HEAD",
+      "name": "blogs.preview"
+    },
+    {
+      "method": "show",
+      "uri": "read/blogs/{uuid}",
+      "httpMethod": "GET|HEAD",
+      "name": "blogs.read"
+    }
+  ],
+  "Modules\\Certification\\Http\\Controllers\\CertificationController": [
+    {
+      "method": "index",
+      "uri": "certificates",
+      "httpMethod": "GET|HEAD",
+      "name": "certificate.index"
+    },
+    {
+      "method": "store",
+      "uri": "certificates",
+      "httpMethod": "POST",
+      "name": "certificate.store"
+    },
+    {
+      "method": "create",
+      "uri": "certificates/create",
+      "httpMethod": "GET|HEAD",
+      "name": "certificate.create"
+    },
+    {
+      "method": "show",
+      "uri": "certificates/{certificate}",
+      "httpMethod": "GET|HEAD",
+      "name": "certificate.show"
+    },
+    {
+      "method": "update",
+      "uri": "certificates/{certificate}",
+      "httpMethod": "PUT|PATCH",
+      "name": "certificate.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "certificates/{certificate}",
+      "httpMethod": "DELETE",
+      "name": "certificate.destroy"
+    },
+    {
+      "method": "edit",
+      "uri": "certificates/{certificate}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "certificate.edit"
+    }
+  ],
+  "Modules\\Language\\Http\\Controllers\\LanguageController": [
+    {
+      "method": "change_direction",
+      "uri": "change-direction",
+      "httpMethod": "POST",
+      "name": "change.direction"
+    },
+    {
+      "method": "change_font_family",
+      "uri": "change-font-family",
+      "httpMethod": "POST",
+      "name": "change.font-family"
+    },
+    {
+      "method": "change_lang",
+      "uri": "change-lang",
+      "httpMethod": "POST",
+      "name": "change.lang"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/language",
+      "httpMethod": "GET|HEAD",
+      "name": "language.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/language",
+      "httpMethod": "POST",
+      "name": "language.store"
+    },
+    {
+      "method": "default",
+      "uri": "dashboard/language/default/{id}",
+      "httpMethod": "POST",
+      "name": "language.default"
+    },
+    {
+      "method": "edit_property",
+      "uri": "dashboard/language/property/{property}",
+      "httpMethod": "GET|HEAD",
+      "name": "language.property.edit"
+    },
+    {
+      "method": "update_property",
+      "uri": "dashboard/language/property/{property}",
+      "httpMethod": "PUT",
+      "name": "language.property.update"
+    },
+    {
+      "method": "show",
+      "uri": "dashboard/language/{language}",
+      "httpMethod": "GET|HEAD",
+      "name": "language.show"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/language/{language}",
+      "httpMethod": "PUT|PATCH",
+      "name": "language.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/language/{language}",
+      "httpMethod": "DELETE",
+      "name": "language.destroy"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/language/{language}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "language.edit"
+    }
+  ],
+  "App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController": [
+    {
+      "method": "update",
+      "uri": "change-email",
+      "httpMethod": "POST",
+      "name": "change-email.update"
+    },
+    {
+      "method": "save",
+      "uri": "change-email/save",
+      "httpMethod": "GET|HEAD",
+      "name": "change-email.save"
+    },
+    {
+      "method": "store",
+      "uri": "email/verification-notification",
+      "httpMethod": "POST",
+      "name": "verification.send"
+    }
+  ],
+  "App\\Http\\Controllers\\Auth\\PasswordResetLinkController": [
+    {
+      "method": "update",
+      "uri": "change-password",
+      "httpMethod": "PUT",
+      "name": "change-password.update"
+    },
+    {
+      "method": "index",
+      "uri": "forgot-password",
+      "httpMethod": "GET|HEAD",
+      "name": "forgot-password.index"
+    },
+    {
+      "method": "store",
+      "uri": "forgot-password",
+      "httpMethod": "POST",
+      "name": "forgot-password.store"
+    }
+  ],
+  "App\\Http\\Controllers\\Auth\\ConfirmablePasswordController": [
+    {
+      "method": "store",
+      "uri": "confirm-password",
+      "httpMethod": "POST",
+      "name": "confirm-password.store"
+    },
+    {
+      "method": "create",
+      "uri": "confirm-password/create",
+      "httpMethod": "GET|HEAD",
+      "name": "confirm-password.create"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseForumReplyController": [
+    {
+      "method": "store",
+      "uri": "course-forum-replies",
+      "httpMethod": "POST",
+      "name": "course-forum-replies.store"
+    },
+    {
+      "method": "update",
+      "uri": "course-forum-replies/{course_forum_reply}",
+      "httpMethod": "PUT|PATCH",
+      "name": "course-forum-replies.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "course-forum-replies/{course_forum_reply}",
+      "httpMethod": "DELETE",
+      "name": "course-forum-replies.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseForumController": [
+    {
+      "method": "store",
+      "uri": "course-forums",
+      "httpMethod": "POST",
+      "name": "course-forums.store"
+    },
+    {
+      "method": "update",
+      "uri": "course-forums/{course_forum}",
+      "httpMethod": "PUT|PATCH",
+      "name": "course-forums.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "course-forums/{course_forum}",
+      "httpMethod": "DELETE",
+      "name": "course-forums.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseReviewController": [
+    {
+      "method": "store",
+      "uri": "course-reviews",
+      "httpMethod": "POST",
+      "name": "course-reviews.store"
+    },
+    {
+      "method": "update",
+      "uri": "course-reviews/{course_review}",
+      "httpMethod": "PUT|PATCH",
+      "name": "course-reviews.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "course-reviews/{course_review}",
+      "httpMethod": "DELETE",
+      "name": "course-reviews.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseWishlistController": [
+    {
+      "method": "store",
+      "uri": "course-wishlists",
+      "httpMethod": "POST",
+      "name": "course-wishlists.store"
+    },
+    {
+      "method": "destroy",
+      "uri": "course-wishlists/{course_wishlist}",
+      "httpMethod": "DELETE",
+      "name": "course-wishlists.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseEnrollmentController": [
+    {
+      "method": "store",
+      "uri": "courses/course/enrollments",
+      "httpMethod": "POST",
+      "name": "course-enrollments.store"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/courses/course/enrollments",
+      "httpMethod": "GET|HEAD",
+      "name": "course-enrollments.index"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/courses/course/enrollments/{id}",
+      "httpMethod": "DELETE",
+      "name": "course-enrollments.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseController": [
+    {
+      "method": "show",
+      "uri": "courses/details/{slug}/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "course.details"
+    },
+    {
+      "method": "category_courses",
+      "uri": "courses/{category}/{category_child?}",
+      "httpMethod": "GET|HEAD",
+      "name": "category.courses"
+    },
+    {
+      "method": "status",
+      "uri": "dashboard/course/status/{id}",
+      "httpMethod": "PUT",
+      "name": "course.status"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/courses",
+      "httpMethod": "GET|HEAD",
+      "name": "courses.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/courses",
+      "httpMethod": "POST",
+      "name": "courses.store"
+    },
+    {
+      "method": "create",
+      "uri": "dashboard/courses/create",
+      "httpMethod": "GET|HEAD",
+      "name": "courses.create"
+    },
+    {
+      "method": "show",
+      "uri": "dashboard/courses/{course}",
+      "httpMethod": "GET|HEAD",
+      "name": "courses.show"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/courses/{course}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "courses.edit"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/courses/{id}",
+      "httpMethod": "DELETE",
+      "name": "courses.destroy"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/courses/{id}",
+      "httpMethod": "POST",
+      "name": "courses.update"
+    }
+  ],
+  "App\\Http\\Controllers\\DashboardController": [
+    {
+      "method": "index",
+      "uri": "dashboard",
+      "httpMethod": "GET|HEAD",
+      "name": "dashboard"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\PaymentController": [
+    {
+      "method": "payment",
+      "uri": "dashboard/billings/payment",
+      "httpMethod": "GET|HEAD",
+      "name": "payment-gateways.index"
+    },
+    {
+      "method": "payment_update",
+      "uri": "dashboard/billings/payment/{id}",
+      "httpMethod": "POST",
+      "name": "payment-gateways.update"
+    },
+    {
+      "method": "index",
+      "uri": "payments/{from}/{item}/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.index"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\PaymentReportController": [
+    {
+      "method": "offline_index",
+      "uri": "dashboard/billings/payment-reports/offline",
+      "httpMethod": "GET|HEAD",
+      "name": "payment-reports.offline.index"
+    },
+    {
+      "method": "reject",
+      "uri": "dashboard/billings/payment-reports/offline/{id}/reject",
+      "httpMethod": "POST",
+      "name": "payment-reports.offline.reject"
+    },
+    {
+      "method": "verify",
+      "uri": "dashboard/billings/payment-reports/offline/{id}/verify",
+      "httpMethod": "POST",
+      "name": "payment-reports.offline.verify"
+    },
+    {
+      "method": "online_index",
+      "uri": "dashboard/billings/payment-reports/online",
+      "httpMethod": "GET|HEAD",
+      "name": "payment-reports.online.index"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payout\\PayoutController": [
+    {
+      "method": "index",
+      "uri": "dashboard/billings/payouts",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/billings/payouts",
+      "httpMethod": "POST",
+      "name": "payouts.store"
+    },
+    {
+      "method": "history",
+      "uri": "dashboard/billings/payouts/history",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.history"
+    },
+    {
+      "method": "request",
+      "uri": "dashboard/billings/payouts/request",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.request"
+    },
+    {
+      "method": "settings",
+      "uri": "dashboard/billings/payouts/settings",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.settings.index"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/billings/payouts/settings",
+      "httpMethod": "POST",
+      "name": "payouts.settings.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/billings/payouts/{payout}",
+      "httpMethod": "DELETE",
+      "name": "payouts.destroy"
+    },
+    {
+      "method": "checkout",
+      "uri": "payouts/{slug}/{request_id}",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.checkout"
+    }
+  ],
+  "Modules\\Blog\\Http\\Controllers\\BlogCategoryController": [
+    {
+      "method": "index",
+      "uri": "dashboard/blogs/categories",
+      "httpMethod": "GET|HEAD",
+      "name": "blogs.categories.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/blogs/categories",
+      "httpMethod": "POST",
+      "name": "blogs.categories.store"
+    },
+    {
+      "method": "sort",
+      "uri": "dashboard/blogs/categories/sort",
+      "httpMethod": "POST",
+      "name": "blogs.categories.sort"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/blogs/categories/{category}",
+      "httpMethod": "PUT|PATCH",
+      "name": "blogs.categories.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/blogs/categories/{category}",
+      "httpMethod": "DELETE",
+      "name": "blogs.categories.destroy"
+    }
+  ],
+  "Modules\\Certification\\Http\\Controllers\\CertificateTemplateController": [
+    {
+      "method": "index",
+      "uri": "dashboard/certification/certificate",
+      "httpMethod": "GET|HEAD",
+      "name": "certificate.templates.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/certification/certificate",
+      "httpMethod": "POST",
+      "name": "certificate.templates.store"
+    },
+    {
+      "method": "create",
+      "uri": "dashboard/certification/certificate/create-certificate",
+      "httpMethod": "GET|HEAD",
+      "name": "certificate.templates.create"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/certification/certificate/{certificate}",
+      "httpMethod": "DELETE",
+      "name": "certificate.templates.destroy"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/certification/certificate/{certificate}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "certificate.templates.edit"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/certification/certificate/{id}",
+      "httpMethod": "POST",
+      "name": "certificate.templates.update"
+    },
+    {
+      "method": "activate",
+      "uri": "dashboard/certification/certificate/{id}/activate",
+      "httpMethod": "POST",
+      "name": "certificate.templates.activate"
+    }
+  ],
+  "Modules\\Certification\\Http\\Controllers\\MarksheetTemplateController": [
+    {
+      "method": "index",
+      "uri": "dashboard/certification/marksheet",
+      "httpMethod": "GET|HEAD",
+      "name": "marksheet.templates.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/certification/marksheet",
+      "httpMethod": "POST",
+      "name": "marksheet.templates.store"
+    },
+    {
+      "method": "create",
+      "uri": "dashboard/certification/marksheet/create-marksheet",
+      "httpMethod": "GET|HEAD",
+      "name": "marksheet.templates.create"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/certification/marksheet/{id}",
+      "httpMethod": "POST",
+      "name": "marksheet.templates.update"
+    },
+    {
+      "method": "activate",
+      "uri": "dashboard/certification/marksheet/{id}/activate",
+      "httpMethod": "POST",
+      "name": "marksheet.templates.activate"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/certification/marksheet/{marksheet}",
+      "httpMethod": "DELETE",
+      "name": "marksheet.templates.destroy"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/certification/marksheet/{marksheet}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "marksheet.templates.edit"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseFaqController": [
+    {
+      "method": "store",
+      "uri": "dashboard/course-faqs",
+      "httpMethod": "POST",
+      "name": "course-faqs.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/course-faqs/{course_faq}",
+      "httpMethod": "PUT|PATCH",
+      "name": "course-faqs.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/course-faqs/{course_faq}",
+      "httpMethod": "DELETE",
+      "name": "course-faqs.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseOutcomeController": [
+    {
+      "method": "store",
+      "uri": "dashboard/course-outcomes",
+      "httpMethod": "POST",
+      "name": "course-outcomes.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/course-outcomes/{course_outcome}",
+      "httpMethod": "PUT|PATCH",
+      "name": "course-outcomes.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/course-outcomes/{course_outcome}",
+      "httpMethod": "DELETE",
+      "name": "course-outcomes.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseRequirementController": [
+    {
+      "method": "store",
+      "uri": "dashboard/course-requirements",
+      "httpMethod": "POST",
+      "name": "course-requirements.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/course-requirements/{course_requirement}",
+      "httpMethod": "PUT|PATCH",
+      "name": "course-requirements.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/course-requirements/{course_requirement}",
+      "httpMethod": "DELETE",
+      "name": "course-requirements.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseCategoryController": [
+    {
+      "method": "index",
+      "uri": "dashboard/courses/categories",
+      "httpMethod": "GET|HEAD",
+      "name": "course-categories.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/courses/categories",
+      "httpMethod": "POST",
+      "name": "course-categories.store"
+    },
+    {
+      "method": "sort",
+      "uri": "dashboard/courses/categories/sort",
+      "httpMethod": "POST",
+      "name": "course-categories.sort"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/courses/categories/update/{category}",
+      "httpMethod": "POST",
+      "name": "course-categories.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/courses/categories/{category}",
+      "httpMethod": "DELETE",
+      "name": "course-categories.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CategoryChildController": [
+    {
+      "method": "store",
+      "uri": "dashboard/courses/category-child",
+      "httpMethod": "POST",
+      "name": "course-category-child.store"
+    },
+    {
+      "method": "sort",
+      "uri": "dashboard/courses/category-child/sort",
+      "httpMethod": "POST",
+      "name": "course-category-child.sort"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/courses/category-child/{category_child}",
+      "httpMethod": "PUT|PATCH",
+      "name": "course-category-child.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/courses/category-child/{category_child}",
+      "httpMethod": "DELETE",
+      "name": "course-category-child.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseCouponController": [
+    {
+      "method": "verify",
+      "uri": "dashboard/courses/coupons/verify",
+      "httpMethod": "POST",
+      "name": "course-coupons.verify"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/courses/course/coupons",
+      "httpMethod": "GET|HEAD",
+      "name": "course-coupons.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/courses/course/coupons",
+      "httpMethod": "POST",
+      "name": "course-coupons.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/courses/course/coupons/{coupon}",
+      "httpMethod": "PUT|PATCH",
+      "name": "course-coupons.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/courses/course/coupons/{coupon}",
+      "httpMethod": "DELETE",
+      "name": "course-coupons.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CourseAssignmentController": [
+    {
+      "method": "index",
+      "uri": "dashboard/courses/{course_id}/assignments",
+      "httpMethod": "GET|HEAD",
+      "name": "course-assignments.index"
+    },
+    {
+      "method": "submissions",
+      "uri": "dashboard/courses/{course_id}/assignments/{assignment_id}/submissions",
+      "httpMethod": "GET|HEAD",
+      "name": "course-assignments.submissions"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/section/assignments",
+      "httpMethod": "POST",
+      "name": "assignments.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/section/assignments/{assignment}",
+      "httpMethod": "PUT|PATCH",
+      "name": "assignments.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/section/assignments/{assignment}",
+      "httpMethod": "DELETE",
+      "name": "assignments.destroy"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamFaqController": [
+    {
+      "method": "store",
+      "uri": "dashboard/exam-faqs",
+      "httpMethod": "POST",
+      "name": "exam-faqs.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/exam-faqs/{exam_faq}",
+      "httpMethod": "PUT|PATCH",
+      "name": "exam-faqs.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exam-faqs/{exam_faq}",
+      "httpMethod": "DELETE",
+      "name": "exam-faqs.destroy"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamOutcomeController": [
+    {
+      "method": "store",
+      "uri": "dashboard/exam-outcomes",
+      "httpMethod": "POST",
+      "name": "exam-outcomes.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/exam-outcomes/{exam_outcome}",
+      "httpMethod": "PUT|PATCH",
+      "name": "exam-outcomes.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exam-outcomes/{exam_outcome}",
+      "httpMethod": "DELETE",
+      "name": "exam-outcomes.destroy"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamQuestionController": [
+    {
+      "method": "store",
+      "uri": "dashboard/exam-questions",
+      "httpMethod": "POST",
+      "name": "exam-questions.store"
+    },
+    {
+      "method": "reorder",
+      "uri": "dashboard/exam-questions/reorder",
+      "httpMethod": "POST",
+      "name": "exam-questions.reorder"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/exam-questions/{exam_question}",
+      "httpMethod": "PUT|PATCH",
+      "name": "exam-questions.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exam-questions/{exam_question}",
+      "httpMethod": "DELETE",
+      "name": "exam-questions.destroy"
+    },
+    {
+      "method": "duplicate",
+      "uri": "dashboard/exam-questions/{question}/duplicate",
+      "httpMethod": "POST",
+      "name": "exam-questions.duplicate"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamRequirementController": [
+    {
+      "method": "store",
+      "uri": "dashboard/exam-requirements",
+      "httpMethod": "POST",
+      "name": "exam-requirements.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/exam-requirements/{exam_requirement}",
+      "httpMethod": "PUT|PATCH",
+      "name": "exam-requirements.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exam-requirements/{exam_requirement}",
+      "httpMethod": "DELETE",
+      "name": "exam-requirements.destroy"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamResourceController": [
+    {
+      "method": "store",
+      "uri": "dashboard/exam-resources",
+      "httpMethod": "POST",
+      "name": "exam-resources.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/exam-resources/{exam_resource}",
+      "httpMethod": "PUT|PATCH",
+      "name": "exam-resources.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exam-resources/{exam_resource}",
+      "httpMethod": "DELETE",
+      "name": "exam-resources.destroy"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamController": [
+    {
+      "method": "index",
+      "uri": "dashboard/exams",
+      "httpMethod": "GET|HEAD",
+      "name": "exams.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/exams",
+      "httpMethod": "POST",
+      "name": "exams.store"
+    },
+    {
+      "method": "create",
+      "uri": "dashboard/exams/create",
+      "httpMethod": "GET|HEAD",
+      "name": "exams.create"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exams/{exam}",
+      "httpMethod": "DELETE",
+      "name": "exams.destroy"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/exams/{exam}",
+      "httpMethod": "POST",
+      "name": "exams.update"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/exams/{exam}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "exams.edit"
+    },
+    {
+      "method": "show",
+      "uri": "exams/details/{slug}/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "exams.details"
+    },
+    {
+      "method": "category_exams",
+      "uri": "exams/{category?}",
+      "httpMethod": "GET|HEAD",
+      "name": "category.exams"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamAttemptController": [
+    {
+      "method": "grade",
+      "uri": "dashboard/exams/attempts/{attempt}/grade",
+      "httpMethod": "POST",
+      "name": "exam-attempts.grade"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/exams/{exam_id}/attempts",
+      "httpMethod": "GET|HEAD",
+      "name": "exam-attempts.index"
+    },
+    {
+      "method": "review",
+      "uri": "dashboard/exams/{exam_id}/attempts/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "exam-attempts.review"
+    },
+    {
+      "method": "abandon",
+      "uri": "student/exam-attempts/{attempt}/abandon",
+      "httpMethod": "POST",
+      "name": "exam-attempts.abandon"
+    },
+    {
+      "method": "submit",
+      "uri": "student/exam-attempts/{attempt}/submit",
+      "httpMethod": "POST",
+      "name": "exam-attempts.submit"
+    },
+    {
+      "method": "take",
+      "uri": "student/exam-attempts/{attempt}/take",
+      "httpMethod": "GET|HEAD",
+      "name": "exam-attempts.take"
+    },
+    {
+      "method": "start",
+      "uri": "student/exams/{exam}/attempts/start",
+      "httpMethod": "POST",
+      "name": "exam-attempts.start"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamCategoryController": [
+    {
+      "method": "index",
+      "uri": "dashboard/exams/categories",
+      "httpMethod": "GET|HEAD",
+      "name": "exam-categories.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/exams/categories",
+      "httpMethod": "POST",
+      "name": "exam-categories.store"
+    },
+    {
+      "method": "sort",
+      "uri": "dashboard/exams/categories/order/sort",
+      "httpMethod": "POST",
+      "name": "exam-categories.sort"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exams/categories/{category}",
+      "httpMethod": "DELETE",
+      "name": "exam-categories.destroy"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/exams/categories/{category}",
+      "httpMethod": "POST",
+      "name": "exam-categories.update"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamCouponController": [
+    {
+      "method": "index",
+      "uri": "dashboard/exams/exam/coupons",
+      "httpMethod": "GET|HEAD",
+      "name": "exam-coupons.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/exams/exam/coupons",
+      "httpMethod": "POST",
+      "name": "exam-coupons.store"
+    },
+    {
+      "method": "verify",
+      "uri": "dashboard/exams/exam/coupons/verify",
+      "httpMethod": "POST",
+      "name": "exam-coupons.verify"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/exams/exam/coupons/{coupon}",
+      "httpMethod": "PUT|PATCH",
+      "name": "exam-coupons.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exams/exam/coupons/{coupon}",
+      "httpMethod": "DELETE",
+      "name": "exam-coupons.destroy"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamEnrollmentController": [
+    {
+      "method": "index",
+      "uri": "dashboard/exams/exam/enrollments",
+      "httpMethod": "GET|HEAD",
+      "name": "exam-enrollments.index"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/exams/exam/enrollments/{id}",
+      "httpMethod": "DELETE",
+      "name": "exam-enrollments.destroy"
+    },
+    {
+      "method": "store",
+      "uri": "student/exams/exam/enrollments",
+      "httpMethod": "POST",
+      "name": "exam-enrollments.store"
+    }
+  ],
+  "Modules\\Frontend\\Http\\Controllers\\PageController": [
+    {
+      "method": "index",
+      "uri": "dashboard/frontend/pages",
+      "httpMethod": "GET|HEAD",
+      "name": "frontend-pages.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/frontend/pages",
+      "httpMethod": "POST",
+      "name": "frontend-pages.store"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/frontend/pages/{page}",
+      "httpMethod": "DELETE",
+      "name": "frontend-pages.destroy"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/frontend/pages/{page}",
+      "httpMethod": "POST",
+      "name": "frontend-pages.update"
+    },
+    {
+      "method": "editor",
+      "uri": "editor/{project}/{page}",
+      "httpMethod": "GET|HEAD",
+      "name": "frontend-pages.editor"
+    },
+    {
+      "method": "content",
+      "uri": "editor/{project}/{page}",
+      "httpMethod": "PUT",
+      "name": "frontend-pages.content"
+    },
+    {
+      "method": "translate",
+      "uri": "editor/{project}/{page}/translate/{locale}",
+      "httpMethod": "GET|HEAD",
+      "name": "frontend-pages.translate"
+    },
+    {
+      "method": "show",
+      "uri": "frontend/pages/{page}",
+      "httpMethod": "GET|HEAD",
+      "name": "frontend-pages.show"
+    }
+  ],
+  "App\\Http\\Controllers\\JobCircularController": [
+    {
+      "method": "index",
+      "uri": "dashboard/job-circulars",
+      "httpMethod": "GET|HEAD",
+      "name": "job-circulars.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/job-circulars",
+      "httpMethod": "POST",
+      "name": "job-circulars.store"
+    },
+    {
+      "method": "create",
+      "uri": "dashboard/job-circulars/create",
+      "httpMethod": "GET|HEAD",
+      "name": "job-circulars.create"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/job-circulars/{job_circular}",
+      "httpMethod": "PUT|PATCH",
+      "name": "job-circulars.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/job-circulars/{job_circular}",
+      "httpMethod": "DELETE",
+      "name": "job-circulars.destroy"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/job-circulars/{job_circular}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "job-circulars.edit"
+    },
+    {
+      "method": "toggleStatus",
+      "uri": "dashboard/job-circulars/{job_circular}/toggle-status",
+      "httpMethod": "PUT",
+      "name": "job-circulars.toggle-status"
+    },
+    {
+      "method": "show",
+      "uri": "job-circulars/{job_circular:uuid}",
+      "httpMethod": "GET|HEAD",
+      "name": "job-circulars.show"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\CurriculumController": [
+    {
+      "method": "lesson_store",
+      "uri": "dashboard/lesson",
+      "httpMethod": "POST",
+      "name": "lesson.store"
+    },
+    {
+      "method": "lesson_sort",
+      "uri": "dashboard/lesson/sort",
+      "httpMethod": "POST",
+      "name": "lesson.sort"
+    },
+    {
+      "method": "lesson_update",
+      "uri": "dashboard/lesson/{id}",
+      "httpMethod": "PUT",
+      "name": "lesson.update"
+    },
+    {
+      "method": "lesson_delete",
+      "uri": "dashboard/lesson/{id}",
+      "httpMethod": "DELETE",
+      "name": "lesson.delete"
+    },
+    {
+      "method": "section_store",
+      "uri": "dashboard/section",
+      "httpMethod": "POST",
+      "name": "section.store"
+    },
+    {
+      "method": "section_sort",
+      "uri": "dashboard/section/sort",
+      "httpMethod": "POST",
+      "name": "section.sort"
+    },
+    {
+      "method": "section_update",
+      "uri": "dashboard/section/{id}",
+      "httpMethod": "PUT",
+      "name": "section.update"
+    },
+    {
+      "method": "section_delete",
+      "uri": "dashboard/section/{id}",
+      "httpMethod": "DELETE",
+      "name": "section.delete"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\LessonResourceController": [
+    {
+      "method": "store",
+      "uri": "dashboard/lesson-resources",
+      "httpMethod": "POST",
+      "name": "lesson-resources.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/lesson-resources/{lesson_resource}",
+      "httpMethod": "PUT|PATCH",
+      "name": "lesson-resources.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/lesson-resources/{lesson_resource}",
+      "httpMethod": "DELETE",
+      "name": "lesson-resources.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\LiveClassController": [
+    {
+      "method": "store",
+      "uri": "dashboard/live-classes",
+      "httpMethod": "POST",
+      "name": "live-classes.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/live-classes/{live_class}",
+      "httpMethod": "PUT|PATCH",
+      "name": "live-classes.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/live-classes/{live_class}",
+      "httpMethod": "DELETE",
+      "name": "live-classes.destroy"
+    },
+    {
+      "method": "signature",
+      "uri": "live-classes/signature/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "live-class.signature"
+    },
+    {
+      "method": "index",
+      "uri": "live-classes/start/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "live-class.start"
+    }
+  ],
+  "App\\Http\\Controllers\\NewsletterController": [
+    {
+      "method": "index",
+      "uri": "dashboard/newsletters",
+      "httpMethod": "GET|HEAD",
+      "name": "newsletters.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/newsletters",
+      "httpMethod": "POST",
+      "name": "newsletters.store"
+    },
+    {
+      "method": "newsletter_send",
+      "uri": "dashboard/newsletters/send",
+      "httpMethod": "POST",
+      "name": "newsletters.send"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/newsletters/{newsletter}",
+      "httpMethod": "PUT|PATCH",
+      "name": "newsletters.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/newsletters/{newsletter}",
+      "httpMethod": "DELETE",
+      "name": "newsletters.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\QuestionController": [
+    {
+      "method": "store",
+      "uri": "dashboard/quiz-questions",
+      "httpMethod": "POST",
+      "name": "quiz-questions.store"
+    },
+    {
+      "method": "sort",
+      "uri": "dashboard/quiz-questions/sort",
+      "httpMethod": "POST",
+      "name": "quiz-questions.sort"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/quiz-questions/{quiz_question}",
+      "httpMethod": "PUT|PATCH",
+      "name": "quiz-questions.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/quiz-questions/{quiz_question}",
+      "httpMethod": "DELETE",
+      "name": "quiz-questions.destroy"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\QuizController": [
+    {
+      "method": "store",
+      "uri": "dashboard/section/quiz",
+      "httpMethod": "POST",
+      "name": "quiz.store"
+    },
+    {
+      "method": "result",
+      "uri": "dashboard/section/quiz/participant/result",
+      "httpMethod": "GET|HEAD",
+      "name": "quizzes.participant.result"
+    },
+    {
+      "method": "result_preview",
+      "uri": "dashboard/section/quiz/result/preview",
+      "httpMethod": "GET|HEAD",
+      "name": "quizzes.result.preview"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/section/quiz/{quiz}",
+      "httpMethod": "PUT|PATCH",
+      "name": "quiz.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/section/quiz/{quiz}",
+      "httpMethod": "DELETE",
+      "name": "quiz.destroy"
+    }
+  ],
+  "App\\Http\\Controllers\\SettingController": [
+    {
+      "method": "account",
+      "uri": "dashboard/settings/account",
+      "httpMethod": "GET|HEAD",
+      "name": "instructor.index"
+    },
+    {
+      "method": "profile_update",
+      "uri": "dashboard/settings/account/profile",
+      "httpMethod": "POST",
+      "name": "instructor.update"
+    },
+    {
+      "method": "auth0",
+      "uri": "dashboard/settings/auth0",
+      "httpMethod": "GET|HEAD",
+      "name": "auth0.index"
+    },
+    {
+      "method": "auth0_update",
+      "uri": "dashboard/settings/auth0/{id}",
+      "httpMethod": "POST",
+      "name": "auth0.update"
+    },
+    {
+      "method": "custom_pages_store",
+      "uri": "dashboard/settings/custom-page",
+      "httpMethod": "POST",
+      "name": "custom-page.store"
+    },
+    {
+      "method": "custom_pages_edit",
+      "uri": "dashboard/settings/custom-page/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "custom-page.edit"
+    },
+    {
+      "method": "custom_pages_update",
+      "uri": "dashboard/settings/custom-page/{id}",
+      "httpMethod": "PUT",
+      "name": "custom-page.update"
+    },
+    {
+      "method": "custom_pages_destroy",
+      "uri": "dashboard/settings/custom-page/{id}",
+      "httpMethod": "DELETE",
+      "name": "custom-page.destroy"
+    },
+    {
+      "method": "footer_items_reorder",
+      "uri": "dashboard/settings/footer-items/reorder",
+      "httpMethod": "POST",
+      "name": "footer.items.reorder"
+    },
+    {
+      "method": "footer_items_update",
+      "uri": "dashboard/settings/footer-items/{item}",
+      "httpMethod": "PUT",
+      "name": "footer.items.update"
+    },
+    {
+      "method": "footer_items_destroy",
+      "uri": "dashboard/settings/footer-items/{item}",
+      "httpMethod": "DELETE",
+      "name": "footer.items.destroy"
+    },
+    {
+      "method": "footer_translations",
+      "uri": "dashboard/settings/footer/translations/{locale}",
+      "httpMethod": "GET|HEAD",
+      "name": "footer.translations"
+    },
+    {
+      "method": "footer_translations_update",
+      "uri": "dashboard/settings/footer/translations/{locale}",
+      "httpMethod": "PUT",
+      "name": "footer.translations.update"
+    },
+    {
+      "method": "footer_items_store",
+      "uri": "dashboard/settings/footer/{footer}/items",
+      "httpMethod": "POST",
+      "name": "footer.items.store"
+    },
+    {
+      "method": "google_analytics",
+      "uri": "dashboard/settings/google-analytics",
+      "httpMethod": "GET|HEAD",
+      "name": "google-analytics.index"
+    },
+    {
+      "method": "google_analytics_update",
+      "uri": "dashboard/settings/google-analytics/{id}",
+      "httpMethod": "POST",
+      "name": "google-analytics.update"
+    },
+    {
+      "method": "home_pages_update",
+      "uri": "dashboard/settings/home-page/{id}",
+      "httpMethod": "POST",
+      "name": "home-page.update"
+    },
+    {
+      "method": "live_class",
+      "uri": "dashboard/settings/live-class",
+      "httpMethod": "GET|HEAD",
+      "name": "live-class.index"
+    },
+    {
+      "method": "live_class_update",
+      "uri": "dashboard/settings/live-class/{id}",
+      "httpMethod": "POST",
+      "name": "live-class.update"
+    },
+    {
+      "method": "maintenance",
+      "uri": "dashboard/settings/maintenance",
+      "httpMethod": "GET|HEAD",
+      "name": "maintenance.index"
+    },
+    {
+      "method": "meta_pixel",
+      "uri": "dashboard/settings/meta-pixel",
+      "httpMethod": "GET|HEAD",
+      "name": "meta-pixel.index"
+    },
+    {
+      "method": "meta_pixel_update",
+      "uri": "dashboard/settings/meta-pixel/{id}",
+      "httpMethod": "POST",
+      "name": "meta-pixel.update"
+    },
+    {
+      "method": "navbar_items_reorder",
+      "uri": "dashboard/settings/navbar-items/reorder",
+      "httpMethod": "POST",
+      "name": "navbar.items.reorder"
+    },
+    {
+      "method": "navbar_items_update",
+      "uri": "dashboard/settings/navbar-items/{item}",
+      "httpMethod": "PUT",
+      "name": "navbar.items.update"
+    },
+    {
+      "method": "navbar_items_destroy",
+      "uri": "dashboard/settings/navbar-items/{item}",
+      "httpMethod": "DELETE",
+      "name": "navbar.items.destroy"
+    },
+    {
+      "method": "navbar_translations",
+      "uri": "dashboard/settings/navbar/translations/{locale}",
+      "httpMethod": "GET|HEAD",
+      "name": "navbar.translations"
+    },
+    {
+      "method": "navbar_translations_update",
+      "uri": "dashboard/settings/navbar/translations/{locale}",
+      "httpMethod": "PUT",
+      "name": "navbar.translations.update"
+    },
+    {
+      "method": "navbar_items_store",
+      "uri": "dashboard/settings/navbar/{navbar}/items",
+      "httpMethod": "POST",
+      "name": "navbar.items.store"
+    },
+    {
+      "method": "pages",
+      "uri": "dashboard/settings/pages",
+      "httpMethod": "GET|HEAD",
+      "name": "pages.index"
+    },
+    {
+      "method": "smtp",
+      "uri": "dashboard/settings/smtp",
+      "httpMethod": "GET|HEAD",
+      "name": "smtp.index"
+    },
+    {
+      "method": "smtp_update",
+      "uri": "dashboard/settings/smtp/{id}",
+      "httpMethod": "POST",
+      "name": "smtp.update"
+    },
+    {
+      "method": "storage",
+      "uri": "dashboard/settings/storage",
+      "httpMethod": "GET|HEAD",
+      "name": "storage.index"
+    },
+    {
+      "method": "storage_update",
+      "uri": "dashboard/settings/storage/{id}",
+      "httpMethod": "POST",
+      "name": "storage.update"
+    },
+    {
+      "method": "system",
+      "uri": "dashboard/settings/system",
+      "httpMethod": "GET|HEAD",
+      "name": "system.index"
+    },
+    {
+      "method": "system_type_update",
+      "uri": "dashboard/settings/system-type",
+      "httpMethod": "POST",
+      "name": "system-type.update"
+    },
+    {
+      "method": "system_translations",
+      "uri": "dashboard/settings/system/translations/{locale}",
+      "httpMethod": "GET|HEAD",
+      "name": "system.translations"
+    },
+    {
+      "method": "system_translations_update",
+      "uri": "dashboard/settings/system/translations/{locale}",
+      "httpMethod": "PUT",
+      "name": "system.translations.update"
+    },
+    {
+      "method": "system_update",
+      "uri": "dashboard/settings/system/{id}",
+      "httpMethod": "POST",
+      "name": "system.update"
+    }
+  ],
+  "App\\Http\\Controllers\\PluginController": [
+    {
+      "method": "index",
+      "uri": "dashboard/settings/plugins",
+      "httpMethod": "GET|HEAD",
+      "name": "plugins.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/settings/plugins",
+      "httpMethod": "POST",
+      "name": "plugins.store"
+    },
+    {
+      "method": "seeder",
+      "uri": "dashboard/settings/plugins/{module}/seeder",
+      "httpMethod": "POST",
+      "name": "plugins.seeder"
+    },
+    {
+      "method": "toggle",
+      "uri": "dashboard/settings/plugins/{module}/toggle",
+      "httpMethod": "PUT",
+      "name": "plugins.toggle"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductCategoryController": [
+    {
+      "method": "index",
+      "uri": "dashboard/store/categories",
+      "httpMethod": "GET|HEAD",
+      "name": "product-categories.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/store/categories",
+      "httpMethod": "POST",
+      "name": "product-categories.store"
+    },
+    {
+      "method": "sort",
+      "uri": "dashboard/store/categories/sort",
+      "httpMethod": "POST",
+      "name": "product-categories.sort"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/store/categories/update/{category}",
+      "httpMethod": "POST",
+      "name": "product-categories.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/store/categories/{category}",
+      "httpMethod": "DELETE",
+      "name": "product-categories.destroy"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductCategoryChildController": [
+    {
+      "method": "store",
+      "uri": "dashboard/store/category-child",
+      "httpMethod": "POST",
+      "name": "product-category-child.store"
+    },
+    {
+      "method": "sort",
+      "uri": "dashboard/store/category-child/sort",
+      "httpMethod": "POST",
+      "name": "product-category-child.sort"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/store/category-child/{category_child}",
+      "httpMethod": "PUT|PATCH",
+      "name": "product-category-child.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/store/category-child/{category_child}",
+      "httpMethod": "DELETE",
+      "name": "product-category-child.destroy"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductFaqController": [
+    {
+      "method": "store",
+      "uri": "dashboard/store/product-faqs",
+      "httpMethod": "POST",
+      "name": "product-faqs.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/store/product-faqs/{product_faq}",
+      "httpMethod": "PUT|PATCH",
+      "name": "product-faqs.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/store/product-faqs/{product_faq}",
+      "httpMethod": "DELETE",
+      "name": "product-faqs.destroy"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductSpecificationController": [
+    {
+      "method": "store",
+      "uri": "dashboard/store/product-specifications",
+      "httpMethod": "POST",
+      "name": "product-specifications.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/store/product-specifications/{product_specification}",
+      "httpMethod": "PUT|PATCH",
+      "name": "product-specifications.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/store/product-specifications/{product_specification}",
+      "httpMethod": "DELETE",
+      "name": "product-specifications.destroy"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductController": [
+    {
+      "method": "status",
+      "uri": "dashboard/store/product/status/{id}",
+      "httpMethod": "PUT",
+      "name": "product.status"
+    },
+    {
+      "method": "index",
+      "uri": "dashboard/store/products",
+      "httpMethod": "GET|HEAD",
+      "name": "products.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/store/products",
+      "httpMethod": "POST",
+      "name": "products.store"
+    },
+    {
+      "method": "create",
+      "uri": "dashboard/store/products/create",
+      "httpMethod": "GET|HEAD",
+      "name": "products.create"
+    },
+    {
+      "method": "storeFile",
+      "uri": "dashboard/store/products/files",
+      "httpMethod": "POST",
+      "name": "products.files.store"
+    },
+    {
+      "method": "storeImage",
+      "uri": "dashboard/store/products/images",
+      "httpMethod": "POST",
+      "name": "products.images.store"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/store/products/{id}",
+      "httpMethod": "DELETE",
+      "name": "products.destroy"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/store/products/{id}",
+      "httpMethod": "POST",
+      "name": "products.update"
+    },
+    {
+      "method": "edit",
+      "uri": "dashboard/store/products/{product}/edit",
+      "httpMethod": "GET|HEAD",
+      "name": "products.edit"
+    },
+    {
+      "method": "destroyFile",
+      "uri": "dashboard/store/products/{product}/files/{media}",
+      "httpMethod": "DELETE",
+      "name": "products.files.destroy"
+    },
+    {
+      "method": "destroyImage",
+      "uri": "dashboard/store/products/{product}/images/{media}",
+      "httpMethod": "DELETE",
+      "name": "products.images.destroy"
+    },
+    {
+      "method": "show",
+      "uri": "products/details/{slug}/{id}",
+      "httpMethod": "GET|HEAD",
+      "name": "products.details"
+    },
+    {
+      "method": "shop",
+      "uri": "products/{category?}",
+      "httpMethod": "GET|HEAD",
+      "name": "products.shop"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductCouponController": [
+    {
+      "method": "index",
+      "uri": "dashboard/store/products/product/coupons",
+      "httpMethod": "GET|HEAD",
+      "name": "product-coupons.index"
+    },
+    {
+      "method": "store",
+      "uri": "dashboard/store/products/product/coupons",
+      "httpMethod": "POST",
+      "name": "product-coupons.store"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/store/products/product/coupons/{coupon}",
+      "httpMethod": "PUT|PATCH",
+      "name": "product-coupons.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "dashboard/store/products/product/coupons/{coupon}",
+      "httpMethod": "DELETE",
+      "name": "product-coupons.destroy"
+    },
+    {
+      "method": "verify",
+      "uri": "products/coupons/verify",
+      "httpMethod": "POST",
+      "name": "product-coupons.verify"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductOrderController": [
+    {
+      "method": "sales",
+      "uri": "dashboard/store/products/product/sales",
+      "httpMethod": "GET|HEAD",
+      "name": "product-orders.sales"
+    },
+    {
+      "method": "store",
+      "uri": "products/product/orders",
+      "httpMethod": "POST",
+      "name": "product-orders.store"
+    },
+    {
+      "method": "purchases",
+      "uri": "products/product/purchases",
+      "httpMethod": "GET|HEAD",
+      "name": "product-orders.purchases"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\BunnyVideoUploadController": [
+    {
+      "method": "initiate",
+      "uri": "dashboard/uploads/bunny/initiate",
+      "httpMethod": "POST",
+      "name": "bunny.upload.initiate"
+    },
+    {
+      "method": "abort",
+      "uri": "dashboard/uploads/bunny/{upload}/abort",
+      "httpMethod": "DELETE",
+      "name": "bunny.upload.abort"
+    },
+    {
+      "method": "complete",
+      "uri": "dashboard/uploads/bunny/{upload}/complete",
+      "httpMethod": "POST",
+      "name": "bunny.upload.complete"
+    }
+  ],
+  "App\\Http\\Controllers\\ChunkedUploadController": [
+    {
+      "method": "initialize",
+      "uri": "dashboard/uploads/chunked/initialize",
+      "httpMethod": "POST",
+      "name": "chunked.upload.initialize"
+    },
+    {
+      "method": "abort",
+      "uri": "dashboard/uploads/chunked/{id}/abort",
+      "httpMethod": "DELETE",
+      "name": "chunked.upload.abort"
+    },
+    {
+      "method": "uploadChunk",
+      "uri": "dashboard/uploads/chunked/{id}/chunk",
+      "httpMethod": "POST",
+      "name": "chunked.upload.chunk"
+    },
+    {
+      "method": "complete",
+      "uri": "dashboard/uploads/chunked/{id}/complete",
+      "httpMethod": "POST",
+      "name": "chunked.upload.complete"
+    },
+    {
+      "method": "status",
+      "uri": "dashboard/uploads/chunked/{id}/status",
+      "httpMethod": "GET|HEAD",
+      "name": "chunked.upload.status"
+    }
+  ],
+  "App\\Http\\Controllers\\UsersController": [
+    {
+      "method": "index",
+      "uri": "dashboard/users",
+      "httpMethod": "GET|HEAD",
+      "name": "users.index"
+    },
+    {
+      "method": "update",
+      "uri": "dashboard/users/{user}",
+      "httpMethod": "PUT|PATCH",
+      "name": "users.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "users/{id}",
+      "httpMethod": "DELETE",
+      "name": "users.destroy"
+    }
+  ],
+  "Modules\\Frontend\\Http\\Controllers\\PageTranslationController": [
+    {
+      "method": "index",
+      "uri": "editor/{project}/{page}/translations/{locale}",
+      "httpMethod": "GET|HEAD",
+      "name": "frontend-pages.translations"
+    },
+    {
+      "method": "update",
+      "uri": "editor/{project}/{page}/translations/{locale}",
+      "httpMethod": "PUT",
+      "name": "frontend-pages.translations.update"
+    }
+  ],
+  "Modules\\Installer\\Http\\Controllers\\InstallerDBController": [
+    {
+      "method": "databaseChecker",
+      "uri": "install/check-database",
+      "httpMethod": "POST",
+      "name": "check-database"
+    }
+  ],
+  "Modules\\Installer\\Http\\Controllers\\InstallerController": [
+    {
+      "method": "finish",
+      "uri": "install/finish",
+      "httpMethod": "GET|HEAD",
+      "name": "install.finish"
+    },
+    {
+      "method": "generateAppKey",
+      "uri": "install/generate-app-key",
+      "httpMethod": "GET|HEAD",
+      "name": "generate-app-key"
+    },
+    {
+      "method": "show_processing",
+      "uri": "install/processing",
+      "httpMethod": "GET|HEAD",
+      "name": "install.show-processing"
+    },
+    {
+      "method": "store_processing",
+      "uri": "install/processing",
+      "httpMethod": "POST",
+      "name": "install.store-processing"
+    },
+    {
+      "method": "refresh",
+      "uri": "install/refresh",
+      "httpMethod": "GET|HEAD",
+      "name": "install.refresh"
+    },
+    {
+      "method": "index",
+      "uri": "install/step-1",
+      "httpMethod": "GET|HEAD",
+      "name": "install.index"
+    },
+    {
+      "method": "show_step2",
+      "uri": "install/step-2",
+      "httpMethod": "GET|HEAD",
+      "name": "install.show-step2"
+    },
+    {
+      "method": "store_step2",
+      "uri": "install/step-2",
+      "httpMethod": "POST",
+      "name": "install.store-step2"
+    },
+    {
+      "method": "show_step3",
+      "uri": "install/step-3",
+      "httpMethod": "GET|HEAD",
+      "name": "install.show-step3"
+    },
+    {
+      "method": "store_step3",
+      "uri": "install/step-3",
+      "httpMethod": "POST",
+      "name": "install.store-step3"
+    },
+    {
+      "method": "show_step4",
+      "uri": "install/step-4",
+      "httpMethod": "GET|HEAD",
+      "name": "install.show-step4"
+    },
+    {
+      "method": "store_step4",
+      "uri": "install/step-4",
+      "httpMethod": "POST",
+      "name": "install.store-step4"
+    }
+  ],
+  "App\\Http\\Controllers\\Auth\\AuthenticatedSessionController": [
+    {
+      "method": "index",
+      "uri": "login",
+      "httpMethod": "GET|HEAD",
+      "name": "login.index"
+    },
+    {
+      "method": "store",
+      "uri": "login",
+      "httpMethod": "POST",
+      "name": "login.store"
+    },
+    {
+      "method": "destroy",
+      "uri": "logout",
+      "httpMethod": "POST",
+      "name": "logout"
+    }
+  ],
+  "App\\Http\\Controllers\\NotificationController": [
+    {
+      "method": "index",
+      "uri": "notifications",
+      "httpMethod": "GET|HEAD",
+      "name": "notifications.index"
+    },
+    {
+      "method": "markAllAsRead",
+      "uri": "notifications/read/all",
+      "httpMethod": "PUT",
+      "name": "notifications.read-all"
+    },
+    {
+      "method": "show",
+      "uri": "notifications/{notification}",
+      "httpMethod": "GET|HEAD",
+      "name": "notifications.show"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\EpsController": [
+    {
+      "method": "cancel",
+      "uri": "payments/eps/cancel",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.eps.cancel"
+    },
+    {
+      "method": "fail",
+      "uri": "payments/eps/fail",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.eps.fail"
+    },
+    {
+      "method": "index",
+      "uri": "payments/eps/payment",
+      "httpMethod": "POST",
+      "name": "payments.eps.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payments/eps/success",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.eps.success"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\FlutterwaveController": [
+    {
+      "method": "callback",
+      "uri": "payments/flutterwave/callback",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.flutterwave.callback"
+    },
+    {
+      "method": "payment",
+      "uri": "payments/flutterwave/payment",
+      "httpMethod": "POST",
+      "name": "payments.flutterwave.payment"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\MollieController": [
+    {
+      "method": "payment",
+      "uri": "payments/mollie/payment",
+      "httpMethod": "POST",
+      "name": "payments.mollie.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payments/mollie/success",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.mollie.success"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\OfflineController": [
+    {
+      "method": "cancel",
+      "uri": "payments/offline/cancel",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.offline.cancel"
+    },
+    {
+      "method": "index",
+      "uri": "payments/offline/redirect",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.offline.redirect"
+    },
+    {
+      "method": "submit",
+      "uri": "payments/offline/submit",
+      "httpMethod": "POST",
+      "name": "payments.offline.submit"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\PaypalController": [
+    {
+      "method": "cancel",
+      "uri": "payments/paypal/cancel",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.paypal.cancel"
+    },
+    {
+      "method": "payment",
+      "uri": "payments/paypal/payment",
+      "httpMethod": "POST",
+      "name": "payments.paypal.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payments/paypal/success",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.paypal.success"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\PaystackController": [
+    {
+      "method": "verify_transaction",
+      "uri": "payments/paystack/callback",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.paystack.callback"
+    },
+    {
+      "method": "paystack_redirect",
+      "uri": "payments/paystack/redirect",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.paystack.redirect"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\RazorpayController": [
+    {
+      "method": "payment",
+      "uri": "payments/razorpay/payment",
+      "httpMethod": "POST",
+      "name": "razorpay.payment"
+    },
+    {
+      "method": "index",
+      "uri": "payments/razorpay/redirect",
+      "httpMethod": "POST",
+      "name": "razorpay.redirect"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\SslCommerzController": [
+    {
+      "method": "cancel",
+      "uri": "payments/sslcommerz/cancel",
+      "httpMethod": "POST",
+      "name": null
+    },
+    {
+      "method": "fail",
+      "uri": "payments/sslcommerz/fail",
+      "httpMethod": "POST",
+      "name": null
+    },
+    {
+      "method": "ipn",
+      "uri": "payments/sslcommerz/ipn",
+      "httpMethod": "POST",
+      "name": null
+    },
+    {
+      "method": "index",
+      "uri": "payments/sslcommerz/payment",
+      "httpMethod": "POST",
+      "name": "sslcommerz.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payments/sslcommerz/success",
+      "httpMethod": "POST",
+      "name": null
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\StripeController": [
+    {
+      "method": "cancel",
+      "uri": "payments/stripe/cancel",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.stripe.cancel"
+    },
+    {
+      "method": "payment",
+      "uri": "payments/stripe/payment",
+      "httpMethod": "POST",
+      "name": "payments.stripe.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payments/stripe/success",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.stripe.success"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payment\\XenditController": [
+    {
+      "method": "callback",
+      "uri": "payments/xendit/callback",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.xendit.callback"
+    },
+    {
+      "method": "cancel",
+      "uri": "payments/xendit/cancel",
+      "httpMethod": "GET|HEAD",
+      "name": "payments.xendit.cancel"
+    },
+    {
+      "method": "payment",
+      "uri": "payments/xendit/payment",
+      "httpMethod": "POST",
+      "name": "payments.xendit.payment"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payout\\MollieController": [
+    {
+      "method": "payment",
+      "uri": "payouts/mollie/payment",
+      "httpMethod": "POST",
+      "name": "payouts.mollie.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payouts/mollie/success",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.mollie.success"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payout\\PaypalController": [
+    {
+      "method": "cancel",
+      "uri": "payouts/paypal/cancel",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.paypal.cancel"
+    },
+    {
+      "method": "payment",
+      "uri": "payouts/paypal/payment",
+      "httpMethod": "POST",
+      "name": "payouts.paypal.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payouts/paypal/success",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.paypal.success"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payout\\PaystackController": [
+    {
+      "method": "verify_transaction",
+      "uri": "payouts/paystack/callback",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.paystack.callback"
+    },
+    {
+      "method": "paystack_redirect",
+      "uri": "payouts/paystack/redirect",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.paystack.redirect"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payout\\RazorpayController": [
+    {
+      "method": "payment",
+      "uri": "payouts/razorpay/payment",
+      "httpMethod": "POST",
+      "name": "payouts.razorpay.payment"
+    },
+    {
+      "method": "index",
+      "uri": "payouts/razorpay/redirect",
+      "httpMethod": "POST",
+      "name": "payouts.razorpay.redirect"
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payout\\SslCommerzController": [
+    {
+      "method": "cancel",
+      "uri": "payouts/sslcommerz/cancel",
+      "httpMethod": "POST",
+      "name": null
+    },
+    {
+      "method": "fail",
+      "uri": "payouts/sslcommerz/fail",
+      "httpMethod": "POST",
+      "name": null
+    },
+    {
+      "method": "ipn",
+      "uri": "payouts/sslcommerz/ipn",
+      "httpMethod": "POST",
+      "name": null
+    },
+    {
+      "method": "index",
+      "uri": "payouts/sslcommerz/payment",
+      "httpMethod": "POST",
+      "name": "payouts.sslcommerz.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payouts/sslcommerz/success",
+      "httpMethod": "POST",
+      "name": null
+    }
+  ],
+  "Modules\\Billing\\Http\\Controllers\\Payout\\StripeController": [
+    {
+      "method": "cancel",
+      "uri": "payouts/stripe/cancel",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.stripe.cancel"
+    },
+    {
+      "method": "payment",
+      "uri": "payouts/stripe/payment",
+      "httpMethod": "POST",
+      "name": "payouts.stripe.payment"
+    },
+    {
+      "method": "success",
+      "uri": "payouts/stripe/success",
+      "httpMethod": "GET|HEAD",
+      "name": "payouts.stripe.success"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\PlayerController": [
+    {
+      "method": "finish_course",
+      "uri": "play-course/finish/{watch_history}",
+      "httpMethod": "GET|HEAD",
+      "name": "course.play.finish"
+    },
+    {
+      "method": "course_player",
+      "uri": "play-course/{type}/{watch_history}/{lesson_id}",
+      "httpMethod": "GET|HEAD",
+      "name": "course.play.start"
+    },
+    {
+      "method": "intWatchHistory",
+      "uri": "player/init/watch-history",
+      "httpMethod": "POST",
+      "name": "course.play.init"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductReviewController": [
+    {
+      "method": "store",
+      "uri": "product-reviews",
+      "httpMethod": "POST",
+      "name": "product-reviews.store"
+    },
+    {
+      "method": "update",
+      "uri": "product-reviews/{product_review}",
+      "httpMethod": "PUT|PATCH",
+      "name": "product-reviews.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "product-reviews/{product_review}",
+      "httpMethod": "DELETE",
+      "name": "product-reviews.destroy"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductWishlistController": [
+    {
+      "method": "store",
+      "uri": "product-wishlists",
+      "httpMethod": "POST",
+      "name": "product-wishlists.store"
+    },
+    {
+      "method": "destroy",
+      "uri": "product-wishlists/{product_wishlist}",
+      "httpMethod": "DELETE",
+      "name": "product-wishlists.destroy"
+    }
+  ],
+  "Modules\\Store\\Http\\Controllers\\ProductFileController": [
+    {
+      "method": "download",
+      "uri": "products/{product}/files/{media}/download",
+      "httpMethod": "GET|HEAD",
+      "name": "products.files.download"
+    }
+  ],
+  "Modules\\Frontend\\Http\\Controllers\\ProjectController": [
+    {
+      "method": "index",
+      "uri": "projects",
+      "httpMethod": "GET|HEAD",
+      "name": "projects.index"
+    },
+    {
+      "method": "storeImage",
+      "uri": "projects/image/store",
+      "httpMethod": "POST",
+      "name": "project.store-image"
+    },
+    {
+      "method": "destroyImage",
+      "uri": "projects/image/{project}/{image}",
+      "httpMethod": "DELETE",
+      "name": "project.delete-image"
+    },
+    {
+      "method": "settings",
+      "uri": "projects/settings/{project}",
+      "httpMethod": "POST",
+      "name": "projects.settings"
+    },
+    {
+      "method": "update",
+      "uri": "projects/{project}",
+      "httpMethod": "POST",
+      "name": "projects.update"
+    }
+  ],
+  "Modules\\Course\\Http\\Controllers\\QuizSubmissionController": [
+    {
+      "method": "store",
+      "uri": "quiz-submissions",
+      "httpMethod": "POST",
+      "name": "quiz-submissions.store"
+    }
+  ],
+  "App\\Http\\Controllers\\Auth\\RegisteredUserController": [
+    {
+      "method": "index",
+      "uri": "register",
+      "httpMethod": "GET|HEAD",
+      "name": "register.index"
+    },
+    {
+      "method": "store",
+      "uri": "register",
+      "httpMethod": "POST",
+      "name": "register.store"
+    }
+  ],
+  "App\\Http\\Controllers\\Auth\\NewPasswordController": [
+    {
+      "method": "index",
+      "uri": "reset-password",
+      "httpMethod": "GET|HEAD",
+      "name": "reset-password.index"
+    },
+    {
+      "method": "store",
+      "uri": "reset-password",
+      "httpMethod": "POST",
+      "name": "reset-password.store"
+    }
+  ],
+  "Laravel\\Sanctum\\Http\\Controllers\\CsrfCookieController": [
+    {
+      "method": "show",
+      "uri": "sanctum/csrf-cookie",
+      "httpMethod": "GET|HEAD",
+      "name": "sanctum.csrf-cookie"
+    }
+  ],
+  "App\\Http\\Controllers\\StudentController": [
+    {
+      "method": "show_course",
+      "uri": "student/courses/{id}/{tab}",
+      "httpMethod": "GET|HEAD",
+      "name": "student.course.show"
+    },
+    {
+      "method": "show_exam",
+      "uri": "student/exams/{id}/{tab}",
+      "httpMethod": "GET|HEAD",
+      "name": "student.exam.show"
+    },
+    {
+      "method": "update_profile",
+      "uri": "student/profile",
+      "httpMethod": "POST",
+      "name": "student.profile.update"
+    },
+    {
+      "method": "index",
+      "uri": "student/{tab}",
+      "httpMethod": "GET|HEAD",
+      "name": "student.index"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamReviewController": [
+    {
+      "method": "store",
+      "uri": "student/exam-reviews",
+      "httpMethod": "POST",
+      "name": "exam-reviews.store"
+    },
+    {
+      "method": "update",
+      "uri": "student/exam-reviews/{review}",
+      "httpMethod": "PUT",
+      "name": "exam-reviews.update"
+    },
+    {
+      "method": "destroy",
+      "uri": "student/exam-reviews/{review}",
+      "httpMethod": "DELETE",
+      "name": "exam-reviews.destroy"
+    },
+    {
+      "method": "index",
+      "uri": "student/exams/{exam}/reviews",
+      "httpMethod": "GET|HEAD",
+      "name": "exam-reviews.index"
+    }
+  ],
+  "Modules\\Exam\\Http\\Controllers\\ExamWishlistController": [
+    {
+      "method": "store",
+      "uri": "student/exam-wishlists",
+      "httpMethod": "POST",
+      "name": "exam-wishlists.store"
+    },
+    {
+      "method": "destroy",
+      "uri": "student/exam-wishlists/{exam_wishlist}",
+      "httpMethod": "DELETE",
+      "name": "exam-wishlists.destroy"
+    }
+  ],
+  "App\\Http\\Controllers\\SubscribeController": [
+    {
+      "method": "store",
+      "uri": "subscribes",
+      "httpMethod": "POST",
+      "name": "subscribes.store"
+    }
+  ],
+  "Modules\\Maintenance\\Http\\Controllers\\BackupController": [
+    {
+      "method": "store",
+      "uri": "system/backup",
+      "httpMethod": "POST",
+      "name": "system.backup-store"
+    },
+    {
+      "method": "destroy",
+      "uri": "system/backup/{id}",
+      "httpMethod": "DELETE",
+      "name": "system.backup-delete"
+    },
+    {
+      "method": "download",
+      "uri": "system/backup/{id}/download",
+      "httpMethod": "GET|HEAD",
+      "name": "system.backup-download"
+    },
+    {
+      "method": "restore",
+      "uri": "system/backup/{id}/restore",
+      "httpMethod": "POST",
+      "name": "system.backup-restore"
+    }
+  ],
+  "Modules\\Maintenance\\Http\\Controllers\\SystemController": [
+    {
+      "method": "clear",
+      "uri": "system/clear",
+      "httpMethod": "POST",
+      "name": "system.clear"
+    },
+    {
+      "method": "login",
+      "uri": "system/login",
+      "httpMethod": "GET|HEAD",
+      "name": "system.login"
+    },
+    {
+      "method": "verify",
+      "uri": "system/login",
+      "httpMethod": "POST",
+      "name": "system.verify"
+    },
+    {
+      "method": "reboot",
+      "uri": "system/reboot",
+      "httpMethod": "POST",
+      "name": "system.reboot"
+    },
+    {
+      "method": "refresh",
+      "uri": "system/refresh",
+      "httpMethod": "POST",
+      "name": "system.refresh"
+    },
+    {
+      "method": "sitemap",
+      "uri": "system/sitemap",
+      "httpMethod": "POST",
+      "name": "system.sitemap"
+    },
+    {
+      "method": "storage",
+      "uri": "system/storage",
+      "httpMethod": "POST",
+      "name": "system.storage"
+    }
+  ],
+  "Modules\\Maintenance\\Http\\Controllers\\UpdaterController": [
+    {
+      "method": "index",
+      "uri": "system/maintenance",
+      "httpMethod": "GET|HEAD",
+      "name": "system.maintenance.index"
+    },
+    {
+      "method": "store",
+      "uri": "system/maintenance",
+      "httpMethod": "POST",
+      "name": "system.maintenance.store"
+    },
+    {
+      "method": "updateApp",
+      "uri": "system/update",
+      "httpMethod": "POST",
+      "name": "system.update-start"
+    },
+    {
+      "method": "updateAppSeeder",
+      "uri": "system/update",
+      "httpMethod": "GET|HEAD",
+      "name": "system.update-seeder"
+    },
+    {
+      "method": "abortUpdate",
+      "uri": "system/update-abort",
+      "httpMethod": "POST",
+      "name": "system.update-abort"
+    },
+    {
+      "method": "rollbackUpdate",
+      "uri": "system/update-rollback",
+      "httpMethod": "POST",
+      "name": "system.update-rollback"
+    },
+    {
+      "method": "updateStatus",
+      "uri": "system/update-status",
+      "httpMethod": "GET|HEAD",
+      "name": "system.update-status"
+    },
+    {
+      "method": "updateStep",
+      "uri": "system/update-step",
+      "httpMethod": "POST",
+      "name": "system.update-step"
+    }
+  ],
+  "Modules\\Maintenance\\Http\\Controllers\\UpdatePackageController": [
+    {
+      "method": "store",
+      "uri": "system/update/packages",
+      "httpMethod": "POST",
+      "name": "system.update-package-store"
+    },
+    {
+      "method": "destroy",
+      "uri": "system/update/packages/{id}",
+      "httpMethod": "DELETE",
+      "name": "system.update-package-delete"
+    },
+    {
+      "method": "verify",
+      "uri": "system/update/packages/{id}/verify",
+      "httpMethod": "POST",
+      "name": "system.update-package-verify"
+    }
+  ]
+}

@@ -71,7 +71,7 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-background/90 via-background/20 to-transparent" />
           
           {/* Level Badge */}
           <div className="absolute top-3 left-3">
@@ -133,7 +133,7 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
                   {course.instructor_name.slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-xs font-medium text-muted-foreground truncate max-w-[130px]">
+              <span className="text-xs font-medium text-muted-foreground truncate max-w-32.5">
                 {course.instructor_name}
               </span>
             </div>

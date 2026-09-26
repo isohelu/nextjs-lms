@@ -57,11 +57,11 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-blue-500 shadow-lg shadow-indigo-500/25">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-tr from-violet-600 via-indigo-600 to-blue-500 shadow-lg shadow-indigo-500/25">
             <Sparkles className="size-5 text-white animate-pulse" />
           </div>
           <div>
-            <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-muted-foreground bg-clip-text">
+            <span className="font-extrabold text-lg tracking-tight bg-linear-to-r from-foreground via-foreground/90 to-muted-foreground bg-clip-text">
               Mentor<span className="text-indigo-500">LMS</span>
             </span>
             <span className="hidden sm:inline-block ml-2 text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
@@ -103,7 +103,7 @@ export function Navbar() {
                     {user.email?.slice(0, 2) || 'ST'}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-xs font-medium text-muted-foreground max-w-[120px] truncate">
+                <span className="text-xs font-medium text-muted-foreground max-w-30 truncate">
                   {user.email?.split('@')[0]}
                 </span>
               </Link>
@@ -126,7 +126,7 @@ export function Navbar() {
                 </Button>
               </Link>
               <Link href="/auth?tab=signup">
-                <Button size="sm" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-medium shadow-md shadow-indigo-500/20 hover:from-indigo-500 hover:to-violet-500">
+                <Button size="sm" className="bg-linear-to-r from-indigo-600 to-violet-600 text-white font-medium shadow-md shadow-indigo-500/20 hover:from-indigo-500 hover:to-violet-500">
                   Get Started
                 </Button>
               </Link>

@@ -21,7 +21,9 @@ export interface CourseData {
   discount_price?: number
   pricing_type?: 'free' | 'paid'
   instructor_name?: string
+  instructor_avatar?: string
   category_name?: string
+  badge?: string
 }
 
 interface CourseCardProps {
@@ -35,7 +37,7 @@ export default function CourseCard({ course, className }: CourseCardProps) {
   return (
     <Card
       className={cn(
-        'group flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-0 transition-all duration-300 shadow-card hover:shadow-card-hover',
+        'group flex flex-col justify-between h-full overflow-hidden rounded-2xl border border-border bg-card p-0 transition-all duration-300 shadow-card hover:shadow-card-hover',
         className
       )}
     >
@@ -43,7 +45,7 @@ export default function CourseCard({ course, className }: CourseCardProps) {
       <CardHeader className="p-0">
         <div className="relative p-2.5 pb-0">
           <Link href={`/courses/${course.slug}`}>
-            <div className="relative h-[200px] w-full overflow-hidden rounded-xl bg-muted">
+            <div className="relative h-47.5 w-full overflow-hidden rounded-xl bg-muted">
               <img
                 src={course.thumbnail || '/assets/images/blank-image.jpg'}
                 alt={course.title}
@@ -59,30 +61,32 @@ export default function CourseCard({ course, className }: CourseCardProps) {
       </CardHeader>
 
       {/* Content */}
-      <CardContent className="flex-1 p-4 pb-2">
-        {/* Meta Stats: Students & Duration */}
-        <div className="mb-2 flex items-center gap-2 text-xs font-medium text-secondary-foreground">
-          <div className="flex items-center gap-1">
-            <Users className="h-3.5 w-3.5" />
-            <span>{course.enrollments_count || 120} Students</span>
+      <CardContent className="flex flex-1 flex-col justify-between p-4 pb-2">
+        <div>
+          {/* Meta Stats: Students & Duration */}
+          <div className="mb-2 flex items-center gap-2 text-xs font-medium text-secondary-foreground">
+            <div className="flex items-center gap-1">
+              <Users className="h-3.5 w-3.5" />
+              <span>{course.enrollments_count || 120} Students</span>
+            </div>
+
+            <div className="flex items-center gap-1 ml-2">
+              <Clock className="h-3.5 w-3.5" />
+              <span>
+                {typeof course.lessons_duration === 'number'
+                  ? `${Math.round(course.lessons_duration / 3600)} hrs`
+                  : course.lessons_duration || '12 hrs'}
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-1 ml-2">
-            <Clock className="h-3.5 w-3.5" />
-            <span>
-              {typeof course.lessons_duration === 'number'
-                ? `${Math.round(course.lessons_duration / 3600)} hrs`
-                : course.lessons_duration || '12 hrs'}
-            </span>
-          </div>
+          {/* Course Title */}
+          <Link href={`/courses/${course.slug}`}>
+            <h3 className="line-clamp-2 text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-secondary-foreground min-h-11">
+              {course.title}
+            </h3>
+          </Link>
         </div>
-
-        {/* Course Title */}
-        <Link href={`/courses/${course.slug}`}>
-          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-secondary-foreground">
-            {course.title}
-          </h3>
-        </Link>
 
         {/* Star Ratings */}
         <div className="mt-2.5 flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -95,7 +99,7 @@ export default function CourseCard({ course, className }: CourseCardProps) {
       </CardContent>
 
       {/* Footer: Price & CTA */}
-      <CardFooter className="flex items-center justify-between p-4 pt-2 border-t border-border/40">
+      <CardFooter className="mt-auto flex items-center justify-between p-4 pt-2 border-t border-border/40">
         <div className="flex items-center gap-1.5">
           {isFree ? (
             <span className="text-lg font-bold text-secondary-foreground">

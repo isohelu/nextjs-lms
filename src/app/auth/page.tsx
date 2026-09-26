@@ -3,7 +3,6 @@
 import React, { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -24,25 +23,37 @@ function AuthForm() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
-  const supabase = createClient()
-
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setErrorMsg(null)
     setSuccessMsg(null)
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
 
-    if (error) {
-      setErrorMsg(error.message)
-      setLoading(false)
-    } else {
-      router.push('/dashboard')
+      const data = await res.json()
+
+      if (!res.ok || !data.success) {
+        setErrorMsg(data.message || 'Invalid email or password.')
+        setLoading(false)
+        return
+      }
+
+      const role = data.user?.role || 'student'
+      if (role === 'admin' || role === 'instructor') {
+        router.push('/dashboard')
+      } else {
+        router.push('/student/courses')
+      }
       router.refresh()
+    } catch {
+      setErrorMsg('Failed to sign in. Please verify your connection.')
+      setLoading(false)
     }
   }
 
@@ -52,25 +63,29 @@ function AuthForm() {
     setErrorMsg(null)
     setSuccessMsg(null)
 
-    const { error, data } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-      },
-    })
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: fullName, email, password, role: 'student' }),
+      })
 
-    if (error) {
-      setErrorMsg(error.message)
+      const data = await res.json()
+
+      if (!res.ok || !data.success) {
+        setErrorMsg(data.message || 'Registration failed.')
+        setLoading(false)
+        return
+      }
+
+      setSuccessMsg('Account created successfully! Redirecting...')
+      setTimeout(() => {
+        router.push('/student')
+        router.refresh()
+      }, 1000)
+    } catch {
+      setErrorMsg('Registration failed. Please try again.')
       setLoading(false)
-    } else if (data.user && !data.session) {
-      setSuccessMsg('Account created! Please check your email to confirm registration.')
-      setLoading(false)
-    } else {
-      router.push('/dashboard')
-      router.refresh()
     }
   }
 
@@ -78,42 +93,35 @@ function AuthForm() {
   const handleDemoSignIn = async () => {
     setLoading(true)
     setErrorMsg(null)
-    const demoEmail = 'student.demo@mentorlms.io'
-    const demoPass = 'DemoPassword123!'
+    const demoEmail = 'student@mentorlms.com'
+    const demoPass = 'Password123!'
 
-    // Try signing in
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: demoEmail,
-      password: demoPass,
-    })
-
-    if (signInError) {
-      // If demo account doesn't exist yet, sign up
-      const { error: signUpError } = await supabase.auth.signUp({
-        email: demoEmail,
-        password: demoPass,
-        options: {
-          data: { full_name: 'Demo Student' },
-        },
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: demoEmail, password: demoPass }),
       })
-      if (signUpError) {
-        setErrorMsg(signUpError.message)
-      } else {
-        router.push('/dashboard')
+
+      const data = await res.json()
+      if (data.success) {
+        router.push('/student')
         router.refresh()
+      } else {
+        setErrorMsg(data.message || 'Demo sign in unavailable.')
       }
-    } else {
-      router.push('/dashboard')
-      router.refresh()
+    } catch {
+      setErrorMsg('Failed to connect to demo account.')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md rounded-2xl border border-border/80 bg-card/80 backdrop-blur-xl shadow-2xl p-2">
         <CardHeader className="text-center pb-4">
-          <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 shadow-lg shadow-indigo-500/30 mb-2">
+          <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-linear-to-tr from-violet-600 to-indigo-600 shadow-lg shadow-indigo-500/30 mb-2">
             <Sparkles className="size-6 text-white" />
           </div>
           <CardTitle className="text-2xl font-black tracking-tight text-foreground">
@@ -237,7 +245,7 @@ function AuthForm() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-xs mt-2"
+                  className="w-full rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 text-white font-bold text-xs mt-2"
                 >
                   {loading ? 'Creating Account...' : 'Register'}
                   <ArrowRight className="size-3.5 ml-1.5" />

@@ -49,10 +49,13 @@ export default function CategoryCard({
     (category.icon && iconMap[category.icon.toLowerCase()]) || Code2
 
   return (
-    <Link href={`/courses/all?category=${category.slug}`}>
+    <Link
+      href={`/courses/all?category=${category.slug}`}
+      className="group flex flex-col h-full"
+    >
       <Card
         className={cn(
-          'group relative min-h-[140px] rounded-2xl border p-6 transition-all duration-300 !shadow-none hover:!shadow-card hover:-translate-y-1',
+          'flex flex-col justify-between h-full rounded-2xl border p-5 transition-all duration-300 shadow-none! hover:shadow-card! hover:-translate-y-1',
           className
         )}
         style={{
@@ -60,15 +63,17 @@ export default function CategoryCard({
           backgroundColor: color.replace('1)', '0.04)'),
         }}
       >
-        <div style={{ color }}>
-          <IconComponent className="h-7 w-7" />
+        <div>
+          <div style={{ color }}>
+            <IconComponent className="h-7 w-7" />
+          </div>
+
+          <p className="mt-4 mb-4 text-xl font-semibold text-foreground line-clamp-2 min-h-14">
+            {category.title}
+          </p>
         </div>
 
-        <p className="mt-4 mb-3 text-lg font-semibold text-foreground">
-          {category.title}
-        </p>
-
-        <div className="flex items-center justify-between gap-2 text-muted-foreground transition-colors group-hover:text-foreground">
+        <div className="mt-auto flex items-center justify-between gap-2 text-muted-foreground transition-colors group-hover:text-foreground pt-2">
           <p className="text-sm font-medium">
             {category.courses_count || 12} Courses
           </p>

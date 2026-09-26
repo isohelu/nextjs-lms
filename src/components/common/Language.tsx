@@ -41,7 +41,7 @@ export default function Language() {
           {currentLang?.flag ? (
             <span aria-hidden="true">{currentLang.flag}</span>
           ) : (
-            <Globe className="!h-5 !w-5" />
+            <Globe className="h-5! w-5!" />
           )}
           <span className="sr-only">
             {currentLang?.name ?? 'Select language'}
@@ -49,7 +49,7 @@ export default function Language() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="end" className="w-40">
         {defaultLanguages.map((lang) => (
           <DropdownMenuItem
             key={lang.id}

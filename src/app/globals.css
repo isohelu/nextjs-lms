@@ -1,7 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: 'Inter', sans-serif, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -256,16 +257,61 @@
 
   a,
   button {
-    @apply !shadow-none;
+    @apply shadow-none!;
   }
+}
+
+@utility container {
+  margin-inline: auto;
+  max-width: 1280px;
+  padding-inline: 1.25rem;
 }
 
 @layer utilities {
   .container {
-    @apply mx-auto max-w-[1280px] px-5;
+    margin-inline: auto;
+    max-width: 1280px;
+    padding-inline: 1.25rem;
   }
 
   .bg-card {
     @apply border-border shadow-card;
   }
+
+  .horizontal-tabs-list {
+    @apply grid h-auto grid-cols-1 gap-y-1 overflow-hidden rounded-2xl border border-border bg-card px-0 py-5 text-card-foreground shadow;
+  }
+
+  .horizontal-tabs-trigger {
+    @apply relative flex cursor-pointer items-center justify-start gap-3 rounded-none border-primary px-5 py-3 text-start shadow-none! before:content-[''] before:absolute before:top-0 before:bottom-0 before:left-0 before:rounded-r-xl hover:bg-muted! data-[state=active]:bg-muted! data-[state=active]:before:w-1 data-[state=active]:before:bg-primary;
+  }
+
+  .vertical-tabs-list {
+    @apply rounded-none bg-transparent px-0 py-6;
+  }
+
+  .vertical-tabs-trigger {
+    @apply relative flex cursor-pointer items-center justify-start gap-3 rounded-none border-primary px-8 py-4 text-start shadow-none! before:absolute before:right-0 before:bottom-0 before:left-0 before:h-1 before:rounded-t-xl data-[state=active]:bg-muted! data-[state=active]:before:bg-primary data-[state=active]:before:content-['.'];
+  }
+
+  .btn-gradient-glow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -1.75rem;
+    width: 5.25rem;
+    height: 5.25rem;
+    transform: translateY(-50%);
+    border-radius: 9999px;
+    background-color: #E4CBA8A6;
+    filter: blur(30px);
+    pointer-events: none;
+  }
+  .dark .btn-gradient-glow::after {
+    background-color: #e4cba857;
+  }
+}
+
+[data-radix-popper-content-wrapper] {
+  z-index: 100 !important;
 }

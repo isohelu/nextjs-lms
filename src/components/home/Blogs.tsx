@@ -47,28 +47,25 @@ export default function Blogs({ blogs = defaultBlogs }: { blogs?: BlogData[] }) 
   const displayBlogs = blogs.length > 0 ? blogs : defaultBlogs
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="mx-auto mb-14 text-center md:max-w-xl">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary-foreground">
-            Blogs
-          </p>
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Our Latest Posts
-          </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
-            Stay up to date with engineering tutorials, industry insights, and
-            career guides written by expert educators and tech leaders.
-          </p>
-        </div>
+    <section className="container z-10 py-20">
+      {/* Header matching Laravel 1:1 */}
+      <div className="mx-auto mb-10 text-center md:max-w-2xl">
+        <p className="mb-1 font-medium text-secondary-foreground">
+          Blogs
+        </p>
+        <h2 className="mb-4 text-3xl font-bold sm:text-4xl text-foreground">
+          Our Latest Posts
+        </h2>
+        <p className="text-muted-foreground">
+          Stay up to date with engineering tutorials, industry insights, and career guides
+        </p>
+      </div>
 
-        {/* Blogs Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {displayBlogs.slice(0, 3).map((blog) => (
-            <BlogCard key={blog.id} blog={blog} />
-          ))}
-        </div>
+      {/* Blogs Grid */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
+        {displayBlogs.slice(0, 3).map((blog) => (
+          <BlogCard key={blog.id} blog={blog} />
+        ))}
       </div>
     </section>
   )

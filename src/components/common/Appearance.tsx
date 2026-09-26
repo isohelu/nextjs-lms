@@ -26,14 +26,14 @@ export default function Appearance({ className, buttonClass, ...props }: Props) 
   }, [])
 
   const getCurrentIcon = () => {
-    if (!mounted) return <Monitor className="!h-5 !w-5" />
+    if (!mounted) return <Monitor className="h-5! w-5!" />
     switch (appearance) {
       case 'dark':
-        return <Moon className="!h-5 !w-5" />
+        return <Moon className="h-5! w-5!" />
       case 'light':
-        return <Sun className="!h-5 !w-5" />
+        return <Sun className="h-5! w-5!" />
       default:
-        return <Monitor className="!h-5 !w-5" />
+        return <Monitor className="h-5! w-5!" />
     }
   }
 

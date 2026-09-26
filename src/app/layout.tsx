@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
+import AppShell from '@/components/layout/AppShell'
 import { getOrganizationSchema } from '@/lib/seo/schema'
 
 const inter = Inter({
@@ -12,6 +11,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   title: {
     default: 'Home 1 | Mentor Learning Management System',
     template: '%s | Mentor Learning Management System',
@@ -67,11 +67,22 @@ export default function RootLayout({
             __html: JSON.stringify(organizationJsonLd),
           }}
         />
+        {/* Instant Theme Initialization Script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const a = localStorage.getItem('appearance') || 'system';
+                const dark = a === 'dark' || (a === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (dark) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+              } catch (_) {}
+            `,
+          }}
+        />
       </head>
       <body className="flex min-h-screen flex-col justify-between overflow-x-hidden font-sans antialiased bg-background text-foreground">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   )

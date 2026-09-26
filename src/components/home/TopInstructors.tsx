@@ -29,36 +29,37 @@ const topInstructorsList: InstructorData[] = [
 ]
 
 export default function TopInstructors({
+  title = 'Meet Our Experts',
   instructors = topInstructorsList,
 }: {
+  title?: string
   instructors?: InstructorData[]
 }) {
   const displayInstructors =
     instructors.length > 0 ? instructors : topInstructorsList
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="mx-auto mb-14 text-center md:max-w-md">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-secondary-foreground">
-            Top Instructors
-          </p>
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Meet Our Experts
-          </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
-            Learn directly from passionate practitioners who have engineered systems
-            at scale and mentored thousands of developers globally.
-          </p>
-        </div>
+    <section className="container py-20">
+      {/* Header matching Laravel 1:1 */}
+      <div className="mx-auto mb-10 text-center md:max-w-120">
+        <p className="mb-1 font-medium text-secondary-foreground">
+          Top Instructors
+        </p>
+        <h2 className="mb-4 text-3xl font-bold sm:text-4xl text-foreground">
+          {title}
+        </h2>
+        <p className="text-muted-foreground">
+          Discover skilled educators who inspire, guide, and share their expertise
+        </p>
+      </div>
 
-        {/* Instructors Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {displayInstructors.slice(0, 4).map((instructor) => (
-            <InstructorCard key={instructor.id} instructor={instructor} />
-          ))}
-        </div>
+      {/* Instructors Grid matching 4-column layout */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 items-stretch">
+        {displayInstructors.slice(0, 4).map((instructor) => (
+          <div key={instructor.id} className="h-full w-full">
+            <InstructorCard instructor={instructor} className="h-full" />
+          </div>
+        ))}
       </div>
     </section>
   )

@@ -10,60 +10,74 @@ import Faqs from '@/components/home/Faqs'
 import { defaultFaqs } from '@/lib/data/faqs'
 import Blogs from '@/components/home/Blogs'
 import CallToAction from '@/components/home/CallToAction'
-import { createClient } from '@/lib/supabase/server'
+import db from '@/lib/db'
+import { courseRepository } from '@/lib/repositories/courseRepository'
 import { getFaqSchema, getCourseSchema } from '@/lib/seo/schema'
 import { CourseData } from '@/components/cards/CourseCard'
 import { CategoryData } from '@/components/cards/CategoryCard'
+import { InstructorData } from '@/components/cards/InstructorCard'
 
-export const revalidate = 60 // Revalidate cached page every 60 seconds
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   let dbCategories: CategoryData[] = []
   let dbCourses: CourseData[] = []
+  let dbInstructors: InstructorData[] = []
 
   try {
-    const supabase = await createClient()
+    // Fetch categories from SQLite
+    const categoriesRows = db.prepare(`
+      SELECT cc.id, cc.title, cc.slug, cc.icon,
+             (SELECT COUNT(*) FROM courses c WHERE c.course_category_id = cc.id) as courses_count
+      FROM course_categories cc
+      ORDER BY cc.id ASC
+      LIMIT 8
+    `).all() as { id: number; title: string; slug: string; icon: string | null; courses_count: number }[]
 
-    // Fetch categories
-    const { data: categoriesData } = await supabase
-      .from('categories')
-      .select('id, name, slug, icon')
-      .limit(8)
-
-    if (categoriesData && categoriesData.length > 0) {
-      dbCategories = categoriesData.map((c) => ({
-        id: c.id,
-        title: c.name,
-        slug: c.slug,
-        icon: c.icon,
-        courses_count: 12,
-      }))
-    }
-
-    // Fetch published courses
-    const { data: coursesData } = await supabase
-      .from('courses')
-      .select(
-        'id, title, slug, short_description, instructor_name, price, level, duration_hours, rating, thumbnail_url'
-      )
-      .eq('is_published', true)
-      .limit(8)
-
-    if (coursesData && coursesData.length > 0) {
-      dbCourses = coursesData.map((c) => ({
+    if (categoriesRows && categoriesRows.length > 0) {
+      dbCategories = categoriesRows.map((c) => ({
         id: c.id,
         title: c.title,
         slug: c.slug,
-        thumbnail: c.thumbnail_url,
-        instructor_name: c.instructor_name,
-        price: c.price,
-        lessons_duration: `${c.duration_hours || 10} hrs`,
-        average_rating: c.rating || 5.0,
-        reviews_count: 28,
+        icon: c.icon || 'BookOpen',
+        courses_count: c.courses_count || 12,
+      }))
+    }
+
+    // Fetch published courses from SQLite
+    const { courses } = courseRepository.listAll({ limit: 8 })
+    if (courses && courses.length > 0) {
+      dbCourses = courses.map((c) => ({
+        id: c.id,
+        title: c.title,
+        slug: c.slug,
+        thumbnail: c.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80',
+        instructor_name: c.instructor_name || 'Dr. Angela Yu',
+        price: c.price || 0,
+        lessons_duration: '38 hrs',
+        average_rating: 4.9,
+        reviews_count: 142,
+      }))
+    }
+    // Fetch top instructors from SQLite
+    const instructorRows = db.prepare(`
+      SELECT i.id, u.name, i.designation, u.photo
+      FROM instructors i
+      JOIN users u ON i.user_id = u.id
+      ORDER BY i.id ASC
+      LIMIT 4
+    `).all() as any[]
+
+    if (instructorRows && instructorRows.length > 0) {
+      dbInstructors = instructorRows.map((inst) => ({
+        id: inst.id,
+        name: inst.name,
+        designation: inst.designation || 'Lead Technical Instructor',
+        photo: inst.photo || `/assets/avatars/avatar-${(inst.id % 4) + 1}.png`,
       }))
     }
   } catch (error) {
-    console.error('Supabase query fallback to defaults:', error)
+    console.error('Database query fallback to defaults:', error)
   }
 
   // Schema.org FAQPage structured data
@@ -101,14 +115,14 @@ export default async function HomePage() {
         />
       ))}
 
-      {/* 1:1 Home-1 Section Hierarchy */}
+      {/* Standard Home-1 Sections matching Laravel 1:1 */}
       <Hero />
       <Partners />
       <TopCategories categories={dbCategories} />
       <TopCourses courses={dbCourses} />
       <Overview />
       <NewCourses courses={dbCourses.slice(4)} />
-      <TopInstructors />
+      <TopInstructors instructors={dbInstructors} />
       <Faqs />
       <Blogs />
       <CallToAction />

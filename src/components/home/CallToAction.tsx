@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export default function CallToAction() {
   const [email, setEmail] = useState('')
@@ -16,77 +17,68 @@ export default function CallToAction() {
   }
 
   const avatars = [
-    '/assets/avatars/avatar-1.png',
-    '/assets/avatars/avatar-2.png',
-    '/assets/avatars/avatar-3.png',
-    '/assets/avatars/avatar-4.png',
-    '/assets/avatars/avatar-5.png',
-    '/assets/avatars/avatar-6.png',
+    { name: 'User 1', image: '/assets/avatars/avatar-1.png' },
+    { name: 'User 2', image: '/assets/avatars/avatar-2.png' },
+    { name: 'User 3', image: '/assets/avatars/avatar-3.png' },
+    { name: 'User 4', image: '/assets/avatars/avatar-4.png' },
+    { name: 'User 5', image: '/assets/avatars/avatar-5.png' },
   ]
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="overflow-hidden rounded-3xl sm:rounded-4xl bg-[rgba(0,114,98,1)] shadow-xl">
-          <div className="space-y-6 bg-[url('/assets/images/intro/home-1/cta-bg-vector.png')] bg-cover bg-center px-6 py-16 text-center text-white md:px-12 md:py-20">
-            {/* Title */}
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Subscribe Our Newsletter
-            </h2>
+    <div className="bg-secondary-100er py-20">
+      <section className="container bg-[rgba(0,114,98,1)] rounded-4xl">
+        <div className="text-white text-center space-y-5 px-6 py-14 bg-[url('/assets/images/intro/home-1/cta-bg-vector.png')] bg-cover bg-center">
+          <h1 className="text-2xl leading-tight font-bold md:text-3xl md:leading-9">
+            Subscribe Our Newsletter
+          </h1>
 
-            <p className="mx-auto max-w-md text-base text-white/90 leading-relaxed">
-              Subscribe to our newsletter to get the latest news, updates, and
-              exclusive course discounts delivered directly to your inbox.
+          <div className="mx-auto w-full max-w-105 text-center">
+            <p className="mb-3 text-white/90 text-sm">
+              Subscribe to our newsletter to get latest courses and discounts.
             </p>
 
-            {/* Newsletter Input Form */}
-            <div className="mx-auto max-w-md">
-              {subscribed ? (
-                <div className="rounded-xl bg-white/20 p-3.5 backdrop-blur text-sm font-semibold text-white">
-                  ✓ Thank you for subscribing! Welcome to Mentor LMS.
-                </div>
-              ) : (
-                <form
-                  onSubmit={handleSubmit}
-                  className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:rounded-xl sm:bg-white sm:p-1.5"
-                >
+            {subscribed ? (
+              <div className="rounded-lg bg-white/20 p-3 text-sm font-semibold text-white">
+                ✓ Thank you for subscribing!
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="relative z-10">
+                <div className="flex items-center justify-between rounded-lg border border-gray-400 bg-background text-foreground overflow-hidden">
                   <input
                     type="email"
+                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
-                    required
-                    className="w-full rounded-xl bg-white px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none sm:bg-transparent"
+                    className="h-12.5 w-full px-4 text-sm text-foreground focus:outline-0 bg-transparent"
+                    placeholder="name@example.com"
                   />
-                  <Button
-                    type="submit"
-                    className="shrink-0 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90"
-                  >
+                  <Button type="submit" className="mr-0.75 h-11 rounded-lg px-6 font-medium">
                     Subscribe
                   </Button>
-                </form>
-              )}
-            </div>
+                </div>
+              </form>
+            )}
+          </div>
 
-            {/* Avatar Stack */}
-            <div className="flex flex-col items-center justify-center gap-3 pt-4 sm:flex-row">
-              <div className="flex -space-x-2">
-                {avatars.map((src, index) => (
-                  <img
-                    key={index}
-                    src={src}
-                    alt={`Subscriber ${index + 1}`}
-                    className="h-8 w-8 rounded-full border-2 border-[rgba(0,114,98,1)] object-cover"
+          <div className="flex items-center justify-center gap-3">
+            <div className="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale">
+              {avatars.map((item, index) => (
+                <Avatar key={index} className="h-8 w-8">
+                  <AvatarImage
+                    src={item.image}
+                    alt={item.name}
+                    className="object-cover"
                   />
-                ))}
-              </div>
-              <p className="text-sm font-medium text-white/95">
-                +2000 readers worldwide
-              </p>
+                  <AvatarFallback>U</AvatarFallback>
+                </Avatar>
+              ))}
             </div>
+            <p className="font-medium text-sm text-white/95">
+              +2000 readers worldwide
+            </p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   )
 }

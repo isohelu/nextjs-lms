@@ -89,11 +89,11 @@ export function HeroAnimation() {
   return (
     <section
       ref={containerRef}
-      className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 border-b border-border/40 bg-gradient-to-b from-background via-card/30 to-background"
+      className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 border-b border-border/40 bg-linear-to-b from-background via-card/30 to-background"
     >
       {/* Ambient background glows */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 size-[600px] rounded-full bg-gradient-to-tr from-indigo-500/20 via-violet-500/15 to-blue-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 -right-20 size-[400px] rounded-full bg-cyan-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 size-150 rounded-full bg-linear-to-tr from-indigo-500/20 via-violet-500/15 to-blue-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute top-1/2 -right-20 size-100 rounded-full bg-cyan-500/10 blur-3xl" />
 
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -114,7 +114,7 @@ export function HeroAnimation() {
               className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-foreground leading-[1.1]"
             >
               Master High-Impact <br />
-              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
                 Full-Stack & AI Skills
               </span>
             </h1>
@@ -131,7 +131,7 @@ export function HeroAnimation() {
               <Link href="#catalog">
                 <Button
                   size="lg"
-                  className="rounded-xl px-7 bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] transition-all"
+                  className="rounded-xl px-7 bg-linear-to-r from-indigo-600 via-indigo-500 to-violet-600 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] transition-all"
                 >
                   Explore Catalog
                   <ArrowRight className="size-4 ml-2" />
@@ -176,7 +176,7 @@ export function HeroAnimation() {
 
           {/* Right Column: Visual Showcase Card */}
           <div className="lg:col-span-5 relative" ref={visualCardRef}>
-            <div className="relative rounded-2xl border border-border/60 bg-gradient-to-b from-card/80 via-card/50 to-background/80 p-6 shadow-2xl backdrop-blur-xl">
+            <div className="relative rounded-2xl border border-border/60 bg-linear-to-b from-card/80 via-card/50 to-background/80 p-6 shadow-2xl backdrop-blur-xl">
               {/* Card top banner */}
               <div className="flex items-center justify-between pb-4 border-b border-border/40">
                 <div className="flex items-center gap-2">
@@ -195,7 +195,7 @@ export function HeroAnimation() {
               {/* Mock Player / Lab Preview */}
               <div className="mt-4 rounded-xl overflow-hidden border border-border/40 bg-zinc-950 p-4 space-y-3 font-mono text-xs text-indigo-300">
                 <div className="flex items-center justify-between text-zinc-400 text-[11px]">
-                  <span>// Supabase Realtime Stream</span>
+                  <span>{`// Supabase Realtime Stream`}</span>
                   <span className="text-emerald-400 flex items-center gap-1">
                     <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" />
                     Connected
@@ -204,7 +204,7 @@ export function HeroAnimation() {
                 <div className="bg-zinc-900/90 rounded-lg p-3 text-[12px] space-y-1 text-zinc-300">
                   <p><span className="text-purple-400">const</span> supabase = <span className="text-blue-400">createClient</span>()</p>
                   <p><span className="text-purple-400">const</span> &#123; data: session &#125; = <span className="text-purple-400">await</span> supabase.auth.<span className="text-amber-300">getUser</span>()</p>
-                  <p className="text-emerald-400">// Row Level Security Verified ✓</p>
+                  <p className="text-emerald-400">{`// Row Level Security Verified ✓`}</p>
                 </div>
               </div>
 

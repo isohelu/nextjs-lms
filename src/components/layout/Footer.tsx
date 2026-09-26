@@ -12,6 +12,7 @@ export default function Footer() {
   const companyLinks = [
     { title: 'About Us', url: '/about-us' },
     { title: 'Our Team', url: '/our-team' },
+    { title: 'Verify Certificate', url: '/verify-certificate' },
     { title: 'Careers', url: '/careers' },
     { title: 'Contact Us', url: '/contact-us' },
   ]
@@ -44,11 +45,11 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="overflow-hidden bg-[rgba(255,222,99,0.06)] border-t border-border/50">
-      <div className="container space-y-9 pt-[60px] pb-5">
+    <footer className="overflow-hidden bg-[rgba(255,222,99,0.06)]">
+      <div className="container space-y-9 pt-15 pb-5">
         <div className="flex flex-col items-start justify-between gap-10 md:flex-row">
           {/* Logo & Description Column */}
-          <div className="w-full space-y-5 md:max-w-[300px]">
+          <div className="w-full space-y-5 md:max-w-75">
             <div>
               <Link href="/">
                 <AppLogo className="h-7" />
@@ -82,7 +83,7 @@ export default function Footer() {
           </div>
 
           {/* Links Columns */}
-          <div className="flex w-full flex-col justify-between gap-10 md:max-w-[640px] md:flex-row">
+          <div className="flex w-full flex-col justify-between gap-10 md:max-w-160 md:flex-row">
             {/* Company */}
             <div className="relative w-full">
               <p className="mb-3 text-lg font-semibold">Company</p>
@@ -130,20 +131,20 @@ export default function Footer() {
         </div>
 
         {/* Payment Methods */}
-        <div className="space-y-3 pt-4 border-t border-border/40">
-          <h3 className="text-sm font-medium text-muted-foreground">
+        <div className="space-y-3">
+          <h3 className="text-base font-medium">
             We support multiple payment gateways.
           </h3>
-          <div className="flex flex-wrap items-center gap-5">
+          <div className="flex flex-wrap gap-3">
             {paymentMethods.map((payment, idx) => (
               <div
                 key={idx}
-                className="flex h-7 items-center justify-center filter grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100"
+                className="flex h-7 items-center justify-center gap-5 md:justify-start"
               >
                 <img
                   src={payment.image}
                   alt={payment.name}
-                  className="h-6 w-auto object-contain"
+                  className="h-full w-auto object-contain"
                 />
               </div>
             ))}
@@ -152,7 +153,7 @@ export default function Footer() {
       </div>
 
       {/* Copyright Notice */}
-      <div className="border-t border-border/30 px-6 py-6 text-center">
+      <div className="px-6 py-8 text-center">
         <p className="text-sm text-muted-foreground">
           © Copyright 2025 UI Lib, All rights reserved.
         </p>

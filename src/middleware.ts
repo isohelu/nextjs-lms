@@ -37,10 +37,27 @@ export async function middleware(request: NextRequest) {
     headers: requestHeaders,
   })
 
+  // Check protected route authentication
+  const pathname = request.nextUrl.pathname
+  const hasSession = request.cookies.has('mentor_session') || request.cookies.has('demo_user')
+
+  if (!hasSession) {
+    if (
+      pathname.startsWith('/dashboard') ||
+      pathname.startsWith('/admin') ||
+      pathname.startsWith('/instructor') ||
+      pathname.startsWith('/student')
+    ) {
+      const loginUrl = new URL('/auth/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+  }
+
   let response: NextResponse
   try {
     response = await updateSession(modifiedRequest)
-  } catch (error) {
+  } catch {
     response = NextResponse.next({
       request: modifiedRequest,
     })

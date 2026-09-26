@@ -29,14 +29,14 @@ export default function BlogCard({
   return (
     <Card
       className={cn(
-        'group flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-0 transition-all duration-300 shadow-card hover:shadow-card-hover',
+        'group flex flex-col justify-between h-full overflow-hidden rounded-2xl border border-border bg-card p-0 transition-all duration-300 shadow-card hover:shadow-card-hover',
         className
       )}
     >
       <CardHeader className="p-0">
         <div className="p-2.5 pb-0">
           <Link href={`/blogs/${blog.uuid || blog.slug}`}>
-            <div className="relative h-[190px] w-full overflow-hidden rounded-xl bg-muted">
+            <div className="relative h-47.5 w-full overflow-hidden rounded-xl bg-muted">
               <img
                 src={blog.thumbnail || '/assets/images/blank-image.jpg'}
                 alt={blog.title}
@@ -51,32 +51,34 @@ export default function BlogCard({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 p-4 pb-2">
-        <div className="mb-2 flex items-center gap-3 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
-            <span>{blog.published_at || 'Recently'}</span>
+      <CardContent className="flex flex-1 flex-col justify-between p-4 pb-2">
+        <div>
+          <div className="mb-2 flex items-center gap-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              <span>{blog.published_at || 'Recently'}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              <span>{blog.read_time || '5 min read'}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            <span>{blog.read_time || '5 min read'}</span>
-          </div>
+
+          <Link href={`/blogs/${blog.uuid || blog.slug}`}>
+            <h3 className="line-clamp-2 text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-secondary-foreground min-h-11">
+              {blog.title}
+            </h3>
+          </Link>
+
+          {blog.summary && (
+            <p className="mt-2 line-clamp-2 text-xs text-muted-foreground leading-relaxed min-h-9">
+              {blog.summary}
+            </p>
+          )}
         </div>
-
-        <Link href={`/blogs/${blog.uuid || blog.slug}`}>
-          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-secondary-foreground">
-            {blog.title}
-          </h3>
-        </Link>
-
-        {blog.summary && (
-          <p className="mt-2 line-clamp-2 text-xs text-muted-foreground leading-relaxed">
-            {blog.summary}
-          </p>
-        )}
       </CardContent>
 
-      <CardFooter className="flex items-center gap-2 p-4 pt-2 border-t border-border/40">
+      <CardFooter className="mt-auto flex items-center gap-2 p-4 pt-2 border-t border-border/40">
         <img
           src={blog.author_avatar || '/assets/avatars/avatar-1.png'}
           alt={blog.author_name || 'Author'}

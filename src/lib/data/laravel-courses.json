@@ -1,0 +1,162 @@
+[
+    {
+        "id": 1,
+        "title": "Full-Stack Next.js 15 & Modern React Architecture",
+        "slug": "fullstack-nextjs-15-architecture",
+        "price": 99,
+        "discount": 1,
+        "discount_price": 69,
+        "thumbnail": "\/assets\/images\/students-1.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 2,
+        "title": "Mastering AI Agent Development & Autonomous Workflows",
+        "slug": "mastering-ai-agent-development",
+        "price": 120,
+        "discount": 1,
+        "discount_price": 89,
+        "thumbnail": "\/assets\/images\/students-2.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 3,
+        "title": "Modern UI\/UX Design System with Figma & Tailwind",
+        "slug": "modern-ui-ux-design-systems",
+        "price": 79,
+        "discount": 0,
+        "discount_price": null,
+        "thumbnail": "\/assets\/images\/students-3.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 4,
+        "title": "Enterprise PostgreSQL, Supabase & Real-time Scaling",
+        "slug": "enterprise-postgresql-supabase",
+        "price": 0,
+        "discount": 0,
+        "discount_price": null,
+        "thumbnail": "\/assets\/images\/students-1.jpg",
+        "pricing_type": "free"
+    },
+    {
+        "id": 5,
+        "title": "Modern TypeScript 5 & Advanced Generics Mastery",
+        "slug": "modern-typescript-5-generics",
+        "price": 49,
+        "discount": 1,
+        "discount_price": 35,
+        "thumbnail": "\/assets\/images\/students-2.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 6,
+        "title": "Docker, Kubernetes & Cloud Native Microservices",
+        "slug": "docker-kubernetes-microservices",
+        "price": 89,
+        "discount": 0,
+        "discount_price": null,
+        "thumbnail": "\/assets\/images\/students-3.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 7,
+        "title": "Cybersecurity Defense, Network Penetration & OWASP",
+        "slug": "cybersecurity-defense-owasp",
+        "price": 110,
+        "discount": 1,
+        "discount_price": 79,
+        "thumbnail": "\/assets\/images\/students-1.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 8,
+        "title": "Building Interactive Web Applications with GSAP & Three.js",
+        "slug": "interactive-web-apps-gsap-threejs",
+        "price": 59,
+        "discount": 0,
+        "discount_price": null,
+        "thumbnail": "\/assets\/images\/students-2.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 9,
+        "title": "Applied Machine Learning and Deep Neural Networks",
+        "slug": "applied-machine-learning-deep-neural-networks",
+        "price": 135,
+        "discount": 1,
+        "discount_price": 95,
+        "thumbnail": "\/assets\/images\/students-3.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 10,
+        "title": "Cloud Architecture Masterclass on AWS & Azure",
+        "slug": "cloud-architecture-masterclass",
+        "price": 105,
+        "discount": 0,
+        "discount_price": null,
+        "thumbnail": "\/assets\/images\/students-1.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 11,
+        "title": "Strategic Product Management & Technical Leadership",
+        "slug": "strategic-product-management",
+        "price": 75,
+        "discount": 1,
+        "discount_price": 55,
+        "thumbnail": "\/assets\/images\/students-2.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 12,
+        "title": "High-Performance API Design with Rust and Go",
+        "slug": "high-performance-api-design",
+        "price": 99,
+        "discount": 0,
+        "discount_price": null,
+        "thumbnail": "\/assets\/images\/students-3.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 13,
+        "title": "Digital Brand Strategy & Performance Marketing",
+        "slug": "digital-brand-strategy",
+        "price": 65,
+        "discount": 1,
+        "discount_price": 45,
+        "thumbnail": "\/assets\/images\/students-1.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 14,
+        "title": "Data Engineering Pipelines with Kafka and PySpark",
+        "slug": "data-engineering-kafka-pyspark",
+        "price": 115,
+        "discount": 0,
+        "discount_price": null,
+        "thumbnail": "\/assets\/images\/students-2.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 15,
+        "title": "Cross-Platform App Development with Flutter 3",
+        "slug": "cross-platform-flutter-3",
+        "price": 85,
+        "discount": 1,
+        "discount_price": 59,
+        "thumbnail": "\/assets\/images\/students-3.jpg",
+        "pricing_type": "paid"
+    },
+    {
+        "id": 16,
+        "title": "Enterprise Security & ISO 27001 Compliance Architecture",
+        "slug": "enterprise-security-iso27001",
+        "price": 140,
+        "discount": 1,
+        "discount_price": 99,
+        "thumbnail": "\/assets\/images\/students-1.jpg",
+        "pricing_type": "paid"
+    }
+]

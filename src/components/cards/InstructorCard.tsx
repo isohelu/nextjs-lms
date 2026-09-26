@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { FacebookIcon, TwitterIcon, LinkedinIcon } from '@/components/common/SocialIcons'
+import { cn } from '@/lib/utils'
 
 export interface InstructorData {
   id: string | number
@@ -18,10 +19,21 @@ export interface InstructorData {
   }
 }
 
-export default function InstructorCard({ instructor }: { instructor: InstructorData }) {
+export default function InstructorCard({
+  instructor,
+  className,
+}: {
+  instructor: InstructorData
+  className?: string
+}) {
   return (
-    <div className="group relative h-[380px] overflow-hidden rounded-2xl shadow-card transition-all duration-300 hover:shadow-card-hover">
-      <Link href={`/instructors/${instructor.id}`}>
+    <div
+      className={cn(
+        'group relative h-90 sm:h-95 w-full overflow-hidden rounded-2xl shadow-card transition-all duration-300 hover:shadow-card-hover',
+        className
+      )}
+    >
+      <Link href={`/instructors/${instructor.id}`} className="block h-full w-full">
         <img
           src={instructor.photo || '/assets/avatars/avatar-1.png'}
           alt={instructor.name}
@@ -33,7 +45,7 @@ export default function InstructorCard({ instructor }: { instructor: InstructorD
         />
 
         {/* Gradient Overlay revealed on hover */}
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/40 to-transparent p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/85 via-black/40 to-transparent p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <p className="mb-1 text-lg font-bold text-white tracking-wide">
             {instructor.name}
           </p>

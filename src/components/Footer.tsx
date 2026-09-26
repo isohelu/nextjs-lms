@@ -10,7 +10,7 @@ export function Footer() {
           {/* Col 1 */}
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-3">
-              <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 shadow-md">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-linear-to-tr from-violet-600 to-indigo-600 shadow-md">
                 <Sparkles className="size-4 text-white" />
               </div>
               <span className="font-extrabold text-lg tracking-tight">
