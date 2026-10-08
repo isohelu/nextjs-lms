@@ -91,7 +91,7 @@ export default function PendingWithdrawalsCard({
                     </span>
                   </TableCell>
                   <TableCell className="pr-6 text-right">
-                    <Button asChild size="sm" className="h-8 rounded-lg bg-[#007867] px-3 text-xs font-semibold text-white hover:bg-[#007867]/90">
+                    <Button asChild size="sm" className="h-8 rounded-lg bg-[#D8FC38] hover:bg-[#CBF128] px-3.5 text-xs font-bold text-slate-950 shadow-xs">
                       <Link href={`/admin/payouts?request_id=${item.id}`}>
                         Pay
                       </Link>

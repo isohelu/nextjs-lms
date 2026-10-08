@@ -57,14 +57,14 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-tr from-violet-600 via-indigo-600 to-blue-500 shadow-lg shadow-indigo-500/25">
-            <Sparkles className="size-5 text-white animate-pulse" />
+          <div className="flex size-10 items-center justify-center rounded-xl bg-slate-950 text-[#D8FC38] border border-slate-800 shadow-xs">
+            <Sparkles className="size-5" />
           </div>
           <div>
-            <span className="font-extrabold text-lg tracking-tight bg-linear-to-r from-foreground via-foreground/90 to-muted-foreground bg-clip-text">
-              Mentor<span className="text-indigo-500">LMS</span>
+            <span className="font-extrabold text-lg tracking-tight text-foreground">
+              Mentor<span className="text-slate-900 dark:text-slate-100 font-bold">LMS</span>
             </span>
-            <span className="hidden sm:inline-block ml-2 text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+            <span className="hidden sm:inline-block ml-2 text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#D8FC38]/20 text-slate-950 dark:text-[#D8FC38] border border-[#D8FC38]/40">
               Enterprise
             </span>
           </div>
@@ -79,10 +79,10 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`flex items-center gap-2 px-3.5 py-2 text-sm font-semibold rounded-xl transition-colors ${
                   isActive
-                    ? 'text-foreground bg-accent'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                    ? 'text-slate-950 dark:text-white bg-[#D8FC38]/15 font-bold'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
                 <Icon className="size-4" />
@@ -97,13 +97,13 @@ export function Navbar() {
           {user ? (
             <div className="flex items-center gap-3">
               <Link href="/dashboard" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                <Avatar className="size-9 border border-border/60 ring-2 ring-indigo-500/20">
+                <Avatar className="size-9 border border-border/60 ring-2 ring-[#D8FC38]/40">
                   <AvatarImage src={`https://api.dicebear.com/7.x/bottts/svg?seed=${user.email}`} />
-                  <AvatarFallback className="bg-indigo-600 text-white text-xs uppercase font-bold">
+                  <AvatarFallback className="bg-slate-950 text-[#D8FC38] text-xs uppercase font-bold">
                     {user.email?.slice(0, 2) || 'ST'}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-xs font-medium text-muted-foreground max-w-30 truncate">
+                <span className="text-sm font-semibold text-foreground max-w-30 truncate">
                   {user.email?.split('@')[0]}
                 </span>
               </Link>
@@ -111,7 +111,7 @@ export function Navbar() {
                 variant="outline"
                 size="sm"
                 onClick={handleSignOut}
-                className="text-xs font-medium border-border/60 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                className="text-xs font-semibold rounded-xl border-border/80 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
               >
                 <LogOut className="size-3.5 mr-1" />
                 Sign Out
@@ -119,14 +119,14 @@ export function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <Link href="/auth">
-                <Button variant="ghost" size="sm" className="text-sm font-medium">
+              <Link href="/login">
+                <Button variant="ghost" size="sm" className="text-sm font-semibold rounded-xl">
                   <LogIn className="size-4 mr-1.5" />
                   Sign In
                 </Button>
               </Link>
-              <Link href="/auth?tab=signup">
-                <Button size="sm" className="bg-linear-to-r from-indigo-600 to-violet-600 text-white font-medium shadow-md shadow-indigo-500/20 hover:from-indigo-500 hover:to-violet-500">
+              <Link href="/register">
+                <Button size="sm" className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs transition-all active:scale-[0.98]">
                   Get Started
                 </Button>
               </Link>
@@ -155,7 +155,7 @@ export function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
             >
               <link.icon className="size-4" />
               {link.label}
@@ -163,13 +163,13 @@ export function Navbar() {
           ))}
           <div className="pt-2 border-t border-border flex flex-col gap-2">
             {user ? (
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="w-full justify-start">
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="w-full justify-start rounded-xl">
                 <LogOut className="size-4 mr-2" />
                 Sign Out ({user.email?.split('@')[0]})
               </Button>
             ) : (
-              <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full bg-indigo-600 text-white">Sign In / Register</Button>
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl">Sign In / Register</Button>
               </Link>
             )}
           </div>

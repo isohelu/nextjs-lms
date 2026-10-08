@@ -81,7 +81,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="flex min-h-screen flex-col justify-between overflow-x-hidden font-sans antialiased bg-background text-foreground">
+      <body
+        suppressHydrationWarning
+        className="flex min-h-screen flex-col justify-between overflow-x-hidden font-sans antialiased bg-background text-foreground"
+      >
         <AppShell>{children}</AppShell>
       </body>
     </html>

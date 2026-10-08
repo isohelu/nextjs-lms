@@ -49,7 +49,7 @@ export default function ReviewCard1({
         </div>
         <div>
           <p className="text-xs sm:text-sm font-semibold text-foreground">{review.name}</p>
-          <p className="text-[11px] text-muted-foreground">{review.address}</p>
+          <p className="text-xs text-muted-foreground">{review.address}</p>
         </div>
       </div>
     </Card>

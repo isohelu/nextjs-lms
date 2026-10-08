@@ -83,7 +83,7 @@ export default function ExamEnrollmentsPage() {
         <Card className="border-slate-200/80 shadow-xs overflow-hidden">
           {loading ? (
             <div className="py-20 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-[#007867] mx-auto mb-2" />
+              <Loader2 className="h-8 w-8 animate-spin text-foreground mx-auto mb-2" />
               <p className="text-xs text-muted-foreground font-medium">Loading exam enrollments...</p>
             </div>
           ) : filtered.length === 0 ? (
@@ -108,12 +108,12 @@ export default function ExamEnrollmentsPage() {
                     <tr key={item.id} className="hover:bg-slate-50/60 transition-colors">
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2.5">
-                          <div className="h-8 w-8 rounded-full bg-[#007867]/10 text-[#007867] flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                          <div className="h-8 w-8 rounded-full bg-[#D8FC38]/25 text-slate-950 dark:text-[#D8FC38] flex items-center justify-center font-bold text-xs uppercase shrink-0">
                             {(item.user_name || 'U')[0]}
                           </div>
                           <div>
                             <p className="font-semibold text-foreground">{item.user_name || 'Candidate'}</p>
-                            <p className="text-[11px] text-muted-foreground">{item.user_email || 'No email'}</p>
+                            <p className="text-xs text-muted-foreground">{item.user_email || 'No email'}</p>
                           </div>
                         </div>
                       </td>
@@ -124,7 +124,7 @@ export default function ExamEnrollmentsPage() {
                         {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">
+                        <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs font-semibold">
                           Enrolled
                         </Badge>
                       </td>

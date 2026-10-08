@@ -98,7 +98,7 @@ export default function OnlinePaymentReportsPage() {
         <Card className="border-slate-200/80 shadow-xs overflow-hidden">
           {loading ? (
             <div className="py-20 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-[#007867] mx-auto mb-2" />
+              <Loader2 className="h-8 w-8 animate-spin text-foreground mx-auto mb-2" />
               <p className="text-xs text-muted-foreground font-medium">Loading payment reports...</p>
             </div>
           ) : filtered.length === 0 ? (
@@ -129,10 +129,10 @@ export default function OnlinePaymentReportsPage() {
                       </td>
                       <td className="py-3 px-4">
                         <p className="font-semibold text-foreground">{item.user_name}</p>
-                        <p className="text-[11px] text-muted-foreground">{item.user_email}</p>
+                        <p className="text-xs text-muted-foreground">{item.user_email}</p>
                       </td>
                       <td className="py-3 px-4">
-                        <Badge variant="outline" className="text-[11px] font-medium">
+                        <Badge variant="outline" className="text-xs font-medium">
                           {item.gateway}
                         </Badge>
                       </td>
@@ -146,7 +146,7 @@ export default function OnlinePaymentReportsPage() {
                         {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">
+                        <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs font-semibold">
                           Succeeded
                         </Badge>
                       </td>

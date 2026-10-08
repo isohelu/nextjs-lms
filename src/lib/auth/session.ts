@@ -120,23 +120,13 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       try {
         const parsed = JSON.parse(decodeURIComponent(demoCookie))
         return {
-          id: parsed.id || 14,
-          name: parsed.name || 'System Administrator',
-          email: parsed.email || 'admin@admin.com',
-          role: parsed.role || 'admin',
+          id: parsed.id || 12,
+          name: parsed.name || 'Alex Johnson',
+          email: parsed.email || 'student@mentor.test',
+          role: parsed.role || 'student',
         }
       } catch {
         // Not JSON formatted, ignore
-      }
-    }
-
-    // In development mode, provide default admin user so all actions work out-of-the-box
-    if (process.env.NODE_ENV === 'development') {
-      return {
-        id: 14,
-        name: 'System Administrator',
-        email: 'admin@admin.com',
-        role: 'admin',
       }
     }
 
@@ -187,9 +177,6 @@ export async function requireAuth(): Promise<SessionUser> {
  */
 export async function requireRole(allowedRoles: ('student' | 'instructor' | 'admin')[]): Promise<SessionUser> {
   const user = await requireAuth()
-  if (process.env.NODE_ENV === 'development') {
-    return user
-  }
   if (!allowedRoles.includes(user.role)) {
     throw new Error('FORBIDDEN')
   }
@@ -198,18 +185,18 @@ export async function requireRole(allowedRoles: ('student' | 'instructor' | 'adm
 
 export async function requireAdmin(): Promise<SessionUser> {
   const user = await requireAuth()
-  if (process.env.NODE_ENV === 'development') {
-    return user
+  if (user.role !== 'admin') {
+    throw new Error('FORBIDDEN')
   }
-  return requireRole(['admin'])
+  return user
 }
 
 export async function requireInstructor(): Promise<SessionUser> {
   const user = await requireAuth()
-  if (process.env.NODE_ENV === 'development') {
-    return user
+  if (user.role !== 'instructor' && user.role !== 'admin') {
+    throw new Error('FORBIDDEN')
   }
-  return requireRole(['instructor', 'admin'])
+  return user
 }
 
 export const getSessionUser = getCurrentUser

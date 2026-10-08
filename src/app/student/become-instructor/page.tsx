@@ -164,10 +164,10 @@ export default function BecomeInstructorPage() {
                 />
               </div>
 
-              <div className="rounded-xl border border-dashed border-border p-6 text-center space-y-2 cursor-pointer hover:border-primary/50 transition-colors">
+              <div className="rounded-xl border border-dashed border-border p-6 text-center space-y-2 cursor-pointer hover:border-[#D8FC38]/80 transition-colors">
                 <Upload className="mx-auto h-6 w-6 text-muted-foreground" />
                 <p className="text-xs font-semibold text-foreground">Attach Curriculum Vitae / Resume (PDF)</p>
-                <p className="text-[11px] text-muted-foreground">Up to 10MB</p>
+                <p className="text-xs text-muted-foreground">Up to 10MB</p>
               </div>
 
               <Button

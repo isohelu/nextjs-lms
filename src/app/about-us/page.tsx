@@ -2,7 +2,6 @@ import React from 'react'
 import Link from 'next/link'
 import { Metadata } from 'next'
 import InnerHero from '@/components/common/InnerHero'
-import CallToAction from '@/components/home/CallToAction'
 
 export const metadata: Metadata = {
   title: 'About Us - Why Choose Mentor?',
@@ -175,9 +174,6 @@ export default function AboutUsPage() {
           </div>
         </div>
       </section>
-
-      {/* 5. Call to Action Newsletter */}
-      <CallToAction />
     </>
   )
 }

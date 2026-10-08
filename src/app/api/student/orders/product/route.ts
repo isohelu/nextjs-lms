@@ -1,68 +1,71 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { requireRole } from '@/lib/auth/session'
+import { getCurrentUser, setSessionCookie, hashPassword, SessionUser } from '@/lib/auth/session'
 import { productRepository } from '@/lib/repositories/productRepository'
+import db from '@/lib/db'
 
-const orderSchema = z.object({
-  product_id: z.number().int().positive(),
-  coupon_code: z.string().optional()
+const directProductOrderSchema = z.object({
+  productId: z.number().int().positive(),
+  unitPrice: z.number().nonnegative().optional(),
+  billing: z.object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    email: z.string().email().optional(),
+    phone: z.string().optional(),
+  }).optional(),
 })
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await requireRole(['student', 'admin'])
     const body = await req.json()
-    const parsed = orderSchema.safeParse(body)
+    const parsed = directProductOrderSchema.safeParse(body)
 
     if (!parsed.success) {
       return NextResponse.json(
-        { success: false, errors: parsed.error.flatten().fieldErrors },
+        { success: false, errors: parsed.error.flatten().fieldErrors, message: 'Invalid product purchase parameters.' },
         { status: 422 }
       )
     }
 
-    const { product_id, coupon_code } = parsed.data
-    const product = productRepository.findById(product_id)
+    const { productId, unitPrice, billing } = parsed.data
+    const product = productRepository.findById(productId)
+
     if (!product) {
       return NextResponse.json({ success: false, message: 'Product not found.' }, { status: 404 })
     }
 
-    const alreadyPurchased = productRepository.isPurchased(user.id, product_id)
-    if (alreadyPurchased) {
-      return NextResponse.json({
-        success: true,
-        message: 'You already own this product.',
-        purchased: true
-      })
+    // Resolve User (Must be authenticated)
+    const user = await getCurrentUser()
+    if (!user || !user.id) {
+      return NextResponse.json(
+        { success: false, message: 'You must be logged in to purchase or claim products.' },
+        { status: 401 }
+      )
     }
+    const userId = user.id
 
-    const unitPrice = product.price || 0
-    const finalPrice = product.discount && product.discount_price != null ? product.discount_price : unitPrice
+    const priceToPay = unitPrice !== undefined ? unitPrice : (product.discount_price ?? product.price ?? 0)
 
     const orderId = productRepository.createOrder({
-      userId: user.id,
-      productId: product.id,
+      userId,
+      productId,
       instructorId: product.instructor_id || 1,
-      unitPrice,
-      total: finalPrice,
-      discount: unitPrice - finalPrice,
-      couponCode: coupon_code || null
+      unitPrice: priceToPay,
+      total: priceToPay,
     })
+
+    // Decrement product inventory if not unlimited
+    try {
+      db.prepare('UPDATE products SET inventory = MAX(0, inventory - 1) WHERE id = ? AND (unlimited_inventory = 0 OR unlimited_inventory IS NULL)').run(productId)
+    } catch {}
 
     return NextResponse.json({
       success: true,
-      message: 'Product order created successfully.',
+      message: 'Product purchased successfully!',
       orderId,
-      purchased: true
     }, { status: 201 })
   } catch (error: unknown) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json({ success: false, message: 'Unauthorized.' }, { status: 401 })
-    }
-    console.error('Product order error:', error)
-    return NextResponse.json(
-      { success: false, message: 'Failed to complete order.' },
-      { status: 500 }
-    )
+    console.error('Direct product order error:', error)
+    return NextResponse.json({ success: false, message: 'Failed to complete product purchase.' }, { status: 500 })
   }
 }

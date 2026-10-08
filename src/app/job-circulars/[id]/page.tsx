@@ -157,7 +157,7 @@ export default function JobCircularDetailPage() {
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Compensation Range</p>
                 <p className="text-2xl font-bold text-foreground">$140k - $180k</p>
-                <p className="text-[11px] text-muted-foreground">Includes equity options + full health benefits</p>
+                <p className="text-xs text-muted-foreground">Includes equity options + full health benefits</p>
               </div>
 
               {/* Apply Dialog Trigger */}
@@ -254,10 +254,10 @@ export default function JobCircularDetailPage() {
                         />
                       </div>
 
-                      <div className="rounded-xl border border-dashed border-border p-4 text-center space-y-1 cursor-pointer hover:border-primary/60 transition-colors">
+                      <div className="rounded-xl border border-dashed border-border p-4 text-center space-y-1 cursor-pointer hover:border-[#D8FC38]/80 transition-colors">
                         <Upload className="mx-auto h-5 w-5 text-muted-foreground" />
                         <p className="text-xs font-semibold text-foreground">Attach Resume / CV (PDF, DOCX)</p>
-                        <p className="text-[11px] text-muted-foreground">Up to 10MB</p>
+                        <p className="text-xs text-muted-foreground">Up to 10MB</p>
                       </div>
 
                       <Button

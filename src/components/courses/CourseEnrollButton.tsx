@@ -13,34 +13,63 @@ interface CourseEnrollButtonProps {
   courseId: number
   courseSlug: string
   pricingType: string
+  title?: string
+  thumbnail?: string
+  price?: number
+  discountPrice?: number
 }
 
 export default function CourseEnrollButton({
   courseId,
   courseSlug,
   pricingType,
+  title,
+  thumbnail,
+  price,
+  discountPrice,
 }: CourseEnrollButtonProps) {
   const router = useRouter()
-  const { isCourseEnrolled, enrollCourse, wishlistCourses, toggleCourseWishlist } = useUserStore()
+  const { currentUser, isCourseEnrolled, enrollCourse, wishlistCourses, toggleCourseWishlist } = useUserStore()
   const { addItem, openCart } = useCartStore()
   const [justEnrolled, setJustEnrolled] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const isEnrolled = isCourseEnrolled(courseId)
-  const isWishlisted = wishlistCourses.includes(courseId)
+  const isEnrolled = Boolean(currentUser && isCourseEnrolled(courseId))
+  const isWishlisted = Boolean(currentUser && wishlistCourses.includes(courseId))
   const isFree = pricingType === 'free'
 
+  const checkoutRedirectUrl = `/checkout?courseId=${courseId}&slug=${encodeURIComponent(courseSlug)}&title=${encodeURIComponent(title || courseSlug)}&price=${discountPrice ?? price ?? 19.99}`
+  const enrollRedirectUrl = `/courses/${courseSlug}?action=enroll`
+
+  // Auto-enroll if returning from login with action=enroll
+  React.useEffect(() => {
+    if (!currentUser || isEnrolled || !isFree) return
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('action') === 'enroll') {
+      handleEnroll()
+    }
+  }, [currentUser, isEnrolled, isFree])
+
   const handleEnroll = async () => {
+    if (!currentUser) {
+      const redirectTarget = isFree ? enrollRedirectUrl : checkoutRedirectUrl
+      router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`)
+      return
+    }
+
     if (!isFree) {
+      const courseTitle = title || courseSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
       addItem({
         id: `course-${courseId}`,
-        title: courseSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        title: courseTitle,
         slug: courseSlug,
-        thumbnail: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80',
-        price: 19.99,
+        thumbnail: thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80',
+        price: price ?? 19.99,
+        discount_price: discountPrice !== undefined ? discountPrice : undefined,
         type: 'course',
       })
-      openCart()
+      router.push('/checkout')
       return
     }
 
@@ -53,7 +82,7 @@ export default function CourseEnrollButton({
       })
 
       if (res.status === 401) {
-        router.push(`/login?redirect=/courses/${courseSlug}`)
+        router.push(`/login?redirect=${encodeURIComponent(enrollRedirectUrl)}`)
         return
       }
 
@@ -87,11 +116,18 @@ export default function CourseEnrollButton({
             Play Course / Continue
           </Link>
         </Button>
+      ) : !currentUser ? (
+        <Button asChild size="lg" className="w-full font-bold shadow-md cursor-pointer">
+          <Link href={`/login?redirect=${encodeURIComponent(isFree ? enrollRedirectUrl : checkoutRedirectUrl)}`}>
+            {isFree ? 'Login to Enroll (Free)' : `Login to Buy Now ($${discountPrice ?? price ?? 19.99})`}
+          </Link>
+        </Button>
       ) : (
         <>
           <Button
             size="lg"
             onClick={handleEnroll}
+            disabled={loading}
             className="w-full font-bold shadow-md cursor-pointer"
           >
             <Sparkles className="mr-2 h-4 w-4" />
@@ -101,7 +137,13 @@ export default function CourseEnrollButton({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => toggleCourseWishlist(courseId)}
+            onClick={() => {
+              if (!currentUser) {
+                router.push(`/login?redirect=/courses/${courseSlug}`)
+              } else {
+                toggleCourseWishlist(courseId)
+              }
+            }}
             className="w-full font-semibold text-xs cursor-pointer"
           >
             <Heart

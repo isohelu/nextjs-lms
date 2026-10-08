@@ -199,17 +199,17 @@ export default function CourseBuilderPage() {
                 key={step.id}
                 onClick={() => setCurrentStep(step.id)}
                 className={cn(
-                  "flex items-center gap-2 cursor-pointer text-xs font-semibold py-1 px-3 rounded-xl transition-all shrink-0",
+                  "flex items-center gap-2 cursor-pointer text-xs font-semibold py-1.5 px-3.5 rounded-xl transition-all shrink-0",
                   isCurrent
-                    ? "bg-primary text-primary-foreground shadow-xs"
+                    ? "bg-[#D8FC38] text-slate-950 font-bold shadow-xs"
                     : isCompleted
                     ? "text-emerald-600 bg-emerald-500/10"
                     : "text-muted-foreground hover:bg-muted"
                 )}
               >
                 <span className={cn(
-                  "flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold",
-                  isCurrent ? "bg-white/20 text-white" : isCompleted ? "bg-emerald-600 text-white" : "border border-border"
+                  "flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold",
+                  isCurrent ? "bg-black/15 text-slate-950" : isCompleted ? "bg-emerald-600 text-white" : "border border-border"
                 )}>
                   {isCompleted ? '✓' : step.id}
                 </span>
@@ -343,7 +343,7 @@ export default function CourseBuilderPage() {
                       className="pl-10 h-11 text-xs rounded-xl"
                     />
                   </div>
-                  <p className="text-[11px] text-muted-foreground">Students can preview this trailer before enrolling.</p>
+                  <p className="text-xs text-muted-foreground">Students can preview this trailer before enrolling.</p>
                 </div>
               </div>
             </div>

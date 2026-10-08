@@ -161,13 +161,13 @@ export default function TopCourseSpotlight() {
                         >
                           <div className="flex items-center gap-2.5">
                             {lesson.type === 'video' ? (
-                              <Video className="h-3.5 w-3.5 text-primary" />
+                              <Video className="h-3.5 w-3.5 text-foreground" />
                             ) : (
                               <FileQuestion className="h-3.5 w-3.5 text-amber-500" />
                             )}
                             <span className="text-foreground">{lesson.title}</span>
                           </div>
-                          <span className="text-[11px]">{lesson.duration}</span>
+                          <span className="text-xs text-muted-foreground">{lesson.duration}</span>
                         </div>
                       ))}
                     </div>

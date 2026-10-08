@@ -26,8 +26,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     pathname.startsWith('/auth')
 
   // Learning player has its own distraction-free player UI
-  const isPlayerRoute =
-    pathname.includes('/learn')
+  const isPlayerRoute = pathname.includes('/learn')
 
   if (isDashboardRoute || isAuthRoute || isPlayerRoute) {
     return (
@@ -41,11 +40,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Toaster position="top-right" richColors />
-      <Navbar />
+      <div className="print:hidden">
+        <Navbar />
+      </div>
       <main className="flex-1">{children}</main>
-      <Footer />
-      <CartDrawer />
+      <div className="print:hidden">
+        <Footer />
+        <CartDrawer />
+      </div>
     </>
   )
 }
-

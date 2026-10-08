@@ -134,6 +134,11 @@ interface BlogPageProps {
 
 import { blogRepository } from '@/lib/repositories/blogRepository'
 
+function stripHtml(html?: string | null): string {
+  if (!html) return ''
+  return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()
+}
+
 export default async function BlogDirectoryPage({ searchParams }: BlogPageProps) {
   const sp = searchParams ? await searchParams : {}
   const selectedCategory = sp?.category || 'All'
@@ -148,20 +153,23 @@ export default async function BlogDirectoryPage({ searchParams }: BlogPageProps)
     })
 
     if (dbBlogs && dbBlogs.length > 0) {
-      mappedDbBlogs = dbBlogs.map((b) => ({
-        id: b.id,
-        uuid: b.uuid || b.slug,
-        slug: b.slug,
-        title: b.title,
-        summary: b.description ? b.description.slice(0, 160) + '...' : '',
-        description: b.description || '',
-        category: b.category_name || 'Web Development',
-        thumbnail: b.thumbnail || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
-        published_at: b.created_at ? new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently',
-        read_time: '8 min read',
-        author_name: b.author_name || 'Sarah Jenkins',
-        author_avatar: b.author_photo || '/assets/avatars/avatar-2.png',
-      }))
+      mappedDbBlogs = dbBlogs.map((b) => {
+        const cleanSummary = stripHtml(b.description)
+        return {
+          id: b.id,
+          uuid: b.uuid || b.slug,
+          slug: b.slug,
+          title: b.title,
+          summary: cleanSummary ? cleanSummary.slice(0, 160) + (cleanSummary.length > 160 ? '...' : '') : '',
+          description: b.description || '',
+          category: b.category_name || 'Web Development',
+          thumbnail: b.thumbnail || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+          published_at: b.created_at ? new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently',
+          read_time: '8 min read',
+          author_name: b.author_name || 'Sarah Jenkins',
+          author_avatar: b.author_photo || '/assets/avatars/avatar-2.png',
+        }
+      })
     }
   } catch {}
 
@@ -185,7 +193,7 @@ export default async function BlogDirectoryPage({ searchParams }: BlogPageProps)
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-12">
       {/* Hero Section */}
       <div className="max-w-3xl space-y-4">
-        <Badge className="bg-primary/10 text-primary border-primary/20 font-semibold">
+        <Badge className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold border-transparent">
           Articles & Insights
         </Badge>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
@@ -198,7 +206,7 @@ export default async function BlogDirectoryPage({ searchParams }: BlogPageProps)
 
       {/* Featured Banner Post */}
       {selectedCategory === 'All' && !searchQuery && (
-        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm group">
+        <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm hover:border-[#D8FC38]/60 transition-all group">
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
             <div className="lg:col-span-7 relative h-72 sm:h-96 w-full overflow-hidden bg-muted">
               <img
@@ -217,7 +225,7 @@ export default async function BlogDirectoryPage({ searchParams }: BlogPageProps)
               </div>
 
               <Link href={`/blogs/${featuredPost.slug}`}>
-                <h2 className="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-primary transition-colors leading-tight">
+                <h2 className="text-2xl sm:text-3xl font-bold text-foreground transition-colors leading-tight">
                   {featuredPost.title}
                 </h2>
               </Link>
@@ -234,13 +242,13 @@ export default async function BlogDirectoryPage({ searchParams }: BlogPageProps)
                 />
                 <div>
                   <p className="text-xs font-semibold text-foreground">{featuredPost.author_name}</p>
-                  <p className="text-[11px] text-muted-foreground">Lead Contributor</p>
+                  <p className="text-xs text-muted-foreground">Lead Contributor</p>
                 </div>
               </div>
 
               <div className="pt-2">
                 <Link href={`/blogs/${featuredPost.slug}`}>
-                  <Button size="sm" className="font-semibold text-xs">
+                  <Button size="sm" className="font-bold text-sm bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 rounded-xl shadow-xs active:scale-[0.98]">
                     Read Full Article
                     <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                   </Button>

@@ -501,19 +501,19 @@ export default async function CourseDetailPage({ params }: CoursePageProps) {
                   </TabsTrigger>
                   <TabsTrigger
                     value="details"
-                    className="h-12 rounded-none border-b-2 border-transparent px-4 font-semibold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground"
+                    className="h-12 rounded-none border-b-2 border-transparent px-4 font-semibold text-muted-foreground data-[state=active]:border-[#D8FC38] data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:font-bold"
                   >
                     Requirements & Outcomes
                   </TabsTrigger>
                   <TabsTrigger
                     value="instructor"
-                    className="h-12 rounded-none border-b-2 border-transparent px-4 font-semibold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground"
+                    className="h-12 rounded-none border-b-2 border-transparent px-4 font-semibold text-muted-foreground data-[state=active]:border-[#D8FC38] data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:font-bold"
                   >
                     Instructor
                   </TabsTrigger>
                   <TabsTrigger
                     value="reviews"
-                    className="h-12 rounded-none border-b-2 border-transparent px-4 font-semibold text-muted-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground"
+                    className="h-12 rounded-none border-b-2 border-transparent px-4 font-semibold text-muted-foreground data-[state=active]:border-[#D8FC38] data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:font-bold"
                   >
                     Reviews ({course.reviews_count})
                   </TabsTrigger>
@@ -524,7 +524,7 @@ export default async function CourseDetailPage({ params }: CoursePageProps) {
               <TabsContent value="overview" className="m-0 p-6 space-y-8">
                 <div className="space-y-4">
                   <h3 className="text-xl font-bold text-foreground">Course Overview</h3>
-                  <div className="prose dark:prose-invert max-w-none text-muted-foreground text-sm leading-relaxed whitespace-pre-line">
+                  <div className="prose dark:prose-invert max-w-none text-muted-foreground text-sm sm:text-base leading-relaxed whitespace-pre-line">
                     {course.description}
                   </div>
                 </div>
@@ -534,7 +534,8 @@ export default async function CourseDetailPage({ params }: CoursePageProps) {
                 {/* FAQs Accordion */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-primary" />
+                    <span className="h-2 w-2 rounded-full bg-[#D8FC38]" />
+                    <HelpCircle className="h-5 w-5 text-foreground" />
                     <h3 className="text-lg font-bold text-foreground">Frequently Asked Questions</h3>
                   </div>
 
@@ -543,12 +544,12 @@ export default async function CourseDetailPage({ params }: CoursePageProps) {
                       <AccordionItem
                         key={faq.id}
                         value={`faq-${faq.id}`}
-                        className="rounded-lg border border-border px-4 bg-muted/20"
+                        className="rounded-xl border border-border/80 px-4 bg-muted/20"
                       >
-                        <AccordionTrigger className="text-sm font-semibold hover:no-underline py-3">
+                        <AccordionTrigger className="text-sm sm:text-base font-semibold hover:no-underline py-3.5">
                           {faq.question}
                         </AccordionTrigger>
-                        <AccordionContent className="text-xs text-muted-foreground pb-4 leading-relaxed">
+                        <AccordionContent className="text-sm text-muted-foreground pb-4 leading-relaxed">
                           {faq.answer}
                         </AccordionContent>
                       </AccordionItem>
@@ -606,7 +607,7 @@ export default async function CourseDetailPage({ params }: CoursePageProps) {
 
                               <div className="flex items-center gap-3">
                                 {lesson.is_free && (
-                                  <Badge variant="outline" className="text-[10px] text-emerald-500 border-emerald-500/30">
+                                  <Badge variant="outline" className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
                                     Preview
                                   </Badge>
                                 )}
@@ -809,10 +810,14 @@ export default async function CourseDetailPage({ params }: CoursePageProps) {
                 courseId={course.id}
                 courseSlug={course.slug}
                 pricingType={course.pricing_type}
+                title={course.title}
+                thumbnail={course.thumbnail}
+                price={course.price}
+                discountPrice={course.discount ? course.discount_price : undefined}
               />
 
               {/* Bulleted Specifications */}
-              <div className="space-y-3 pt-4 border-t border-border text-xs">
+              <div className="space-y-3.5 pt-4 border-t border-border text-sm">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2 text-muted-foreground">
                     <Users className="h-4 w-4 text-foreground/70" />

@@ -45,12 +45,31 @@ function AuthForm() {
       }
 
       const role = data.user?.role || 'student'
-      if (role === 'admin' || role === 'instructor') {
-        router.push('/dashboard')
-      } else {
-        router.push('/student/courses')
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('mentor_user_role', role)
+        localStorage.setItem('dashboard_role', role)
+        if (data.user) {
+          localStorage.setItem('demo_user', JSON.stringify(data.user))
+        }
+        window.dispatchEvent(new Event('mentor_user_state_changed'))
+        window.dispatchEvent(new Event('storage'))
       }
-      router.refresh()
+
+      const searchParams = new URLSearchParams(window.location.search)
+      const redirectUrl = searchParams.get('redirect')
+
+      let targetUrl = (data && data.redirect) || (role === 'admin' ? '/admin/dashboard' : role === 'instructor' ? '/instructor/dashboard' : '/student')
+      if (
+        redirectUrl &&
+        redirectUrl !== '/' &&
+        redirectUrl !== '/auth' &&
+        redirectUrl !== '/login' &&
+        redirectUrl !== '/register'
+      ) {
+        targetUrl = redirectUrl
+      }
+
+      window.location.href = targetUrl
     } catch {
       setErrorMsg('Failed to sign in. Please verify your connection.')
       setLoading(false)
@@ -78,11 +97,35 @@ function AuthForm() {
         return
       }
 
+      const role = data.user?.role || 'student'
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('mentor_user_role', role)
+        localStorage.setItem('dashboard_role', role)
+        if (data.user) {
+          localStorage.setItem('demo_user', JSON.stringify(data.user))
+        }
+        window.dispatchEvent(new Event('mentor_user_state_changed'))
+        window.dispatchEvent(new Event('storage'))
+      }
+
+      const searchParams = new URLSearchParams(window.location.search)
+      const redirectUrl = searchParams.get('redirect')
+
+      let targetUrl = (data && data.redirect) || '/student'
+      if (
+        redirectUrl &&
+        redirectUrl !== '/' &&
+        redirectUrl !== '/auth' &&
+        redirectUrl !== '/login' &&
+        redirectUrl !== '/register'
+      ) {
+        targetUrl = redirectUrl
+      }
+
       setSuccessMsg('Account created successfully! Redirecting...')
       setTimeout(() => {
-        router.push('/student')
-        router.refresh()
-      }, 1000)
+        window.location.href = targetUrl
+      }, 700)
     } catch {
       setErrorMsg('Registration failed. Please try again.')
       setLoading(false)
@@ -105,8 +148,9 @@ function AuthForm() {
 
       const data = await res.json()
       if (data.success) {
-        router.push('/student')
-        router.refresh()
+        const searchParams = new URLSearchParams(window.location.search)
+        const redirectUrl = searchParams.get('redirect')
+        window.location.href = redirectUrl || '/student'
       } else {
         setErrorMsg(data.message || 'Demo sign in unavailable.')
       }
@@ -258,7 +302,7 @@ function AuthForm() {
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-border/40" />
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-wider">
+            <div className="relative flex justify-center text-xs uppercase font-bold tracking-wider">
               <span className="bg-card px-2 text-muted-foreground">Quick Access</span>
             </div>
           </div>

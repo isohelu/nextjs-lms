@@ -75,14 +75,14 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
           
           {/* Level Badge */}
           <div className="absolute top-3 left-3">
-            <Badge className="bg-background/80 text-foreground backdrop-blur-md border border-border/50 text-[11px] font-semibold">
+            <Badge className="bg-background/90 text-foreground border border-border/60 text-xs font-semibold shadow-xs">
               {course.level}
             </Badge>
           </div>
 
           {/* Price Badge */}
           <div className="absolute top-3 right-3">
-            <Badge className="bg-indigo-600 text-white font-bold text-xs shadow-md">
+            <Badge className="bg-[#D8FC38] text-slate-950 font-bold text-xs shadow-xs border-transparent">
               {Number(course.price) === 0 ? 'Free' : `$${Number(course.price).toFixed(2)}`}
             </Badge>
           </div>
@@ -90,7 +90,7 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
           {/* Category Pill */}
           {course.category?.name && (
             <div className="absolute bottom-3 left-3">
-              <span className="text-[11px] font-medium text-indigo-400 bg-indigo-950/70 border border-indigo-500/20 px-2 py-0.5 rounded-md backdrop-blur-sm">
+              <span className="text-xs font-semibold text-foreground bg-card/90 border border-border/60 px-2.5 py-1 rounded-lg backdrop-blur-sm">
                 {course.category.name}
               </span>
             </div>
@@ -104,8 +104,8 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
               <Clock className="size-3.5 text-muted-foreground" />
               {course.duration_hours}h
             </span>
-            <span className="flex items-center gap-1 font-semibold text-amber-400">
-              <Star className="size-3.5 fill-amber-400" />
+            <span className="flex items-center gap-1 font-semibold text-amber-500">
+              <Star className="size-3.5 fill-amber-400 text-amber-400" />
               {course.rating}
             </span>
             <span className="flex items-center gap-1">
@@ -114,7 +114,7 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
             </span>
           </div>
 
-          <h3 className="font-bold text-base text-foreground group-hover:text-indigo-400 transition-colors line-clamp-2 leading-snug">
+          <h3 className="font-bold text-base text-foreground transition-colors line-clamp-2 leading-snug">
             {course.title}
           </h3>
         </CardHeader>
@@ -129,7 +129,7 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
             <div className="flex items-center gap-2">
               <Avatar className="size-6 border border-border">
                 <AvatarImage src={course.instructor_avatar} />
-                <AvatarFallback className="text-[10px]">
+                <AvatarFallback className="text-xs font-bold">
                   {course.instructor_name.slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
@@ -146,7 +146,7 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
             <Button
               variant="outline"
               size="sm"
-              className="w-full text-xs font-semibold group-hover:border-indigo-500/40 group-hover:bg-indigo-500/10 group-hover:text-indigo-400 transition-all rounded-lg"
+              className="w-full text-xs font-semibold hover:border-[#D8FC38]/60 hover:bg-[#D8FC38]/10 text-foreground transition-all rounded-xl"
             >
               <BookOpen className="size-3.5 mr-1.5" />
               View Syllabus
@@ -155,7 +155,7 @@ export function AnimatedCourseCard({ course }: AnimatedCourseCardProps) {
           <Link href={`/courses/${course.slug}/learn`}>
             <Button
               size="sm"
-              className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-3"
+              className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl px-3 shadow-xs"
               title="Start Learning Now"
             >
               <ArrowUpRight className="size-4" />

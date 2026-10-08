@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
     await setSessionCookie(sessionUser, remember)
 
     // Compute role-specific redirect route
-    let defaultRedirect = '/student/dashboard'
+    let defaultRedirect = '/student'
     if (user.role === 'admin') {
       defaultRedirect = '/admin/dashboard'
     } else if (user.role === 'instructor') {

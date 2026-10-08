@@ -194,7 +194,7 @@ export default function InstructorsDirectoryPage() {
       <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-12">
         {/* Hero Section */}
         <div className="max-w-3xl space-y-4">
-          <Badge className="bg-primary/10 text-primary border-primary/20 font-semibold">
+          <Badge className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold border-transparent">
             World-Class Mentors
           </Badge>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
@@ -210,12 +210,12 @@ export default function InstructorsDirectoryPage() {
           {instructors.map((instructor) => (
             <div
               key={instructor.id}
-              className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:border-primary/40 hover:shadow-lg"
+              className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 shadow-sm transition-all duration-300 hover:border-[#D8FC38]/60 hover:shadow-md"
             >
               <div>
                 {/* Header: Avatar, Name, Rating */}
                 <div className="flex items-start justify-between gap-4">
-                  <Avatar className="h-16 w-16 border-2 border-border group-hover:border-primary/40 transition-colors">
+                  <Avatar className="h-16 w-16 border-2 border-border group-hover:border-[#D8FC38]/80 transition-colors">
                     <AvatarImage src={instructor.avatar} alt={instructor.name} />
                     <AvatarFallback>{instructor.name.charAt(0)}</AvatarFallback>
                   </Avatar>
@@ -228,17 +228,17 @@ export default function InstructorsDirectoryPage() {
 
                 <div className="mt-4 space-y-1">
                   <div className="flex items-center gap-1.5">
-                    <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="text-lg font-bold text-foreground transition-colors">
                       {instructor.name}
                     </h3>
-                    <ShieldCheck className="h-4 w-4 text-primary" />
+                    <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <p className="text-xs font-medium text-muted-foreground">
                     {instructor.designation}
                   </p>
                 </div>
 
-                <p className="mt-3 text-xs leading-relaxed text-muted-foreground line-clamp-3">
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-3">
                   {instructor.bio}
                 </p>
 
@@ -248,7 +248,7 @@ export default function InstructorsDirectoryPage() {
                     <Badge
                       key={skill}
                       variant="secondary"
-                      className="text-[11px] font-normal"
+                      className="text-xs font-medium"
                     >
                       {skill}
                     </Badge>
@@ -280,7 +280,7 @@ export default function InstructorsDirectoryPage() {
                 </div>
 
                 <Link href={`/instructors/${instructor.id}`} className="block w-full">
-                  <Button variant="outline" className="w-full text-xs font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <Button className="w-full text-sm font-bold bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 rounded-xl transition-all shadow-xs active:scale-[0.98]">
                     View Profile & Courses
                     <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                   </Button>

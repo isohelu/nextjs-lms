@@ -70,7 +70,7 @@ export default function StudentFeedback({ totalReviews }: StudentFeedbackProps) 
               <div className="flex w-24 shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground">
                 <span>{item.stars}</span>
                 <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   ({item.count})
                 </span>
               </div>

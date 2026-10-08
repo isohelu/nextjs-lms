@@ -1,7 +1,8 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getProductById, getProductBySlug, PRODUCTS_DATA } from '@/lib/data/products'
+import { getProductBySlugOrId, PRODUCTS_DATA, ProductItem } from '@/lib/data/products'
+import { productRepository } from '@/lib/repositories/productRepository'
 import ProductDetailClient from '@/components/products/ProductDetailClient'
 
 export const dynamic = 'force-dynamic'
@@ -13,9 +14,76 @@ interface ProductDetailPageProps {
   }>
 }
 
+function resolveProduct(idOrSlug: string): ProductItem | null {
+  const fallback = getProductBySlugOrId(idOrSlug)
+  const isId = /^\d+$/.test(idOrSlug)
+  const dbProd = isId ? productRepository.findById(Number(idOrSlug)) : productRepository.findBySlug(idOrSlug)
+
+  if (!dbProd && !fallback) return null
+
+  if (dbProd) {
+    const fullDb = productRepository.findBySlug(dbProd.slug) || dbProd
+    const specs = (fullDb as any).specifications || []
+    const faqs = (fullDb as any).faqs || []
+    const files = (fullDb as any).files || []
+
+    return {
+      id: dbProd.id,
+      title: dbProd.title,
+      slug: dbProd.slug,
+      thumbnail: dbProd.thumbnail || fallback?.thumbnail || '/assets/images/blank-image.jpg',
+      images: fallback?.images || [{ id: 1, url: dbProd.thumbnail || '/assets/images/blank-image.jpg' }],
+      price: Number(dbProd.price || 0),
+      discount: Boolean(dbProd.discount),
+      discount_price: dbProd.discount_price ? Number(dbProd.discount_price) : null,
+      pricing_type: (dbProd.pricing_type as 'free' | 'paid') || (dbProd.price && dbProd.price > 0 ? 'paid' : 'free'),
+      featured: Boolean(dbProd.featured),
+      unlimited_inventory: Boolean(dbProd.unlimited_inventory ?? 1),
+      status: (dbProd.status as any) || 'approved',
+      orders_count: Number(dbProd.orders_count || 12),
+      average_rating: Number(dbProd.average_rating || 5.0),
+      reviews_count: Number(dbProd.reviews_count || 4),
+      summary: dbProd.summary || fallback?.summary || '',
+      description: dbProd.description || fallback?.description || '',
+      product_category: {
+        id: dbProd.product_category_id || 1,
+        title: dbProd.category_title || fallback?.product_category?.title || 'Templates & Themes',
+        slug: dbProd.category_slug || fallback?.product_category?.slug || 'all',
+      },
+      instructor: {
+        id: dbProd.instructor_id || 1,
+        user: {
+          id: dbProd.instructor_id || 1,
+          name: dbProd.instructor_name || fallback?.instructor?.user?.name || 'System Administrator',
+          email: dbProd.instructor_email || 'instructor@mentor.test',
+          photo: dbProd.instructor_photo || fallback?.instructor?.user?.photo || '',
+        },
+      },
+      specifications: specs.length > 0
+        ? specs.map((s: any) => ({ id: s.id, title: s.title, value: s.value }))
+        : (fallback?.specifications || []),
+      faqs: faqs.length > 0
+        ? faqs.map((f: any) => ({ id: f.id, question: f.question, answer: f.answer }))
+        : (fallback?.faqs || []),
+      files: files.length > 0
+        ? files.map((f: any) => ({
+            id: f.id,
+            name: f.name || f.file_name,
+            size: `${(f.size / 1024).toFixed(0)} KB`,
+            extension: f.mime_type?.split('/')[1] || 'zip',
+            url: `/api/products/${dbProd.id}/download/${f.id}`,
+          }))
+        : (fallback?.files || []),
+      reviews: fallback?.reviews || [],
+    }
+  }
+
+  return fallback || null
+}
+
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { id, slug } = await params
-  const product = getProductById(id) || getProductBySlug(slug) || PRODUCTS_DATA[0]
+  const product = resolveProduct(id) || resolveProduct(slug) || PRODUCTS_DATA[0]
 
   return {
     title: `${product.title} | Store`,
@@ -43,7 +111,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
 export default async function ProductDetailsPage({ params }: ProductDetailPageProps) {
   const { id, slug } = await params
-  const product = getProductById(id) || getProductBySlug(slug)
+  const product = resolveProduct(id) || resolveProduct(slug)
 
   if (!product) {
     notFound()

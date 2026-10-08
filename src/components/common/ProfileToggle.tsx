@@ -60,15 +60,18 @@ export default function ProfileToggle({
     }
     if (typeof window !== 'undefined') {
       localStorage.removeItem('demo_user')
+      localStorage.setItem('mentor_user_role', 'guest')
       document.cookie = 'demo_user=; path=/; max-age=0'
+      document.cookie = 'mentor_session=; path=/; max-age=0'
       document.cookie = 'lms_session=; path=/; max-age=0'
+      window.dispatchEvent(new Event('mentor_user_state_changed'))
+      window.dispatchEvent(new Event('storage'))
     }
     if (onLogout) {
       onLogout()
       return
     }
-    router.push('/login')
-    router.refresh()
+    window.location.assign('/login')
   }
 
   return (

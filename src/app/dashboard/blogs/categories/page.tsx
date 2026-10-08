@@ -513,7 +513,7 @@ export default function BlogCategoriesPage() {
                 maxLength={80}
                 rows={3}
               />
-              <span className="text-[11px] text-muted-foreground block text-right">
+              <span className="text-xs text-muted-foreground block text-right font-mono">
                 {formDescription.length}/80
               </span>
             </div>

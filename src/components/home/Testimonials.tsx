@@ -1,176 +1,263 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import Autoplay from 'embla-carousel-autoplay'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import ReviewCard1, { Review1Item } from '@/components/cards/ReviewCard1'
-import { Button } from '@/components/ui/button'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from '@/components/ui/carousel'
+import React, { useState } from 'react'
+import Image from 'next/image'
+import { Star, MapPin, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  TestimonialsSectionData,
+  DEFAULT_TESTIMONIALS_DATA,
+} from '@/lib/data/testimonials-section'
 
-const sampleReviews: Review1Item[] = [
-  {
-    id: 1,
-    name: 'Emily Watson',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
-    rating: 5,
-    address: 'Full Stack Engineer, London UK',
-    description: 'The Next.js 15 course changed how I approach React architecture. The interactive quizzes and real-world project modules gave me the confidence to step into a senior engineering role.',
-  },
-  {
-    id: 2,
-    name: 'Michael Torres',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-    rating: 5,
-    address: 'DevOps Specialist, Austin TX',
-    description: 'Hands down the best LMS experience I have ever had. The Docker and Kubernetes curriculum covers production scenarios that tutorials normally gloss over.',
-  },
-  {
-    id: 3,
-    name: 'Sophia Patel',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-    rating: 5,
-    address: 'Product Designer, San Francisco CA',
-    description: 'The design systems course is world-class. From Figma token setup to React component sync, every lesson was packed with practical, high-value insights.',
-  },
-  {
-    id: 4,
-    name: 'David Kim',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
-    rating: 5,
-    address: 'Security Analyst, Toronto Canada',
-    description: 'The OWASP and network security lab exercises were incredibly comprehensive. I was able to pass my industry certifications on the very first try!',
-  },
-  {
-    id: 5,
-    name: 'Amina Al-Mansoor',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
-    rating: 5,
-    address: 'AI Engineer, Dubai UAE',
-    description: 'Direct access to mentors during weekly office hours made all the difference when building complex autonomous agent workflows with LangChain and Python.',
-  },
-]
+/**
+ * Typographic Double Quote Icon matching the reference image's cheerful lime quotation mark.
+ */
+function DoubleQuoteIcon({ className = 'h-7 w-7' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 32 32"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M9.5 8C6.5 8 4 10.5 4 13.5c0 1.9 1 3.6 2.5 4.6-.3 2-1.3 3.9-3 5.4l2 2c2.8-2.3 4.5-5.5 4.5-9.5V8h-.5zm14 0c-3 0-5.5 2.5-5.5 5.5 0 1.9 1 3.6 2.5 4.6-.3 2-1.3 3.9-3 5.4l2 2c2.8-2.3 4.5-5.5 4.5-9.5V8H23.5z" />
+    </svg>
+  )
+}
 
-export default function Testimonials({
-  reviews = sampleReviews,
-}: {
-  reviews?: Review1Item[]
-}) {
-  const [api, setApi] = useState<CarouselApi>()
-  const [currentSlide, setCurrentSlide] = useState(0)
+interface TestimonialsProps {
+  initialData?: Partial<TestimonialsSectionData>
+}
 
-  useEffect(() => {
-    if (!api) return
+export default function Testimonials({ initialData }: TestimonialsProps) {
+  const data: TestimonialsSectionData = {
+    ...DEFAULT_TESTIMONIALS_DATA,
+    ...initialData,
+  }
 
-    const handleSelect = () => {
-      setCurrentSlide(api.selectedScrollSnap())
-    }
+  const [slideOffset, setSlideOffset] = useState(0)
+  const [hoveredCardId, setHoveredCardId] = useState<string | null>(null)
 
-    api.on('select', handleSelect)
-    handleSelect()
+  const cards = data.cards && data.cards.length > 0 ? data.cards : DEFAULT_TESTIMONIALS_DATA.cards
+  const maxOffset = Math.max(0, cards.length - 4)
 
-    return () => {
-      api.off('select', handleSelect)
-    }
-  }, [api])
+  const handlePrev = () => {
+    setSlideOffset((prev) => (prev > 0 ? prev - 1 : maxOffset))
+  }
+
+  const handleNext = () => {
+    setSlideOffset((prev) => (prev < maxOffset ? prev + 1 : 0))
+  }
+
+  const currentCards = cards.slice(slideOffset, slideOffset + 4)
+
+  const ratingAvatars =
+    data.ratingAvatars && data.ratingAvatars.length >= 3
+      ? data.ratingAvatars
+      : DEFAULT_TESTIMONIALS_DATA.ratingAvatars
 
   return (
-    <section className="relative overflow-hidden py-20 bg-muted/20">
-      {/* Background Ambient Glows */}
-      <div className="pointer-events-none absolute bottom-0 left-0 h-70 w-70 rounded-full bg-[rgba(0,167,111,0.08)] blur-[140px]" />
-      <div className="pointer-events-none absolute top-0 right-0 h-70 w-70 rounded-full bg-[rgba(97,95,255,0.08)] blur-[140px]" />
-
-      <div className="container relative z-10 mx-auto px-4 md:px-6">
-        {/* Header */}
-        <div className="mx-auto mb-12 max-w-xl text-center">
-          <p className="mb-2 text-sm font-semibold tracking-wider text-primary uppercase">
-            Student Testimonials
-          </p>
-          <h2 className="mb-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Trusted by Over 68,000+ Learners
+    <section className="relative py-16 sm:py-20 lg:py-24 bg-white dark:bg-slate-950 overflow-hidden">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        {/* ========================================================================= */}
+        {/* 1. SECTION HEADER: Admin Configurable & 1:1 Reference Match               */}
+        {/* ========================================================================= */}
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 sm:mb-14">
+          {/* Heading */}
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+            {data.title}
           </h2>
-          <p className="text-base text-muted-foreground">
-            Discover how professionals and ambitious career-switchers use our curriculum to master modern tech and land top jobs.
+
+          {/* Subtitle */}
+          <p className="mt-3.5 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            {data.description}
           </p>
         </div>
 
-        {/* Carousel */}
-        <Carousel
-          setApi={setApi}
-          className="w-full pb-10"
-          opts={{
-            loop: true,
-            align: 'start',
-          }}
-          plugins={[
-            Autoplay({
-              delay: 5000,
-              stopOnInteraction: false,
-            }),
-          ]}
-        >
-          <CarouselContent className="-ml-4">
-            {reviews.map((review) => (
-              <CarouselItem
+        {/* ========================================================================= */}
+        {/* 2. CARDS GRID: Hover Rating System Works on ALL Cards                      */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+          {currentCards.map((review) => {
+            const isHovered = data.hoverRatingEnabled && hoveredCardId === review.id
+
+            return (
+              <div
                 key={review.id}
-                className="pl-4 md:basis-1/2 lg:basis-1/3"
+                onMouseEnter={() => setHoveredCardId(review.id)}
+                onMouseLeave={() => setHoveredCardId(null)}
+                onClick={() =>
+                  setHoveredCardId((prev) => (prev === review.id ? null : review.id))
+                }
+                className="group relative cursor-pointer min-h-[350px] h-full"
+                title="Hover to view average rating"
               >
-                <div className="h-full py-1">
-                  <ReviewCard1 review={review} />
+                {/* ------------------------------------------------------------- */}
+                {/* STATE A: LIME RATING CARD (Revealed when card is hovered)     */}
+                {/* ------------------------------------------------------------- */}
+                <div
+                  className={cn(
+                    'absolute inset-0 rounded-[28px] bg-gradient-to-br from-[#E2FD70] via-[#D8FC38] to-[#B6EE12] text-slate-950 p-7 shadow-xs flex flex-col justify-between transition-all duration-300 select-none overflow-hidden',
+                    isHovered
+                      ? 'opacity-100 scale-100 z-10 pointer-events-auto'
+                      : 'opacity-0 scale-[0.98] z-0 pointer-events-none'
+                  )}
+                >
+                  {/* Organic contour waves in bottom-right corner */}
+                  <svg
+                    className="absolute -right-4 -bottom-4 w-48 h-48 pointer-events-none opacity-40 text-[#C4FA10]"
+                    viewBox="0 0 200 200"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M200,40 C140,50 110,100 70,130 C30,160 0,175 0,200 L200,200 Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M200,90 C155,95 125,135 90,160 C60,180 30,190 20,200 L200,200 Z"
+                      fill="#E8FE7B"
+                    />
+                  </svg>
+
+                  {/* Top: 5 Solid Black Stars & Rating */}
+                  <div className="relative z-10 space-y-3.5">
+                    <div className="flex items-center gap-1.5">
+                      {[...Array(data.ratingStars || 5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="h-5 w-5 fill-slate-950 text-slate-950 stroke-none"
+                        />
+                      ))}
+                    </div>
+
+                    {/* Big Rating Number */}
+                    <div className="pt-1">
+                      <div className="flex items-baseline">
+                        <span className="text-[48px] sm:text-[52px] font-black tracking-tight text-slate-950 leading-none">
+                          {data.ratingScore}
+                        </span>
+                        <span className="text-xl sm:text-2xl font-bold text-slate-900 ml-1.5">
+                          {data.ratingMax}
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-800 mt-1">
+                        {data.ratingLabel}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Bottom: Overlapping Avatars + Trusted Students */}
+                  <div className="relative z-10 pt-6">
+                    <div className="flex items-center -space-x-2.5 mb-3.5">
+                      {ratingAvatars.slice(0, 3).map((avatarUrl, idx) => (
+                        <div
+                          key={idx}
+                          className="relative h-8 w-8 rounded-full overflow-hidden border-2 border-white shadow-xs"
+                        >
+                          <Image
+                            src={avatarUrl}
+                            alt="Student"
+                            fill
+                            unoptimized
+                            className="object-cover"
+                          />
+                        </div>
+                      ))}
+                      <div className="h-8 w-8 rounded-full bg-white text-slate-950 font-bold text-xs flex items-center justify-center border-2 border-white shadow-xs">
+                        <Plus className="h-3.5 w-3.5 stroke-[3]" />
+                      </div>
+                    </div>
+
+                    <div className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-none">
+                      {data.studentsCount}
+                    </div>
+                    <div className="text-sm font-semibold text-slate-800 mt-1 leading-none">
+                      {data.studentsLabel}
+                    </div>
+                  </div>
                 </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
 
-        {/* Navigation Controls and Indicator Dots */}
-        <div className="flex items-center justify-between border-t border-border/50 pt-6">
-          {/* Dots */}
-          <div className="flex items-center gap-2">
-            {reviews.map((_, index) => (
-              <button
-                key={index}
-                aria-label={`Go to slide ${index + 1}`}
-                className={cn(
-                  'h-2 rounded-full transition-all duration-300',
-                  currentSlide === index
-                    ? 'w-6 bg-primary'
-                    : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60'
-                )}
-                onClick={() => api?.scrollTo(index)}
-              />
-            ))}
-          </div>
+                {/* ------------------------------------------------------------- */}
+                {/* STATE B: STANDARD TESTIMONIAL CARD (Default / not hovered)   */}
+                {/* ------------------------------------------------------------- */}
+                <div
+                  className={cn(
+                    'h-full rounded-[28px] border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-7 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between transition-all duration-300 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700',
+                    isHovered ? 'opacity-0 scale-[0.98] pointer-events-none' : 'opacity-100 scale-100'
+                  )}
+                >
+                  <div>
+                    {/* Top Row: Brand Lime Quote Icon + Golden Stars */}
+                    <div className="flex items-center justify-between">
+                      <DoubleQuoteIcon className="h-7 w-7 text-[#D8FC38]" />
+                      <div className="flex items-center gap-1 text-[#FBBF24]">
+                        {[...Array(review.rating || 5)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-current stroke-none" />
+                        ))}
+                      </div>
+                    </div>
 
-          {/* Chevrons */}
-          <div className="flex items-center gap-3">
-            <Button
-              size="icon"
-              variant="outline"
-              aria-label="Previous testimonial"
-              disabled={!api?.canScrollPrev()}
-              onClick={() => api?.scrollPrev()}
-              className="h-10 w-10 rounded-full border-border hover:border-primary hover:bg-background shadow-sm"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              size="icon"
-              variant="outline"
-              aria-label="Next testimonial"
-              disabled={!api?.canScrollNext()}
-              onClick={() => api?.scrollNext()}
-              className="h-10 w-10 rounded-full border-border hover:border-primary hover:bg-background shadow-sm"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+                    {/* Body Quote */}
+                    <p className="text-slate-700 dark:text-slate-300 text-[14.5px] leading-relaxed my-5 font-normal">
+                      {review.quote}
+                    </p>
+                  </div>
+
+                  {/* Bottom Author Row */}
+                  <div className="flex items-center pt-2">
+                    <div className="relative h-11 w-11 rounded-full overflow-hidden shrink-0 border border-slate-200 dark:border-slate-700 mr-3">
+                      <Image
+                        src={review.avatar}
+                        alt={review.name}
+                        fill
+                        unoptimized
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-[15px] font-bold text-slate-900 dark:text-white leading-tight truncate">
+                        {review.name}
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                        {review.role}
+                      </p>
+                      <div className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                        <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                        <span>{review.location}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
+
+        {/* ========================================================================= */}
+        {/* 3. NAVIGATION CONTROLS: Below Rating Cards                                 */}
+        {/* ========================================================================= */}
+        <div className="mt-8 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={handlePrev}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 shadow-2xs transition-colors hover:border-[#D8FC38] hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 cursor-pointer"
+            aria-label="Previous reviews"
+          >
+            <ChevronLeft className="h-4 w-4 stroke-[2.5]" />
+          </button>
+
+          <button
+            type="button"
+            onClick={handleNext}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs transition-colors hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 cursor-pointer"
+            aria-label="Next reviews"
+          >
+            <ChevronRight className="h-4 w-4 stroke-[2.5]" />
+          </button>
+        </div>
+
       </div>
     </section>
   )

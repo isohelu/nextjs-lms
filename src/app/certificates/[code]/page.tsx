@@ -95,7 +95,7 @@ export default function CertificateViewPage() {
             <Button
               size="sm"
               onClick={handlePrint}
-              className="flex-1 sm:flex-initial text-xs font-semibold shadow-sm"
+              className="flex-1 sm:flex-initial text-xs font-bold bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 rounded-xl shadow-xs active:scale-[0.98]"
             >
               <Printer className="h-3.5 w-3.5 mr-1.5" />
               Print / Save PDF
@@ -124,7 +124,7 @@ export default function CertificateViewPage() {
                 <h3 className="text-sm font-extrabold uppercase tracking-widest text-slate-900">
                   MENTOR LMS
                 </h3>
-                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                   Global Education & Technical Accreditation
                 </p>
               </div>
@@ -172,7 +172,7 @@ export default function CertificateViewPage() {
               <div className="space-y-1">
                 <p className="text-xs font-bold text-slate-900 font-serif">{cert.issueDate}</p>
                 <div className="mx-auto h-0.5 w-24 bg-slate-300" />
-                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Date of Issuance</p>
+                <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Date of Issuance</p>
               </div>
 
               {/* Verified Seal */}
@@ -180,7 +180,7 @@ export default function CertificateViewPage() {
                 <div className="h-16 w-16 rounded-full border-2 border-amber-600/70 bg-amber-50 flex items-center justify-center text-amber-700 shadow-inner">
                   <ShieldCheck className="h-9 w-9" />
                 </div>
-                <span className="mt-1 text-[9px] font-mono font-bold uppercase tracking-wider text-slate-500">
+                <span className="mt-1 text-xs font-mono font-bold uppercase tracking-wider text-slate-500">
                   ID: {cert.code}
                 </span>
               </div>
@@ -189,12 +189,12 @@ export default function CertificateViewPage() {
               <div className="space-y-1">
                 <p className="text-xs font-bold text-slate-900 font-serif italic">{cert.instructorName}</p>
                 <div className="mx-auto h-0.5 w-24 bg-slate-300" />
-                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">{cert.instructorRole}</p>
+                <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">{cert.instructorRole}</p>
               </div>
             </div>
 
             {/* Tamper-Proof Cryptographic Verification String */}
-            <div className="pt-2 text-[10px] text-slate-400 font-mono tracking-tight">
+            <div className="pt-2 text-xs text-slate-400 font-mono tracking-tight">
               Tamper-proof verifiable credential token: SHA256:{cert.code}-E9A403F-84CD-LMS
             </div>
           </div>

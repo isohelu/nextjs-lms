@@ -193,12 +193,25 @@ export async function GET(
     `).all(courseId) as any[]
 
     // 6. Active Certificate & Marksheet template
-    const certificateTemplate = db.prepare(`
+    const certificateTemplate = (db.prepare(`
+      SELECT * FROM certificate_templates WHERE is_active = 1 AND type = 'course' LIMIT 1
+    `).get() || db.prepare(`
       SELECT * FROM certificate_templates WHERE is_active = 1 LIMIT 1
-    `).get() as any
+    `).get()) as any
+
+    const marksheetTemplate = (db.prepare(`
+      SELECT * FROM marksheet_templates WHERE is_active = 1 AND type = 'course' LIMIT 1
+    `).get() || db.prepare(`
+      SELECT * FROM marksheet_templates WHERE is_active = 1 LIMIT 1
+    `).get()) as any
 
     return NextResponse.json({
       success: true,
+      student: {
+        id: user.id,
+        name: user.name || 'Student',
+        email: user.email,
+      },
       course: {
         id: course.id,
         title: course.title,
@@ -240,11 +253,15 @@ export async function GET(
           grade
         }
       },
-      certificate_template: certificateTemplate || null
+      certificate_template: certificateTemplate || null,
+      marksheet_template: marksheetTemplate || null
     })
   } catch (error: unknown) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
+    if (error instanceof Error && (error.message.includes('UNAUTHORIZED') || error.message.includes('Unauthorized'))) {
       return NextResponse.json({ success: false, message: 'Unauthorized.' }, { status: 401 })
+    }
+    if (error instanceof Error && error.message.includes('FORBIDDEN')) {
+      return NextResponse.json({ success: false, message: 'Forbidden.' }, { status: 403 })
     }
     console.error('Fetch student course overview error:', error)
     return NextResponse.json({ success: false, message: 'Failed to retrieve course overview.' }, { status: 500 })

@@ -268,7 +268,7 @@ function ExamAttemptRunner({
           <div className="flex items-center gap-4">
             <div className={cn(
               "flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold font-mono transition-colors",
-              timeLeft < 300 ? "bg-destructive/10 text-destructive animate-pulse" : "bg-primary/10 text-primary"
+              timeLeft < 300 ? "bg-destructive/10 text-destructive animate-pulse" : "bg-muted text-foreground"
             )}>
               <Clock className="h-3.5 w-3.5" />
               <span>{formatTime(timeLeft)}</span>
@@ -277,7 +277,7 @@ function ExamAttemptRunner({
             <Button
               size="sm"
               onClick={() => setShowConfirmSubmit(true)}
-              className="rounded-xl font-bold bg-[#007867] hover:bg-[#007867]/90 text-white shadow-xs"
+              className="rounded-xl font-bold bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 shadow-xs"
             >
               <Send className="mr-1.5 h-3.5 w-3.5" />
               Submit Exam
@@ -294,7 +294,7 @@ function ExamAttemptRunner({
             <Card className="p-6 border-border shadow-xs bg-card">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#D8FC38] text-xs font-bold text-slate-950">
                     {currentIndex + 1}
                   </span>
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -431,7 +431,7 @@ function ExamAttemptRunner({
                   <div className="space-y-2">
                     {currentQuestion.orderItems?.map((step, sIdx) => (
                       <div key={sIdx} className="flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card text-xs font-medium">
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[10px] font-bold">
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-xs font-bold">
                           {sIdx + 1}
                         </span>
                         <span>{step}</span>
@@ -463,7 +463,7 @@ function ExamAttemptRunner({
                       setShowConfirmSubmit(true)
                     }
                   }}
-                  className="rounded-xl gap-1.5 bg-[#007867] hover:bg-[#007867]/90 text-white"
+                  className="rounded-xl gap-1.5 bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold"
                 >
                   {currentIndex === questions.length - 1 ? 'Review & Submit' : 'Next Question'}
                   <ChevronRight className="h-4 w-4" />
@@ -550,7 +550,7 @@ function ExamAttemptRunner({
               <Button variant="outline" onClick={() => setShowConfirmSubmit(false)} className="rounded-xl">
                 Continue Exam
               </Button>
-              <Button onClick={handleSubmitExam} disabled={submitting} className="rounded-xl font-bold bg-[#007867] text-white">
+              <Button onClick={handleSubmitExam} disabled={submitting} className="rounded-xl font-bold bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950">
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Confirm & Submit
               </Button>
@@ -619,7 +619,7 @@ export default function StudentExamDashboardPage() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-[#007867]" />
+          <Loader2 className="h-8 w-8 animate-spin text-foreground" />
           <p className="text-sm text-muted-foreground">Loading examination portal...</p>
         </div>
       </div>
@@ -647,12 +647,12 @@ export default function StudentExamDashboardPage() {
   const isPassed = bestAttempt && (bestAttempt.obtained_marks / (bestAttempt.total_marks || exam.total_marks)) >= (exam.pass_mark / 100)
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-foreground antialiased font-sans pb-16">
+    <div className="min-h-screen bg-background text-foreground antialiased font-sans pb-16">
       {/* Top Banner Header */}
-      <header className="border-b border-border bg-card">
+      <header className="border-b border-border/80 bg-card">
         <div className="container mx-auto max-w-6xl px-4 py-8">
           <div className="mb-4">
-            <Button variant="ghost" size="sm" asChild className="gap-2 text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" asChild className="gap-2 text-muted-foreground hover:text-foreground rounded-xl">
               <Link href="/student/exams">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Enrolled Exams
@@ -663,7 +663,7 @@ export default function StudentExamDashboardPage() {
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2 max-w-2xl">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-[#007867]/30 bg-[#007867]/10 text-[#007867] font-semibold">
+                <Badge variant="outline" className="border-[#D8FC38]/40 bg-[#D8FC38]/15 text-slate-950 dark:text-[#D8FC38] font-bold">
                   {exam.level || 'Certification'}
                 </Badge>
                 {isPassed && (
@@ -675,10 +675,10 @@ export default function StudentExamDashboardPage() {
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 {exam.title}
               </h1>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                 {exam.short_description}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Instructor: <strong className="text-foreground">{exam.instructor_name}</strong>
               </p>
             </div>
@@ -688,7 +688,7 @@ export default function StudentExamDashboardPage() {
               <Button
                 size="lg"
                 onClick={() => setIsTaking(true)}
-                className="w-full sm:w-auto bg-[#007867] hover:bg-[#007867]/90 text-white font-bold shadow-sm"
+                className="w-full sm:w-auto bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold shadow-xs rounded-xl"
               >
                 <PlayCircle className="mr-2 h-4 w-4" />
                 {attempts.length > 0 ? 'Retake Exam' : 'Start Exam'}
@@ -738,7 +738,7 @@ export default function StudentExamDashboardPage() {
                 className={cn(
                   'flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors',
                   isActive
-                    ? 'bg-primary text-primary-foreground shadow-xs'
+                    ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs'
                     : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                 )}
               >
@@ -746,8 +746,8 @@ export default function StudentExamDashboardPage() {
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span className={cn(
-                    'px-1.5 py-0.5 rounded-full text-[10px] font-bold',
-                    isActive ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted text-muted-foreground'
+                    'px-2 py-0.5 rounded-full text-xs font-bold',
+                    isActive ? 'bg-slate-950/15 text-slate-950' : 'bg-muted text-muted-foreground'
                   )}>
                     {tab.count}
                   </span>
@@ -795,7 +795,7 @@ export default function StudentExamDashboardPage() {
                   <h3 className="text-sm font-bold text-foreground">Exam Attempt Log</h3>
                   <p className="text-xs text-muted-foreground">Historical records of all your examination attempts.</p>
                 </div>
-                <Button size="sm" onClick={() => setIsTaking(true)} className="bg-[#007867] text-white">
+                <Button size="sm" onClick={() => setIsTaking(true)} className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs">
                   New Attempt
                 </Button>
               </div>
@@ -804,17 +804,17 @@ export default function StudentExamDashboardPage() {
                 <div className="p-12 text-center">
                   <Clock className="mx-auto h-10 w-10 text-muted-foreground/50 mb-3" />
                   <h4 className="text-base font-bold text-foreground">No attempts yet</h4>
-                  <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
+                  <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
                     Your test attempts and performance grading will appear here once you begin the assessment.
                   </p>
-                  <Button onClick={() => setIsTaking(true)} className="bg-[#007867] text-white">
+                  <Button onClick={() => setIsTaking(true)} className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs">
                     Start Assessment Now
                   </Button>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase font-semibold">
+                  <table className="w-full text-left text-xs sm:text-sm">
+                    <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase font-semibold text-xs">
                       <tr>
                         <th className="px-5 py-3">Attempt #</th>
                         <th className="px-5 py-3">Date</th>
@@ -839,7 +839,7 @@ export default function StudentExamDashboardPage() {
                             </td>
                             <td className="px-5 py-3.5">
                               <Badge variant="outline" className={cn(
-                                "capitalize text-[11px]",
+                                "capitalize text-xs font-semibold",
                                 attempt.status === 'completed' ? "border-emerald-500/30 text-emerald-600 bg-emerald-50" : "border-blue-500/30 text-blue-600 bg-blue-50"
                               )}>
                                 {attempt.status || 'Completed'}
@@ -850,17 +850,17 @@ export default function StudentExamDashboardPage() {
                             </td>
                             <td className="px-5 py-3.5">
                               {passed ? (
-                                <Badge className="bg-emerald-600 text-white text-[10px]">
+                                <Badge className="bg-emerald-600 text-white text-xs font-semibold">
                                   Passed
                                 </Badge>
                               ) : (
-                                <Badge variant="destructive" className="text-[10px]">
+                                <Badge variant="destructive" className="text-xs font-semibold">
                                   Failed
                                 </Badge>
                               )}
                             </td>
                             <td className="px-5 py-3.5 text-right">
-                              <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+                              <Button asChild variant="outline" size="sm" className="h-9 px-3 text-xs sm:text-sm font-semibold rounded-xl">
                                 <Link href={`/student/exams/${examId}/result?attempt_id=${attempt.id}`}>
                                   Review Result
                                 </Link>
@@ -939,7 +939,7 @@ export default function StudentExamDashboardPage() {
                     <span className="font-semibold text-emerald-600">Passed (Distinction)</span>
                   </div>
                 </div>
-                <Button size="lg" className="w-full bg-[#007867] hover:bg-[#007867]/90 text-white font-bold gap-2">
+                <Button size="lg" className="w-full bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold gap-2 rounded-xl shadow-xs">
                   <Download className="h-4 w-4" />
                   Download Certificate (PDF)
                 </Button>
@@ -948,10 +948,10 @@ export default function StudentExamDashboardPage() {
               <Card className="p-8 border-border text-center space-y-4">
                 <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground/40" />
                 <h3 className="text-lg font-bold text-foreground">Certificate Locked</h3>
-                <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
                   This official certificate requires a minimum passing grade of <strong>{exam.pass_mark}%</strong>. Review your notes and retake the exam to unlock your certificate.
                 </p>
-                <Button onClick={() => setIsTaking(true)} className="bg-[#007867] text-white">
+                <Button onClick={() => setIsTaking(true)} className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs">
                   Take Exam Now
                 </Button>
               </Card>

@@ -1,71 +1,91 @@
+'use client'
+
 import React from 'react'
-import BlogCard, { BlogData } from '@/components/cards/BlogCard'
+import Image from 'next/image'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
+import {
+  BlogSectionData,
+  DEFAULT_BLOG_SECTION_DATA,
+} from '@/lib/data/blog-section'
 
-const defaultBlogs: BlogData[] = [
-  {
-    id: 1,
-    uuid: 'nextjs-15-deep-dive',
-    slug: 'nextjs-15-deep-dive',
-    title: 'Next.js 15 Deep Dive: Server Actions, Nonces & React 19',
-    summary:
-      'Explore how Next.js 15 and React 19 redefine full-stack web applications with native async Server Components and strict security policies.',
-    thumbnail: '/assets/images/students-1.jpg',
-    published_at: '2 days ago',
-    read_time: '6 min read',
-    author_name: 'David Miller',
-    author_avatar: '/assets/avatars/avatar-1.png',
-  },
-  {
-    id: 2,
-    uuid: 'scaling-supabase-production',
-    slug: 'scaling-supabase-production',
-    title: 'Architecting High-Throughput Relational Databases with Supabase',
-    summary:
-      'Learn best practices for indexing, connection pooling with PgBouncer, and Row Level Security for production SaaS platforms.',
-    thumbnail: '/assets/images/students-2.jpg',
-    published_at: '5 days ago',
-    read_time: '8 min read',
-    author_name: 'Marcus Chen',
-    author_avatar: '/assets/avatars/avatar-3.png',
-  },
-  {
-    id: 3,
-    uuid: 'ui-ux-design-systems-2025',
-    slug: 'ui-ux-design-systems-2025',
-    title: 'Building Enterprise Design Systems with Tailwind v4 and OKLCH',
-    summary:
-      'A practical guide to implementing consistent, accessible color palettes and micro-interactions across large-scale frontend apps.',
-    thumbnail: '/assets/images/students-3.jpg',
-    published_at: '1 week ago',
-    read_time: '5 min read',
-    author_name: 'Sarah Jenkins',
-    author_avatar: '/assets/avatars/avatar-4.png',
-  },
-]
+interface BlogsProps {
+  initialData?: Partial<BlogSectionData>
+}
 
-export default function Blogs({ blogs = defaultBlogs }: { blogs?: BlogData[] }) {
-  const displayBlogs = blogs.length > 0 ? blogs : defaultBlogs
+export default function Blogs({ initialData }: BlogsProps) {
+  const data: BlogSectionData = {
+    ...DEFAULT_BLOG_SECTION_DATA,
+    ...initialData,
+  }
+
+  const blogs = data.blogs && data.blogs.length > 0 ? data.blogs : DEFAULT_BLOG_SECTION_DATA.blogs
 
   return (
-    <section className="container z-10 py-20">
-      {/* Header matching Laravel 1:1 */}
-      <div className="mx-auto mb-10 text-center md:max-w-2xl">
-        <p className="mb-1 font-medium text-secondary-foreground">
-          Blogs
-        </p>
-        <h2 className="mb-4 text-3xl font-bold sm:text-4xl text-foreground">
-          Our Latest Posts
-        </h2>
-        <p className="text-muted-foreground">
-          Stay up to date with engineering tutorials, industry insights, and career guides
-        </p>
-      </div>
+    <section className="relative py-14 sm:py-16 lg:py-20 bg-white dark:bg-slate-950 overflow-hidden">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        {/* ========================================================================= */}
+        {/* Section Header: Centered & Clean                                          */}
+        {/* ========================================================================= */}
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+            {data.titleLine1 || 'Our Latest Blog'} {data.titleLine2 || 'Update'}
+          </h2>
 
-      {/* Blogs Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
-        {displayBlogs.slice(0, 3).map((blog) => (
-          <BlogCard key={blog.id} blog={blog} />
-        ))}
+          <p className="mt-3.5 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
+            {data.description}
+          </p>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* 3-Column Editorial Grid of Articles                                       */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 lg:gap-x-9 lg:gap-y-12 items-start">
+          {blogs.map((blog) => (
+            <article key={blog.id} className="group flex flex-col">
+              {/* Image Container with smooth rounded corners */}
+              <Link
+                href={`/blogs/${blog.slug}`}
+                className="relative aspect-[16/10] w-full overflow-hidden rounded-[22px] bg-slate-100 dark:bg-slate-800 shadow-2xs"
+              >
+                <Image
+                  src={blog.image}
+                  alt={blog.title}
+                  fill
+                  unoptimized
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                />
+              </Link>
+
+              {/* Category Label */}
+              <div className="mt-3.5 mb-1.5">
+                <span className="text-[13px] sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                  {blog.category}
+                </span>
+              </div>
+
+              {/* Post Title */}
+              <Link href={`/blogs/${blog.slug}`}>
+                <h3 className="text-base sm:text-[17px] font-bold text-slate-900 dark:text-white leading-snug line-clamp-2 transition-colors duration-200 group-hover:text-slate-700 dark:group-hover:text-[#D8FC38]">
+                  {blog.title}
+                </h3>
+              </Link>
+            </article>
+          ))}
+        </div>
+
+        {/* Bottom CTA Button: Centered */}
+        <div className="mt-12 sm:mt-14 text-center">
+          <Link
+            href={data.buttonUrl || '/blogs'}
+            className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#E2FD70] hover:bg-[#D8FC38] text-slate-950 font-bold text-sm transition-all duration-200 shadow-2xs hover:shadow-xs active:scale-95 group cursor-pointer"
+          >
+            <span>{data.buttonText || 'Browse All Articles'}</span>
+            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </Link>
+        </div>
+
       </div>
     </section>
   )

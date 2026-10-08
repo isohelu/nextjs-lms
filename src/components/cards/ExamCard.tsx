@@ -59,7 +59,7 @@ export default function ExamCard({ exam, viewType = 'grid', className }: ExamCar
   return (
     <Card
       className={cn(
-        'group flex h-full overflow-hidden rounded-2xl border border-border bg-card p-0 transition-all duration-300 shadow-card hover:shadow-card-hover',
+        'group flex h-full overflow-hidden rounded-2xl border border-border/80 bg-card p-0 transition-all duration-300 hover:border-[#D8FC38]/60 shadow-sm hover:shadow-md',
         isList ? 'flex-col sm:flex-row' : 'flex-col justify-between',
         className
       )}
@@ -79,12 +79,12 @@ export default function ExamCard({ exam, viewType = 'grid', className }: ExamCar
             {exam.level && (
               <Badge
                 variant="secondary"
-                className="absolute top-3 left-3 bg-background/90 backdrop-blur text-xs font-semibold capitalize shadow-sm"
+                className="absolute top-3 left-3 bg-background/90 backdrop-blur text-xs font-semibold capitalize shadow-xs"
               >
                 {exam.level}
               </Badge>
             )}
-            <div className="absolute top-3 right-3 rounded-md bg-black/60 px-2 py-0.5 text-xs font-medium text-white backdrop-blur">
+            <div className="absolute top-3 right-3 rounded-md bg-slate-950/80 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur">
               {exam.pass_percentage}% to pass
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function ExamCard({ exam, viewType = 'grid', className }: ExamCar
       <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
         <div>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-primary uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               {exam.category_name || 'Certification Exam'}
             </span>
             <div className="flex items-center gap-1 text-xs font-semibold text-amber-500">
@@ -105,29 +105,29 @@ export default function ExamCard({ exam, viewType = 'grid', className }: ExamCar
             </div>
           </div>
 
-          <Link href={`/exams/${exam.slug}`} className="block mt-1.5">
-            <h3 className="line-clamp-2 text-base font-bold text-foreground transition-colors group-hover:text-primary min-h-11">
+          <Link href={`/exams/${exam.slug}`} className="block mt-2">
+            <h3 className="line-clamp-2 text-base font-bold text-foreground transition-colors group-hover:text-foreground min-h-11">
               {exam.title}
             </h3>
           </Link>
 
           {isList && exam.short_description && (
-            <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+            <p className="mt-2 line-clamp-2 text-sm text-muted-foreground leading-relaxed">
               {exam.short_description}
             </p>
           )}
 
-          <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+          <div className="mt-3.5 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-primary" />
+              <Clock className="h-3.5 w-3.5 text-slate-500" />
               <span>{exam.duration_minutes} Mins</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <HelpCircle className="h-3.5 w-3.5 text-primary" />
+              <HelpCircle className="h-3.5 w-3.5 text-slate-500" />
               <span>{exam.total_questions} Questions</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Award className="h-3.5 w-3.5 text-primary" />
+              <Award className="h-3.5 w-3.5 text-slate-500" />
               <span>Verified Certificate</span>
             </div>
           </div>
@@ -137,7 +137,7 @@ export default function ExamCard({ exam, viewType = 'grid', className }: ExamCar
         <div className="mt-auto pt-4 border-t border-border flex items-center justify-between gap-3">
           <div>
             {isFree ? (
-              <span className="text-base font-bold text-emerald-600 dark:text-emerald-400">Free</span>
+              <span className="text-base font-bold text-foreground">Free</span>
             ) : (
               <div className="flex items-baseline gap-2">
                 <span className="text-lg font-bold text-foreground">
@@ -157,7 +157,7 @@ export default function ExamCard({ exam, viewType = 'grid', className }: ExamCar
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 px-3 border-border hover:bg-muted"
+                className="h-9 px-3 border-border hover:bg-muted rounded-xl"
                 onClick={handleAddToCart}
                 title="Add to cart"
               >
@@ -166,7 +166,7 @@ export default function ExamCard({ exam, viewType = 'grid', className }: ExamCar
             )}
             <Button
               size="sm"
-              className="h-9 px-4 font-semibold shadow-sm"
+              className="h-9 px-4 font-bold bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 rounded-xl active:scale-[0.98] shadow-xs"
               asChild
             >
               <Link href={`/exams/${exam.slug}`}>

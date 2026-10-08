@@ -182,8 +182,8 @@ export default function PayoutSettingsView() {
               className={cn(
                 'flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all text-left',
                 activeTab === tab.id
-                  ? 'bg-white shadow-xs text-foreground font-semibold border-l-4 border-[#007867]'
-                  : 'text-muted-foreground hover:bg-slate-100/70 hover:text-foreground'
+                  ? 'bg-muted/80 shadow-xs text-foreground font-bold border-l-4 border-[#D8FC38]'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
               )}
             >
               <span>{tab.title}</span>
@@ -222,7 +222,7 @@ export default function PayoutSettingsView() {
                             stripe: { ...prev.stripe, active: e.target.checked }
                           }))
                         }
-                        className="h-4 w-4 rounded border-slate-300 text-[#007867] focus:ring-[#007867]"
+                        className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-[#D8FC38]"
                       />
                     </label>
                   </div>
@@ -282,7 +282,7 @@ export default function PayoutSettingsView() {
                             paypal: { ...prev.paypal, active: e.target.checked }
                           }))
                         }
-                        className="h-4 w-4 rounded border-slate-300 text-[#007867] focus:ring-[#007867]"
+                        className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-[#D8FC38]"
                       />
                     </label>
                   </div>
@@ -341,7 +341,7 @@ export default function PayoutSettingsView() {
                             bank: { ...prev.bank, active: e.target.checked }
                           }))
                         }
-                        className="h-4 w-4 rounded border-slate-300 text-[#007867] focus:ring-[#007867]"
+                        className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-[#D8FC38]"
                       />
                     </label>
                   </div>
@@ -424,7 +424,7 @@ export default function PayoutSettingsView() {
                             razorpay: { ...prev.razorpay, active: e.target.checked }
                           }))
                         }
-                        className="h-4 w-4 rounded border-slate-300 text-[#007867] focus:ring-[#007867]"
+                        className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-[#D8FC38]"
                       />
                     </label>
                   </div>
@@ -482,7 +482,7 @@ export default function PayoutSettingsView() {
                             paystack: { ...prev.paystack, active: e.target.checked }
                           }))
                         }
-                        className="h-4 w-4 rounded border-slate-300 text-[#007867] focus:ring-[#007867]"
+                        className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-[#D8FC38]"
                       />
                     </label>
                   </div>
@@ -523,7 +523,7 @@ export default function PayoutSettingsView() {
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="bg-[#007867] hover:bg-[#007867]/90 text-white font-semibold shadow-xs"
+                  className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs"
                 >
                   {saving ? (
                     <>

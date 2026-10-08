@@ -187,7 +187,7 @@ export default function AdminNewslettersPage() {
               <p className="text-xs text-muted-foreground font-medium">Campaigns Broadcasted</p>
               <h3 className="text-2xl font-bold text-foreground mt-1">{newsletters.length}</h3>
             </div>
-            <div className="h-11 w-11 rounded-xl bg-[#007867]/10 flex items-center justify-center text-[#007867]">
+            <div className="h-11 w-11 rounded-xl bg-[#D8FC38]/20 flex items-center justify-center text-slate-950 dark:text-[#D8FC38]">
               <Mail className="h-5 w-5" />
             </div>
           </Card>
@@ -209,14 +209,14 @@ export default function AdminNewslettersPage() {
         {/* Newsletters List */}
         {loading ? (
           <div className="py-20 flex justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin text-foreground" />
           </div>
         ) : filtered.length === 0 ? (
           <Card className="p-12 text-center rounded-2xl border-dashed bg-white">
             <Newspaper className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
             <h3 className="font-semibold text-base mb-1">No newsletters found</h3>
             <p className="text-xs text-muted-foreground mb-4">Start your audience engagement by composing a new newsletter.</p>
-            <Button size="sm" onClick={() => setCreateOpen(true)} className="bg-[#007867] hover:bg-[#007867]/90 text-white">
+            <Button size="sm" onClick={() => setCreateOpen(true)} className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs">
               <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Newsletter
             </Button>
           </Card>
@@ -235,7 +235,7 @@ export default function AdminNewslettersPage() {
                   <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                     {item.description}
                   </p>
-                  <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground pt-1">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
                     <Calendar className="h-3 w-3" />
                     <span>Created: {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent'}</span>
                   </div>
@@ -247,7 +247,7 @@ export default function AdminNewslettersPage() {
                     variant="outline"
                     disabled={sendingId === item.id}
                     onClick={() => handleSendCampaign(item.id)}
-                    className="h-8 text-xs font-medium text-slate-700 hover:text-[#007867] hover:border-[#007867]/40 gap-1.5 rounded-lg"
+                    className="h-8 text-xs font-medium text-slate-700 hover:text-foreground hover:border-[#D8FC38]/60 gap-1.5 rounded-lg"
                   >
                     {sendingId === item.id ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -307,7 +307,7 @@ export default function AdminNewslettersPage() {
                   id="sendNow"
                   checked={sendNow}
                   onChange={(e) => setSendNow(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-[#007867] focus:ring-[#007867]"
+                  className="h-4 w-4 rounded border-gray-300 text-slate-900 focus:ring-[#D8FC38]"
                 />
                 <label htmlFor="sendNow" className="text-xs text-foreground font-medium cursor-pointer">
                   Send immediately to all subscribers ({subscriberCount}) upon saving
@@ -315,14 +315,14 @@ export default function AdminNewslettersPage() {
               </div>
 
               <DialogFooter className="pt-3">
-                <Button type="button" variant="outline" size="sm" onClick={() => setCreateOpen(false)}>
+                <Button type="button" variant="outline" size="sm" onClick={() => setCreateOpen(false)} className="rounded-xl">
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   size="sm"
                   disabled={submitting}
-                  className="bg-[#007867] hover:bg-[#007867]/90 text-white"
+                  className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs"
                 >
                   {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Save Newsletter'}
                 </Button>

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -11,27 +11,31 @@ import {
   Clock,
   BookOpen,
   Award,
-  Star,
+  ShoppingBag,
   ChevronRight,
   Building,
-  ArrowLeft,
   Loader2,
-  Tag,
-  Check
+  Check,
+  AlertCircle,
+  Info
 } from 'lucide-react'
 import { useCartStore, CartItem } from '@/lib/store/cart'
+import { useUserStore } from '@/lib/store/useUserStore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 
 type PaymentGateway = 'stripe' | 'paypal' | 'offline'
 
 export default function CheckoutPage() {
   const router = useRouter()
+  const { currentUser } = useUserStore()
   const {
     items,
+    addItem,
     appliedCoupon,
     discountPercent,
     applyCoupon,
@@ -46,6 +50,9 @@ export default function CheckoutPage() {
   const [couponCode, setCouponCode] = useState('')
   const [couponError, setCouponError] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [offlineNotes, setOfflineNotes] = useState('')
+  const [authenticatedUser, setAuthenticatedUser] = useState<any>(null)
 
   // Billing form state
   const [formData, setFormData] = useState({
@@ -55,6 +62,89 @@ export default function CheckoutPage() {
     phone: '',
     country: 'United States',
   })
+
+  // Autofill if logged in
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.user) {
+          setAuthenticatedUser(data.user)
+          const names = (data.user.name || '').trim().split(' ')
+          setFormData((prev) => ({
+            ...prev,
+            firstName: prev.firstName || names[0] || '',
+            lastName: prev.lastName || names.slice(1).join(' ') || '',
+            email: prev.email || data.user.email || '',
+            phone: prev.phone || data.user.phone || '',
+          }))
+        } else {
+          setAuthenticatedUser(null)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  // Auto-populate cart item if arriving with ?courseId=... or ?examId=... or ?productId=...
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const courseId = params.get('courseId')
+    const examId = params.get('examId')
+    const productId = params.get('productId')
+    const scheduleId = params.get('scheduleId')
+    const slug = params.get('slug')
+    const title = params.get('title')
+    const price = params.get('price')
+
+    if (courseId) {
+      const exists = items.some((i) => i.id === `course-${courseId}`)
+      if (!exists) {
+        addItem({
+          id: `course-${courseId}`,
+          title: title || (slug ? slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Selected Course'),
+          slug: slug || `course-${courseId}`,
+          price: price ? Number(price) : 69.0,
+          type: 'course',
+        })
+      }
+    } else if (scheduleId) {
+      const exists = items.some((i) => i.id === `schedule-${scheduleId}`)
+      if (!exists) {
+        addItem({
+          id: `schedule-${scheduleId}`,
+          title: title || 'Live Masterclass Seat Reservation',
+          slug: slug || `schedule-${scheduleId}`,
+          price: price ? Number(price) : 49.0,
+          type: 'course',
+        })
+      }
+    } else if (examId) {
+      const exists = items.some((i) => i.id === `exam-${examId}`)
+      if (!exists) {
+        addItem({
+          id: `exam-${examId}`,
+          title: title || 'Accredited Certification Exam',
+          slug: slug || `exam-${examId}`,
+          price: price ? Number(price) : 49.0,
+          type: 'exam',
+        })
+      }
+    } else if (productId) {
+      const exists = items.some((i) => i.id === `product-${productId}`)
+      if (!exists) {
+        addItem({
+          id: `product-${productId}`,
+          title: title || 'Learning Resource Kit',
+          slug: slug || `product-${productId}`,
+          price: price ? Number(price) : 29.0,
+          type: 'product',
+        })
+      }
+    }
+  }, [items, addItem])
+
+  const isLoggedIn = Boolean(authenticatedUser || currentUser)
 
   const subtotal = getSubtotal()
   const discount = getDiscountAmount()
@@ -76,6 +166,15 @@ export default function CheckoutPage() {
 
   const handleCompletePayment = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMessage(null)
+
+    if (!isLoggedIn) {
+      setErrorMessage('You must be logged in to complete your checkout.')
+      const redirectTarget = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/checkout'
+      router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`)
+      return
+    }
+
     setIsProcessing(true)
 
     try {
@@ -86,41 +185,42 @@ export default function CheckoutPage() {
         price: item.discount_price ?? item.price ?? 0,
       }))
 
+      const payload = {
+        items: checkoutItems.length > 0 ? checkoutItems : [{
+          id: 1,
+          type: 'course',
+          title: 'Full-Stack Next.js 15 & Modern React Architecture',
+          price: 69.00
+        }],
+        gateway: selectedGateway,
+        billing: {
+          firstName: formData.firstName.trim() || 'Student',
+          lastName: formData.lastName.trim() || 'Learner',
+          email: formData.email.trim(),
+          phone: formData.phone.trim() || '',
+          country: formData.country || 'United States',
+        },
+        offlineInfo: selectedGateway === 'offline' ? offlineNotes : undefined,
+      }
+
       const res = await fetch('/api/student/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: checkoutItems.length > 0 ? checkoutItems : [{
-            id: 1,
-            type: 'course',
-            title: 'Full-Stack Next.js 15 & Modern React Architecture',
-            price: 69.00
-          }],
-          gateway: selectedGateway,
-          billing: {
-            firstName: formData.firstName || 'Student',
-            lastName: formData.lastName || 'Learner',
-            email: formData.email || 'student@mentorlms.com',
-            phone: formData.phone || '',
-            country: formData.country || 'United States',
-          },
-        }),
+        body: JSON.stringify(payload),
       })
 
-      if (res.status === 401) {
-        router.push('/login?redirect=/checkout')
-        return
-      }
-
       const data = await res.json()
+
       if (data.success && data.orderId) {
         clearCart()
         router.push(`/orders/${data.orderId}`)
       } else {
-        alert(data.message || 'Payment processing failed.')
+        const msg = data.message || (data.errors ? Object.values(data.errors).flat().join(', ') : 'Payment processing failed.')
+        setErrorMessage(msg)
         setIsProcessing(false)
       }
-    } catch {
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Network error occurred during checkout. Please try again.')
       setIsProcessing(false)
     }
   }
@@ -138,7 +238,7 @@ export default function CheckoutPage() {
         {items.length === 0 ? (
           <Card className="p-12 text-center space-y-4 max-w-md mx-auto">
             <h2 className="text-xl font-bold">Your Cart is Empty</h2>
-            <p className="text-sm text-muted-foreground">Select a course to proceed to checkout.</p>
+            <p className="text-sm text-muted-foreground">Select a course or product to proceed to checkout.</p>
             <Button asChild>
               <Link href="/courses/all">Browse Courses</Link>
             </Button>
@@ -147,9 +247,45 @@ export default function CheckoutPage() {
           <form onSubmit={handleCompletePayment} className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
             {/* Left Column (8 cols): Order Details & Billing Info */}
             <div className="space-y-6 lg:col-span-7 xl:col-span-8">
+              {/* Unauthenticated Alert Banner */}
+              {!isLoggedIn && (
+                <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-amber-900 dark:text-amber-200 flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+                  <div className="space-y-1.5 flex-1">
+                    <p className="font-bold text-sm">Account Required for Checkout</p>
+                    <p className="text-xs text-muted-foreground">
+                      You must be signed in to purchase products, take exams, or enroll in courses. Please sign in or create an account to finalize your order.
+                    </p>
+                    <div className="pt-2 flex items-center gap-3">
+                      <Button asChild size="sm" className="font-semibold cursor-pointer">
+                        <Link href={`/login?redirect=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/checkout')}`}>
+                          Sign In
+                        </Link>
+                      </Button>
+                      <Button asChild size="sm" variant="outline" className="font-semibold cursor-pointer">
+                        <Link href={`/register?redirect=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/checkout')}`}>
+                          Create Account
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Error Banner if any */}
+              {errorMessage && (
+                <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-destructive text-sm flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold">Checkout Notice</p>
+                    <p className="text-xs mt-0.5">{errorMessage}</p>
+                  </div>
+                </div>
+              )}
+
               {/* Order Items Overview */}
               <Card className="p-6 border-border/80 shadow-sm space-y-6">
-                <h2 className="text-lg font-bold text-foreground">Enrolled Items ({items.length})</h2>
+                <h2 className="text-lg font-bold text-foreground">Selected Items ({items.length})</h2>
                 <div className="divide-y divide-border/60">
                   {items.map((item: CartItem) => (
                     <div key={item.id} className="py-4 first:pt-0 last:pb-0 flex gap-4 items-center">
@@ -162,19 +298,37 @@ export default function CheckoutPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-semibold text-foreground line-clamp-1">{item.title}</h3>
-                        <p className="text-xs text-muted-foreground">Instructor: {item.instructor_name || 'Senior Architect'}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {item.type === 'product'
+                            ? 'Digital Store Asset'
+                            : item.type === 'exam'
+                            ? 'Practice Examination'
+                            : `Instructor: ${item.instructor_name || 'Senior Architect'}`}
+                        </p>
                         <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> 18+ Hours
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Award className="h-3 w-3" /> Certificate
-                          </span>
+                          {item.type === 'product' ? (
+                            <span className="flex items-center gap-1">
+                              <ShoppingBag className="h-3 w-3" /> Instant Download
+                            </span>
+                          ) : item.type === 'exam' ? (
+                            <span className="flex items-center gap-1">
+                              <Award className="h-3 w-3" /> Certification Exam
+                            </span>
+                          ) : (
+                            <>
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" /> 18+ Hours
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Award className="h-3 w-3" /> Certificate
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
                       <div className="text-right">
                         <span className="text-base font-bold text-foreground">
-                          ${item.discount_price !== undefined ? item.discount_price : item.price}
+                          ${(item.discount_price !== undefined ? item.discount_price : item.price).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -184,10 +338,14 @@ export default function CheckoutPage() {
 
               {/* Billing Address Form */}
               <Card className="p-6 border-border/80 shadow-sm space-y-5">
-                <h2 className="text-lg font-bold text-foreground">Billing Details</h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-foreground">Billing Details</h2>
+                  <span className="text-xs text-muted-foreground">Guest or Student Account</span>
+                </div>
+
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName">First Name *</Label>
                     <Input
                       id="firstName"
                       required
@@ -197,7 +355,7 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName">Last Name *</Label>
                     <Input
                       id="lastName"
                       required
@@ -210,7 +368,7 @@ export default function CheckoutPage() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">Email Address *</Label>
                     <Input
                       id="email"
                       type="email"
@@ -234,11 +392,11 @@ export default function CheckoutPage() {
               </Card>
 
               {/* 30-Day Money Back Guarantee Banner */}
-              <div className="flex items-center gap-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-600">
+              <div className="flex items-center gap-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-600 dark:text-emerald-400">
                 <ShieldCheck className="h-8 w-8 shrink-0 text-emerald-500" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">30-Day 100% Money-Back Guarantee</p>
-                  <p className="text-xs text-muted-foreground">If you are not satisfied with the course, get a complete refund within 30 days of purchase.</p>
+                  <p className="text-xs text-muted-foreground">If you are not satisfied with your purchase, get a complete refund within 30 days of purchase.</p>
                 </div>
               </div>
             </div>
@@ -329,17 +487,45 @@ export default function CheckoutPage() {
                   <div className="pt-2 space-y-3">
                     <div className="space-y-1">
                       <Label htmlFor="cardNumber" className="text-xs">Card Number</Label>
-                      <Input id="cardNumber" placeholder="4242 •••• •••• 4242" className="h-10 text-xs" />
+                      <Input id="cardNumber" placeholder="4242 •••• •••• 4242" className="h-10 text-xs" defaultValue="4242 •••• •••• 4242" />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
                         <Label htmlFor="expDate" className="text-xs">MM / YY</Label>
-                        <Input id="expDate" placeholder="12/28" className="h-10 text-xs" />
+                        <Input id="expDate" placeholder="12/28" className="h-10 text-xs" defaultValue="12/28" />
                       </div>
                       <div className="space-y-1">
                         <Label htmlFor="cvc" className="text-xs">CVC</Label>
-                        <Input id="cvc" placeholder="123" className="h-10 text-xs" />
+                        <Input id="cvc" placeholder="123" className="h-10 text-xs" defaultValue="123" />
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedGateway === 'offline' && (
+                  <div className="pt-2 space-y-3 rounded-lg bg-muted/40 border border-border p-3 text-xs">
+                    <div className="flex items-start gap-2 text-muted-foreground">
+                      <Info className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                      <p>
+                        Please transfer the total amount to the account below and enter your Transaction / Reference ID.
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-border bg-card p-3 font-mono text-xs space-y-1">
+                      <p><span className="text-muted-foreground">Bank:</span> Global Standard Bank</p>
+                      <p><span className="text-muted-foreground">Account Name:</span> Mentor LMS Inc</p>
+                      <p><span className="text-muted-foreground">Account No:</span> 9876543210123</p>
+                      <p><span className="text-muted-foreground">SWIFT / Routing:</span> GSBKUS33</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="offlineRef" className="text-xs">Deposit Ref / Transaction Notes</Label>
+                      <Textarea
+                        id="offlineRef"
+                        rows={2}
+                        placeholder="Enter bank transfer reference number or receipt details..."
+                        value={offlineNotes}
+                        onChange={(e) => setOfflineNotes(e.target.value)}
+                        className="text-xs"
+                      />
                     </div>
                   </div>
                 )}
@@ -398,25 +584,36 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Submit Payment CTA */}
-                <Button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="w-full h-12 rounded-xl text-base font-bold shadow-md gap-2"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Authorizing Payment...
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="h-4 w-4" />
-                      Complete Enrollment (${grandTotal.toFixed(2)})
-                    </>
-                  )}
-                </Button>
+                {!isLoggedIn ? (
+                  <Button
+                    asChild
+                    className="w-full h-12 rounded-xl text-base font-bold shadow-md gap-2 cursor-pointer"
+                  >
+                    <Link href="/login?redirect=/checkout">
+                      <Lock className="h-4 w-4" /> Login to Complete Order (${grandTotal.toFixed(2)})
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    disabled={isProcessing}
+                    className="w-full h-12 rounded-xl text-base font-bold shadow-md gap-2 cursor-pointer"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Processing Checkout...
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="h-4 w-4" />
+                        {selectedGateway === 'offline' ? 'Submit Offline Order' : 'Complete Order'} (${grandTotal.toFixed(2)})
+                      </>
+                    )}
+                  </Button>
+                )}
 
-                <p className="text-center text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+                <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5">
                   <Lock className="h-3 w-3" /> 256-bit TLS encrypted transaction
                 </p>
               </Card>

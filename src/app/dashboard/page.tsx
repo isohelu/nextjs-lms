@@ -36,10 +36,12 @@ export default function RoleAwareDashboardPage() {
         }
 
         const userRole = data.user.role || 'student'
-        if (userRole === 'admin' || userRole === 'instructor') {
-          setRole(userRole)
+        if (userRole === 'admin') {
+          window.location.href = '/admin/dashboard'
+        } else if (userRole === 'instructor') {
+          window.location.href = '/instructor/dashboard'
         } else {
-          router.replace('/student/dashboard')
+          window.location.href = '/student/courses'
         }
       } catch {
         router.replace('/login')
@@ -55,8 +57,8 @@ export default function RoleAwareDashboardPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f8fafc]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-[#007867]" />
-          <p className="text-sm text-slate-500 font-medium">Loading dashboard...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-foreground" />
+          <p className="text-sm text-muted-foreground font-medium">Loading dashboard...</p>
         </div>
       </div>
     )

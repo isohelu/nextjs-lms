@@ -188,7 +188,7 @@ export default function CreateJobCircularPage() {
             <Button asChild variant="outline">
               <Link href="/dashboard/job-circulars">Cancel</Link>
             </Button>
-            <Button type="submit" disabled={saving} className="bg-[#007867] hover:bg-[#007867]/90 text-white font-semibold">
+            <Button type="submit" disabled={saving} className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs">
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Publish Job
             </Button>

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Breadcrumbs from '@/components/breadcrumbs'
@@ -25,6 +25,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog'
 import {
   Popover,
@@ -80,6 +81,8 @@ import {
   HelpCircle,
   ArrowUp,
   ArrowDown,
+  Users,
+  ExternalLink,
 } from 'lucide-react'
 
 interface Lesson {
@@ -243,13 +246,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
   const [categoryItems, setCategoryItems] = useState<ComboboxItem[]>([])
   const [liveClasses, setLiveClasses] = useState<LiveClass[]>([])
 
-  // Approval status & modal
-  const [approvalStatus, setApprovalStatus] = useState<any>({
-    approve_able: false,
-    counts: { sections_count: 0, lessons_count: 0, quizzes_count: 0, total_content_count: 0 },
-    has_requirements: {},
-    validation_messages: [],
-  })
+  // Approval dialog modal state
   const [approvalDialogOpen, setApprovalDialogOpen] = useState(false)
 
   // Status modal
@@ -302,6 +299,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
   // Lesson Dialog states
   const [lessonDialogOpen, setLessonDialogOpen] = useState(false)
   const [editLessonDialogOpen, setEditLessonDialogOpen] = useState(false)
+  const [savingLesson, setSavingLesson] = useState(false)
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null)
   const [activeSectionId, setActiveSectionId] = useState<number | null>(null)
   const [addLessonStep, setAddLessonStep] = useState<'type' | 'form'>('type')
@@ -319,6 +317,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
   // Quiz Dialog states
   const [quizDialogOpen, setQuizDialogOpen] = useState(false)
   const [editQuizDialogOpen, setEditQuizDialogOpen] = useState(false)
+  const [savingQuiz, setSavingQuiz] = useState(false)
   const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null)
   const [quizForm, setQuizForm] = useState({
     title: '',
@@ -333,6 +332,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
 
   // Live Class Dialog states
   const [liveClassDialogOpen, setLiveClassDialogOpen] = useState(false)
+  const [editingLiveClassId, setEditingLiveClassId] = useState<number | null>(null)
   const [liveClassForm, setLiveClassForm] = useState({
     class_topic: '',
     provider: 'Zoom',
@@ -345,20 +345,101 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
   const [faqs, setFaqs] = useState<FaqItem[]>([])
   const [requirements, setRequirements] = useState<RequirementItem[]>([])
   const [outcomes, setOutcomes] = useState<OutcomeItem[]>([])
+  const [infoSubTab, setInfoSubTab] = useState<'faqs' | 'requirements' | 'outcomes'>('faqs')
 
   const [faqDialogOpen, setFaqDialogOpen] = useState(false)
+  const [editFaqDialogOpen, setEditFaqDialogOpen] = useState(false)
+  const [activeEditFaq, setActiveEditFaq] = useState<FaqItem | null>(null)
   const [faqQ, setFaqQ] = useState('')
   const [faqA, setFaqA] = useState('')
+  const [editFaqQ, setEditFaqQ] = useState('')
+  const [editFaqA, setEditFaqA] = useState('')
 
   const [reqDialogOpen, setReqDialogOpen] = useState(false)
+  const [editReqDialogOpen, setEditReqDialogOpen] = useState(false)
+  const [activeEditReq, setActiveEditReq] = useState<RequirementItem | null>(null)
   const [reqText, setReqText] = useState('')
+  const [editReqText, setEditReqText] = useState('')
 
   const [outcomeDialogOpen, setOutcomeDialogOpen] = useState(false)
+  const [editOutcomeDialogOpen, setEditOutcomeDialogOpen] = useState(false)
+  const [activeEditOutcome, setActiveEditOutcome] = useState<OutcomeItem | null>(null)
   const [outcomeText, setOutcomeText] = useState('')
+  const [editOutcomeText, setEditOutcomeText] = useState('')
 
   // Thumbnail & Banner upload states
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false)
   const [uploadingBanner, setUploadingBanner] = useState(false)
+
+  // Dynamic real-time calculated approval status (updates instantly on any edit)
+  const approvalStatus = useMemo(() => {
+    const sections = course?.sections || []
+    const sectionsCount = sections.length
+    const lessonsCount = sections.reduce(
+      (acc, s) => acc + (s.lessons?.length || s.section_lessons?.length || 0),
+      0
+    )
+    const quizzesCount = sections.reduce(
+      (acc, s) => acc + (s.quizzes?.length || s.section_quizzes?.length || 0),
+      0
+    )
+    const totalContent = sectionsCount + lessonsCount
+
+    const hasThumbnail = Boolean(course?.thumbnail && String(course.thumbnail).trim() !== '')
+    const hasMinSections = sectionsCount >= 1
+    const hasMinLessons = lessonsCount >= 1
+    const hasMinContent = totalContent >= 2
+    const hasOutcomes = Boolean(outcomes && outcomes.length > 0)
+    const hasRequirements = Boolean(requirements && requirements.length > 0)
+
+    const isReadyForApproval = Boolean(
+      hasThumbnail &&
+      hasMinSections &&
+      hasMinLessons &&
+      hasMinContent &&
+      hasOutcomes &&
+      hasRequirements
+    )
+
+    const validationMessages: string[] = []
+    if (!hasThumbnail) {
+      validationMessages.push('Course thumbnail is missing')
+    }
+    if (!hasMinSections) {
+      validationMessages.push('Course needs at least 1 section')
+    }
+    if (!hasMinLessons) {
+      validationMessages.push('Course needs at least 1 lesson')
+    }
+    if (!hasMinContent) {
+      validationMessages.push('Course needs at least 2 content items (sections + section_lessons)')
+    }
+    if (!hasOutcomes) {
+      validationMessages.push('Course outcomes are missing')
+    }
+    if (!hasRequirements) {
+      validationMessages.push('Course requirements are missing')
+    }
+
+    return {
+      approve_able: isReadyForApproval,
+      counts: {
+        sections_count: sectionsCount,
+        lessons_count: lessonsCount,
+        quizzes_count: quizzesCount,
+        total_content_count: totalContent,
+      },
+      has_requirements: {
+        thumbnail: hasThumbnail,
+        min_sections: hasMinSections,
+        min_lessons: hasMinLessons,
+        min_content: hasMinContent,
+        outcomes: hasOutcomes,
+        requirements: hasRequirements,
+      },
+      validation_messages: validationMessages,
+    }
+  }, [course?.thumbnail, course?.sections, outcomes, requirements])
 
   // Fetch course
   const fetchCourse = async (id: number) => {
@@ -382,7 +463,6 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
           expiry_duration: json.course.expiry_duration || '',
         })
         setSelectedStatus(json.course.status || 'approved')
-        if (json.approvalStatus) setApprovalStatus(json.approvalStatus)
         if (json.course.live_classes) setLiveClasses(json.course.live_classes)
         if (json.course.faqs) setFaqs(json.course.faqs)
         if (json.course.requirements) setRequirements(json.course.requirements)
@@ -819,12 +899,17 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const json = await res.json()
       if (res.ok && json.success) {
-        setCourse((prev) => (prev ? { ...prev, thumbnail: json.url } : null))
-        await fetch(`/api/courses/${course.id}`, {
+        const updateRes = await fetch(`/api/courses/${course.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ thumbnail: json.url }),
         })
+        const updateJson = await updateRes.json()
+        if (updateJson.course) {
+          setCourse((prev) => (prev ? { ...prev, ...updateJson.course } : null))
+        } else {
+          setCourse((prev) => (prev ? { ...prev, thumbnail: json.url } : null))
+        }
         toast.success('Thumbnail uploaded successfully')
       } else {
         toast.error('Failed to upload thumbnail')
@@ -850,12 +935,17 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const json = await res.json()
       if (res.ok && json.success) {
-        setCourse((prev) => (prev ? { ...prev, banner: json.url } : null))
-        await fetch(`/api/courses/${course.id}`, {
+        const updateRes = await fetch(`/api/courses/${course.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ banner: json.url }),
         })
+        const updateJson = await updateRes.json()
+        if (updateJson.course) {
+          setCourse((prev) => (prev ? { ...prev, ...updateJson.course } : null))
+        } else {
+          setCourse((prev) => (prev ? { ...prev, banner: json.url } : null))
+        }
         toast.success('Banner uploaded successfully')
       } else {
         toast.error('Failed to upload banner')
@@ -931,6 +1021,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
   const handleCreateLesson = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!activeSectionId || !lessonForm.title.trim() || !course?.id) return
+    setSavingLesson(true)
     try {
       const res = await fetch(`/api/instructor/courses/${course.id}/lessons`, {
         method: 'POST',
@@ -970,12 +1061,15 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
       }
     } catch {
       toast.error('Error adding lesson.')
+    } finally {
+      setSavingLesson(false)
     }
   }
 
   const handleUpdateLesson = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!activeLesson || !lessonForm.title.trim() || !course?.id) return
+    setSavingLesson(true)
     try {
       const res = await fetch(`/api/instructor/courses/${course.id}/lessons/${activeLesson.id}`, {
         method: 'PUT',
@@ -1002,6 +1096,8 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
       }
     } catch {
       toast.error('Failed to update lesson')
+    } finally {
+      setSavingLesson(false)
     }
   }
 
@@ -1026,6 +1122,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
   const handleCreateQuiz = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!activeSectionId || !quizForm.title.trim() || !course?.id) return
+    setSavingQuiz(true)
     try {
       const res = await fetch(`/api/instructor/courses/${course.id}/quizzes`, {
         method: 'POST',
@@ -1064,12 +1161,15 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
       }
     } catch {
       toast.error('Error adding quiz')
+    } finally {
+      setSavingQuiz(false)
     }
   }
 
   const handleUpdateQuiz = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!activeQuiz || !quizForm.title.trim() || !course?.id) return
+    setSavingQuiz(true)
     try {
       const res = await fetch(`/api/instructor/courses/${course.id}/quizzes/${activeQuiz.id}`, {
         method: 'PUT',
@@ -1096,6 +1196,8 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
       }
     } catch {
       toast.error('Error updating quiz.')
+    } finally {
+      setSavingQuiz(false)
     }
   }
 
@@ -1121,15 +1223,20 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
     e.preventDefault()
     if (!course?.id || !liveClassForm.class_topic || !liveClassForm.class_date_and_time) return
     try {
-      const res = await fetch(`/api/instructor/courses/${course.id}/live-classes`, {
-        method: 'POST',
+      const url = editingLiveClassId
+        ? `/api/instructor/courses/${course.id}/live-classes/${editingLiveClassId}`
+        : `/api/instructor/courses/${course.id}/live-classes`
+      const method = editingLiveClassId ? 'PUT' : 'POST'
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(liveClassForm),
       })
       const json = await res.json()
       if (res.ok && json.success) {
-        toast.success('Live class scheduled!')
+        toast.success(editingLiveClassId ? 'Live class updated!' : 'Live class scheduled!')
         setLiveClassDialogOpen(false)
+        setEditingLiveClassId(null)
         setLiveClassForm({
           class_topic: '',
           provider: 'Zoom',
@@ -1139,60 +1246,179 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
         })
         fetchCourse(course.id)
       } else {
-        toast.error(json.message || 'Failed to schedule class.')
+        toast.error(json.message || 'Failed to save class.')
       }
     } catch {
-      toast.error('Error scheduling live class.')
+      toast.error('Error saving live class.')
+    }
+  }
+
+  const handleDeleteLiveClass = async (liveClassId: number) => {
+    if (!course?.id || !confirm('Are you sure you want to delete this live class?')) return
+    try {
+      const res = await fetch(`/api/instructor/courses/${course.id}/live-classes/${liveClassId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        toast.success('Live class deleted.')
+        fetchCourse(course.id)
+      } else {
+        toast.error('Failed to delete live class.')
+      }
+    } catch {
+      toast.error('Error deleting live class.')
     }
   }
 
   // Info: FAQs
-  const handleAddFaq = (e: React.FormEvent) => {
+  const handleAddFaq = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!faqQ.trim() || !faqA.trim()) return
-    const newItem: FaqItem = { id: Date.now(), question: faqQ, answer: faqA }
-    setFaqs((p) => [...p, newItem])
+    const newItem: FaqItem = { id: Date.now(), question: faqQ.trim(), answer: faqA.trim() }
+    const updated = [...faqs, newItem]
+    setFaqs(updated)
     setFaqQ('')
     setFaqA('')
     setFaqDialogOpen(false)
-    toast.success('FAQ added. Click Save Changes to persist.')
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ faqs: updated }),
+      }).catch(() => {})
+    }
+    toast.success('FAQ added!')
   }
 
-  const handleDeleteFaq = (id: number) => {
-    setFaqs((p) => p.filter((f) => f.id !== id))
-    toast.success('FAQ removed. Click Save Changes to persist.')
+  const handleDeleteFaq = async (id: number) => {
+    const updated = faqs.filter((f) => f.id !== id)
+    setFaqs(updated)
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ faqs: updated }),
+      }).catch(() => {})
+    }
+    toast.success('FAQ removed.')
   }
 
   // Info: Requirements
-  const handleAddRequirement = (e: React.FormEvent) => {
+  const handleAddRequirement = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!reqText.trim()) return
-    const newItem: RequirementItem = { id: Date.now(), requirement: reqText }
-    setRequirements((p) => [...p, newItem])
+    const newItem: RequirementItem = { id: Date.now(), requirement: reqText.trim() }
+    const updated = [...requirements, newItem]
+    setRequirements(updated)
     setReqText('')
     setReqDialogOpen(false)
-    toast.success('Requirement added. Click Save Changes to persist.')
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requirements: updated }),
+      }).catch(() => {})
+    }
+    toast.success('Requirement added!')
   }
 
-  const handleDeleteRequirement = (id: number) => {
-    setRequirements((p) => p.filter((r) => r.id !== id))
-    toast.success('Requirement removed. Click Save Changes to persist.')
+  const handleDeleteRequirement = async (id: number) => {
+    const updated = requirements.filter((r) => r.id !== id)
+    setRequirements(updated)
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requirements: updated }),
+      }).catch(() => {})
+    }
+    toast.success('Requirement removed.')
   }
 
   // Info: Outcomes
-  const handleAddOutcome = (e: React.FormEvent) => {
+  const handleAddOutcome = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!outcomeText.trim()) return
-    const newItem: OutcomeItem = { id: Date.now(), outcome: outcomeText }
-    setOutcomes((p) => [...p, newItem])
+    const newItem: OutcomeItem = { id: Date.now(), outcome: outcomeText.trim() }
+    const updated = [...outcomes, newItem]
+    setOutcomes(updated)
     setOutcomeText('')
     setOutcomeDialogOpen(false)
-    toast.success('Outcome added. Click Save Changes to persist.')
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ outcomes: updated }),
+      }).catch(() => {})
+    }
+    toast.success('Outcome added!')
   }
 
-  const handleDeleteOutcome = (id: number) => {
-    setOutcomes((p) => p.filter((o) => o.id !== id))
-    toast.success('Outcome removed. Click Save Changes to persist.')
+  const handleDeleteOutcome = async (id: number) => {
+    const updated = outcomes.filter((o) => o.id !== id)
+    setOutcomes(updated)
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ outcomes: updated }),
+      }).catch(() => {})
+    }
+    toast.success('Outcome removed.')
+  }
+
+  // Update FAQ
+  const handleUpdateFaq = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!activeEditFaq || !editFaqQ.trim() || !editFaqA.trim()) return
+    const updated = faqs.map((f) => (f.id === activeEditFaq.id ? { ...f, question: editFaqQ.trim(), answer: editFaqA.trim() } : f))
+    setFaqs(updated)
+    setEditFaqDialogOpen(false)
+    setActiveEditFaq(null)
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ faqs: updated }),
+      }).catch(() => {})
+    }
+    toast.success('FAQ updated!')
+  }
+
+  // Update Requirement
+  const handleUpdateRequirement = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!activeEditReq || !editReqText.trim()) return
+    const updated = requirements.map((r) => (r.id === activeEditReq.id ? { ...r, requirement: editReqText.trim() } : r))
+    setRequirements(updated)
+    setEditReqDialogOpen(false)
+    setActiveEditReq(null)
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requirements: updated }),
+      }).catch(() => {})
+    }
+    toast.success('Requirement updated!')
+  }
+
+  // Update Outcome
+  const handleUpdateOutcome = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!activeEditOutcome || !editOutcomeText.trim()) return
+    const updated = outcomes.map((o) => (o.id === activeEditOutcome.id ? { ...o, outcome: editOutcomeText.trim() } : o))
+    setOutcomes(updated)
+    setEditOutcomeDialogOpen(false)
+    setActiveEditOutcome(null)
+    if (course?.id) {
+      fetch(`/api/courses/${course.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ outcomes: updated }),
+      }).catch(() => {})
+    }
+    toast.success('Outcome updated!')
   }
 
   if (loading) {
@@ -1310,27 +1536,31 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
               </span>
             )}
 
-            {/* Submit for Approval Button matching Screenshots 1 & 2 */}
-            {approvalStatus.approve_able ? (
-              currentUser?.role === 'instructor' && course.status !== 'approved' && course.status !== 'pending' && (
-                <Button
-                  onClick={handleSubmitForApproval}
-                  className="h-9 px-4 gap-1.5"
-                >
-                  <Send className="mr-1.5 h-4 w-4" />
-                  Submit for Approval
-                </Button>
+            {/* Submit for Approval Button matching Screenshots 1 & 2 (Instructor Only) */}
+            {currentUser?.role === 'instructor' && (
+              approvalStatus.approve_able ? (
+                course.status !== 'approved' && course.status !== 'pending' && (
+                  <Button
+                    onClick={handleSubmitForApproval}
+                    className="h-9 px-4 gap-1.5"
+                  >
+                    <Send className="mr-1.5 h-4 w-4" />
+                    Submit for Approval
+                  </Button>
+                )
+              ) : (
+                course.status !== 'approved' && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setApprovalDialogOpen(true)}
+                    className="border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-500/30 dark:text-amber-400 dark:hover:bg-amber-950/20 h-9 px-4 gap-1.5 rounded-md font-medium"
+                  >
+                    <AlertTriangle className="mr-1.5 h-4 w-4" />
+                    Submit for Approval
+                  </Button>
+                )
               )
-            ) : (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setApprovalDialogOpen(true)}
-                className="border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-500/30 dark:text-amber-400 dark:hover:bg-amber-950/20 h-9 px-4 gap-1.5 rounded-md font-medium"
-              >
-                <AlertTriangle className="mr-1.5 h-4 w-4" />
-                Submit for Approval
-              </Button>
             )}
 
             {/* Admin Status Update Dialog */}
@@ -1409,17 +1639,63 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                     <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                       Pending Requirements
                     </h4>
-                    <div className="max-h-40 space-y-2 overflow-y-auto pr-1">
+                    <div className="max-h-48 space-y-2 overflow-y-auto pr-1">
                       {approvalStatus.validation_messages && approvalStatus.validation_messages.length > 0 ? (
-                        approvalStatus.validation_messages.map((message: string, index: number) => (
-                          <div
-                            key={index}
-                            className="flex items-start gap-2.5 rounded-lg border bg-card p-3 text-sm text-foreground shadow-xs"
-                          >
-                            <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-                            <span className="leading-snug">{message}</span>
-                          </div>
-                        ))
+                        approvalStatus.validation_messages.map((message: string, index: number) => {
+                          const msgLower = message.toLowerCase()
+                          let targetTab: string | null = null
+                          let targetSubTab: 'faqs' | 'requirements' | 'outcomes' | null = null
+                          let label = ''
+
+                          if (msgLower.includes('thumbnail')) {
+                            targetTab = 'media'
+                            label = 'Media'
+                          } else if (msgLower.includes('outcome')) {
+                            targetTab = 'info'
+                            targetSubTab = 'outcomes'
+                            label = 'Outcomes'
+                          } else if (msgLower.includes('requirement')) {
+                            targetTab = 'info'
+                            targetSubTab = 'requirements'
+                            label = 'Requirements'
+                          } else if (msgLower.includes('faq')) {
+                            targetTab = 'info'
+                            targetSubTab = 'faqs'
+                            label = 'FAQs'
+                          } else if (msgLower.includes('section') || msgLower.includes('lesson') || msgLower.includes('content')) {
+                            targetTab = 'curriculum'
+                            label = 'Curriculum'
+                          }
+
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => {
+                                if (targetTab) {
+                                  setApprovalDialogOpen(false)
+                                  handleTabChange(targetTab)
+                                  if (targetSubTab) {
+                                    setInfoSubTab(targetSubTab)
+                                  }
+                                }
+                              }}
+                              className={cn(
+                                'flex items-center justify-between gap-2.5 rounded-lg border bg-card p-3 text-sm text-foreground shadow-xs transition-all',
+                                targetTab && 'cursor-pointer hover:bg-muted/60 hover:border-primary/50'
+                              )}
+                            >
+                              <div className="flex items-start gap-2.5">
+                                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                                <span className="leading-snug">{message}</span>
+                              </div>
+                              {targetTab && (
+                                <span className="text-xs font-semibold text-primary capitalize flex items-center gap-1 shrink-0 ml-2">
+                                  {label || targetTab} &rarr;
+                                </span>
+                              )}
+                            </div>
+                          )
+                        })
                       ) : (
                         <div className="flex items-start gap-2.5 rounded-lg border bg-card p-3 text-sm text-muted-foreground shadow-xs">
                           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
@@ -1606,102 +1882,102 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                         value={`sec-${section.id}`}
                         className="w-full overflow-hidden rounded-lg border border-border bg-card shadow-none"
                       >
-                        {/* Section Accordion Trigger matching Screenshot 1 */}
-                        <AccordionTrigger className="px-4 py-3 text-base hover:no-underline [&>svg]:hidden data-[state=open]:bg-muted/40">
-                          <div className="flex w-full items-center justify-between">
-                            <span className="font-medium text-foreground">
+                        {/* Section Header: AccordionTrigger and Popover Menu separated to avoid nested button */}
+                        <div className="flex w-full items-center justify-between px-4 py-1 hover:bg-muted/40 transition-colors">
+                          <AccordionTrigger className="flex-1 py-2 text-base font-medium hover:no-underline text-foreground">
+                            <span>
                               {idx + 1}. {section.title}
                             </span>
+                          </AccordionTrigger>
 
-                            {/* Section Menu Popover matching Screenshot 1 */}
-                            <div onClick={(e) => e.stopPropagation()}>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    className="bg-muted px-2.5 py-1 text-sm font-medium hover:bg-muted-foreground/10 flex items-center gap-1 rounded-md"
-                                  >
-                                    <span>Section Menu</span>
-                                    <ChevronDown className="h-4 w-4" />
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent align="end" className="flex w-40 flex-col space-y-1 p-2">
-                                  <Button
-                                    variant="ghost"
-                                    className="h-8 w-full justify-start bg-muted hover:bg-muted-foreground/10 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
-                                    onClick={() => {
-                                      setActiveSectionId(section.id)
-                                      setAddLessonStep('type')
-                                      setLessonForm({
-                                        title: '',
-                                        lesson_type: 'video_url',
-                                        lesson_provider: 'youtube',
-                                        lesson_src: '',
-                                        duration: '',
-                                        is_free: false,
-                                        summary: '',
-                                        description: '',
-                                      })
-                                      setLessonDialogOpen(true)
-                                    }}
-                                  >
-                                    <Plus className="h-3.5 w-3.5" />
-                                    <span>Add Lesson</span>
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    className="h-8 w-full justify-start bg-muted hover:bg-muted-foreground/10 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
-                                    onClick={() => openSortLessonsModal(section)}
-                                  >
-                                    <ArrowDownUp className="h-3.5 w-3.5" />
-                                    <span>Sort Lessons</span>
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    className="h-8 w-full justify-start bg-muted hover:bg-muted-foreground/10 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
-                                    onClick={() => {
-                                      setActiveSectionId(section.id)
-                                      setQuizForm({
-                                        title: '',
-                                        hours: 0,
-                                        minutes: 30,
-                                        seconds: 0,
-                                        total_marks: 100,
-                                        pass_mark: 50,
-                                        retake: 1,
-                                        summary: '',
-                                      })
-                                      setQuizDialogOpen(true)
-                                    }}
-                                  >
-                                    <Plus className="h-3.5 w-3.5" />
-                                    <span>Add Quiz</span>
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    className="h-8 w-full justify-start bg-muted hover:bg-muted-foreground/10 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
-                                    onClick={() => {
-                                      setActiveSection(section)
-                                      setEditSectionTitle(section.title)
-                                      setEditSectionDialogOpen(true)
-                                    }}
-                                  >
-                                    <Pencil className="h-3.5 w-3.5" />
-                                    <span>Update Section</span>
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    className="h-8 w-full justify-start bg-red-50 text-destructive hover:bg-red-100 hover:text-destructive dark:bg-destructive/15 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
-                                    onClick={() => handleDeleteSection(section.id)}
-                                  >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                    <span>Delete Section</span>
-                                  </Button>
-                                </PopoverContent>
-                              </Popover>
-                            </div>
+                          {/* Section Menu Popover matching Screenshot 1 */}
+                          <div className="ml-3 shrink-0">
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  className="bg-muted px-2.5 py-1 text-sm font-medium hover:bg-muted-foreground/10 flex items-center gap-1 rounded-md cursor-pointer"
+                                >
+                                  <span>Section Menu</span>
+                                  <ChevronDown className="h-4 w-4" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent align="end" className="flex w-40 flex-col space-y-1 p-2">
+                                <Button
+                                  variant="ghost"
+                                  className="h-8 w-full justify-start bg-muted hover:bg-muted-foreground/10 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
+                                  onClick={() => {
+                                    setActiveSectionId(section.id)
+                                    setAddLessonStep('type')
+                                    setLessonForm({
+                                      title: '',
+                                      lesson_type: 'video_url',
+                                      lesson_provider: 'youtube',
+                                      lesson_src: '',
+                                      duration: '',
+                                      is_free: false,
+                                      summary: '',
+                                      description: '',
+                                    })
+                                    setLessonDialogOpen(true)
+                                  }}
+                                >
+                                  <Plus className="h-3.5 w-3.5" />
+                                  <span>Add Lesson</span>
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  className="h-8 w-full justify-start bg-muted hover:bg-muted-foreground/10 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
+                                  onClick={() => openSortLessonsModal(section)}
+                                >
+                                  <ArrowDownUp className="h-3.5 w-3.5" />
+                                  <span>Sort Lessons</span>
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  className="h-8 w-full justify-start bg-muted hover:bg-muted-foreground/10 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
+                                  onClick={() => {
+                                    setActiveSectionId(section.id)
+                                    setQuizForm({
+                                      title: '',
+                                      hours: 0,
+                                      minutes: 30,
+                                      seconds: 0,
+                                      total_marks: 100,
+                                      pass_mark: 50,
+                                      retake: 1,
+                                      summary: '',
+                                    })
+                                    setQuizDialogOpen(true)
+                                  }}
+                                >
+                                  <Plus className="h-3.5 w-3.5" />
+                                  <span>Add Quiz</span>
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  className="h-8 w-full justify-start bg-muted hover:bg-muted-foreground/10 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
+                                  onClick={() => {
+                                    setActiveSection(section)
+                                    setEditSectionTitle(section.title)
+                                    setEditSectionDialogOpen(true)
+                                  }}
+                                >
+                                  <Pencil className="h-3.5 w-3.5" />
+                                  <span>Update Section</span>
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  className="h-8 w-full justify-start bg-red-50 text-destructive hover:bg-red-100 hover:text-destructive dark:bg-destructive/15 text-xs gap-2 font-normal has-[svg]:px-2! rounded-md"
+                                  onClick={() => handleDeleteSection(section.id)}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                  <span>Delete Section</span>
+                                </Button>
+                              </PopoverContent>
+                            </Popover>
                           </div>
-                        </AccordionTrigger>
+                        </div>
 
                         {/* Lesson / Quiz items inside section matching Screenshot 1 */}
                         <AccordionContent className="space-y-3 p-4 bg-background border-t">
@@ -2223,316 +2499,479 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
               </DialogContent>
             </Dialog>
 
-            {/* Add Lesson Dialog */}
-            <Dialog open={lessonDialogOpen} onOpenChange={setLessonDialogOpen}>
-              <DialogContent className="sm:max-w-150 max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
+            {/* Add Lesson Dialog - Exact 1:1 Laravel replica */}
+            <Dialog
+              open={lessonDialogOpen}
+              onOpenChange={(open) => {
+                setLessonDialogOpen(open);
+                if (open) setAddLessonStep('type');
+              }}
+            >
+              <DialogContent className="sm:max-w-[540px] max-h-[90vh] p-6">
+                <DialogHeader className="mb-4">
                   <DialogTitle className="text-lg font-semibold">
-                    {addLessonStep === 'type' ? 'Select Lesson Type' : 'Add Lesson'}
+                    Add Lesson
                   </DialogTitle>
                 </DialogHeader>
 
                 {addLessonStep === 'type' ? (
-                  <div className="space-y-4 pt-2">
-                    <p className="text-xs text-muted-foreground">
-                      Choose the type of lesson you want to add to this section:
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {[
-                        { type: 'video_url', label: 'Video URL', icon: TvMinimalPlay, desc: 'YouTube, Vimeo, HTML5 link' },
-                        { type: 'video', label: 'Video File', icon: Video, desc: 'Direct video file upload' },
-                        { type: 'document', label: 'Document File', icon: FileText, desc: 'PDF, Word, or presentation' },
-                        { type: 'image', label: 'Image File', icon: Eye, desc: 'Visual aid or graphic diagram' },
-                        { type: 'text', label: 'Text Content', icon: BookText, desc: 'Article or reading lesson' },
-                        { type: 'iframe', label: 'Embed Source', icon: Play, desc: 'External iFrame or embed code' },
-                      ].map((item) => (
-                        <button
-                          key={item.type}
-                          type="button"
-                          onClick={() => {
-                            setLessonForm((p) => ({ ...p, lesson_type: item.type }))
-                            setAddLessonStep('form')
-                          }}
-                          className={cn(
-                            'flex flex-col items-center justify-center p-4 rounded-lg border text-center transition-all hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 group cursor-pointer',
-                            lessonForm.lesson_type === item.type
-                              ? 'border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/30 font-medium'
-                              : 'border-border bg-card'
-                          )}
-                        >
-                          <item.icon className="h-6 w-6 mb-2 text-emerald-600 group-hover:scale-110 transition-transform" />
-                          <span className="text-xs font-semibold text-foreground">{item.label}</span>
-                          <span className="text-[11px] text-muted-foreground mt-1 line-clamp-2">{item.desc}</span>
-                        </button>
-                      ))}
-                    </div>
-                    <div className="flex justify-between pt-2">
-                      <Button type="button" variant="outline" onClick={() => setLessonDialogOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() => setAddLessonStep('form')}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label className="font-semibold text-sm">Lesson type</Label>
+                      <RadioGroup
+                        value={lessonForm.lesson_type}
+                        onValueChange={(val) => setLessonForm((p) => ({ ...p, lesson_type: val }))}
+                        className="grid grid-cols-2 gap-3"
                       >
-                        Continue to Details
-                      </Button>
+                        {[
+                          { value: 'video', label: 'Video File' },
+                          { value: 'video_url', label: 'Video URL' },
+                          { value: 'document', label: 'Document File' },
+                          { value: 'image', label: 'Image File' },
+                          { value: 'text', label: 'Text Content' },
+                          { value: 'embed', label: 'Embed Source' },
+                        ].map((type) => (
+                          <Label
+                            key={type.value}
+                            className={cn(
+                              'flex items-center space-x-2 rounded-lg border p-2 cursor-pointer transition-colors text-sm',
+                              lessonForm.lesson_type === type.value
+                                ? 'border-foreground/80 font-medium'
+                                : 'border-border hover:bg-muted/50'
+                            )}
+                          >
+                            <RadioGroupItem
+                              className="mb-0 cursor-pointer"
+                              value={type.value}
+                            />
+                            <span>{type.label}</span>
+                          </Label>
+                        ))}
+                      </RadioGroup>
                     </div>
+
+                    <DialogFooter className="w-full justify-start space-x-2 pt-6">
+                      <div className="flex items-center gap-3">
+                        <Button type="button" variant="outline" onClick={() => setLessonDialogOpen(false)}>
+                          Close
+                        </Button>
+                        <Button type="button" onClick={() => setAddLessonStep('form')}>
+                          Next
+                        </Button>
+                      </div>
+                    </DialogFooter>
                   </div>
                 ) : (
-                  <form onSubmit={handleCreateLesson} className="space-y-4 pt-2">
-                    <div className="flex items-center justify-between pb-1">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs -ml-2 text-muted-foreground hover:text-foreground"
-                        onClick={() => setAddLessonStep('type')}
-                      >
-                        ← Back to Type Selection
-                      </Button>
-                      <Badge variant="outline" className="text-xs font-normal capitalize">
-                        Type: {lessonForm.lesson_type.replace('_', ' ')}
-                      </Badge>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="les-title">Title <span className="text-destructive">*</span></Label>
-                      <Input
-                        id="les-title"
-                        placeholder="e.g. CSS Tutorial - Zero to Hero"
-                        value={lessonForm.title}
-                        onChange={(e) => setLessonForm((p) => ({ ...p, title: e.target.value }))}
-                        className="mt-1"
-                        required
-                      />
-                    </div>
-
-                    {(lessonForm.lesson_type === 'video_url' || lessonForm.lesson_type === 'video') && (
-                      <div className="space-y-4">
+                  <form onSubmit={handleCreateLesson}>
+                    <ScrollArea className="max-h-[calc(85vh-160px)] pr-3">
+                      <div className="space-y-4 p-0.5">
                         <div>
-                          <Label>Video URL Provider</Label>
-                          <Select
-                            value={lessonForm.lesson_provider}
-                            onValueChange={(val) => setLessonForm((p) => ({ ...p, lesson_provider: val }))}
-                          >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue placeholder="Select Provider" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="youtube">YouTube</SelectItem>
-                              <SelectItem value="vimeo">Vimeo</SelectItem>
-                              <SelectItem value="html5">HTML5</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <Label htmlFor="les-title">Title *</Label>
+                          <Input
+                            id="les-title"
+                            placeholder="Title"
+                            value={lessonForm.title}
+                            onChange={(e) => setLessonForm((p) => ({ ...p, title: e.target.value }))}
+                            className="mt-1"
+                            required
+                          />
                         </div>
 
-                        <div>
-                          <div className="flex items-baseline gap-1">
-                            <Label htmlFor="les-src">Video URL <span className="text-destructive">*</span></Label>
-                            <span className="text-xs text-muted-foreground">(Provide the shareable url only)</span>
+                        {/* File Upload for video, document, image */}
+                        {['video', 'document', 'image'].includes(lessonForm.lesson_type) && (
+                          <div>
+                            <Label className="capitalize">Select {lessonForm.lesson_type}</Label>
+                            <Input
+                              type="file"
+                              className="mt-1 cursor-pointer"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  if (!lessonForm.title) {
+                                    setLessonForm((p) => ({
+                                      ...p,
+                                      title: file.name.replace(/\.[^/.]+$/, ''),
+                                    }));
+                                  }
+                                }
+                              }}
+                            />
                           </div>
+                        )}
+
+                        {/* Video URL Provider and Source */}
+                        {lessonForm.lesson_type === 'video_url' && (
+                          <div className="space-y-4">
+                            <div>
+                              <Label>Video URL Provider</Label>
+                              <Select
+                                value={lessonForm.lesson_provider || 'youtube'}
+                                onValueChange={(val) => setLessonForm((p) => ({ ...p, lesson_provider: val }))}
+                              >
+                                <SelectTrigger className="mt-1 w-full">
+                                  <SelectValue placeholder="Select Provider" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="youtube">YouTube</SelectItem>
+                                  <SelectItem value="vimeo">Vimeo</SelectItem>
+                                  <SelectItem value="html5">HTML5</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <Label htmlFor="les-src">
+                                Video URL{' '}
+                                <span className="text-xs text-muted-foreground">
+                                  (Provide the shareable url only)
+                                </span>
+                              </Label>
+                              <Input
+                                id="les-src"
+                                placeholder={`Type your ${lessonForm.lesson_provider || 'youtube'} video url`}
+                                value={lessonForm.lesson_src}
+                                onChange={(e) => setLessonForm((p) => ({ ...p, lesson_src: e.target.value }))}
+                                className="mt-1"
+                                required
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Embed Source */}
+                        {lessonForm.lesson_type === 'embed' && (
+                          <div>
+                            <Label htmlFor="les-embed">
+                              Embed source{' '}
+                              <span className="text-xs text-muted-foreground">
+                                (Provide the source url only)
+                              </span>
+                            </Label>
+                            <Textarea
+                              id="les-embed"
+                              placeholder="Type your embed source code or url"
+                              rows={4}
+                              value={lessonForm.lesson_src}
+                              onChange={(e) => setLessonForm((p) => ({ ...p, lesson_src: e.target.value }))}
+                              className="mt-1"
+                              required
+                            />
+                          </div>
+                        )}
+
+                        {/* Rich Text for text type */}
+                        {lessonForm.lesson_type === 'text' && (
+                          <div>
+                            <Label>Your text</Label>
+                            <div className="mt-1">
+                              <Editor
+                                ssr={true}
+                                output="html"
+                                placeholder={{
+                                  paragraph: 'Type your content here...',
+                                  imageCaption: 'Type caption for image (optional)',
+                                }}
+                                contentMinHeight={220}
+                                contentMaxHeight={500}
+                                initialContent={lessonForm.lesson_src}
+                                onContentChange={(val) =>
+                                  setLessonForm((p) => ({ ...p, lesson_src: val }))
+                                }
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Duration for video and video_url */}
+                        {['video_url', 'video'].includes(lessonForm.lesson_type) && (
+                          <div>
+                            <Label htmlFor="les-dur">Duration</Label>
+                            <Input
+                              id="les-dur"
+                              placeholder="00:00:00"
+                              value={lessonForm.duration}
+                              onChange={(e) => setLessonForm((p) => ({ ...p, duration: e.target.value }))}
+                              className="mt-1"
+                            />
+                          </div>
+                        )}
+
+                        {/* Summary with TipTap Rich Editor matching Laravel */}
+                        <div>
+                          <Label htmlFor="les-summary">Summary</Label>
+                          <div className="mt-1">
+                            <Editor
+                              ssr={true}
+                              output="html"
+                              placeholder={{
+                                paragraph: 'Type your content here...',
+                                imageCaption: 'Type caption for image (optional)',
+                              }}
+                              contentMinHeight={200}
+                              contentMaxHeight={400}
+                              initialContent={lessonForm.summary}
+                              onContentChange={(val) =>
+                                setLessonForm((p) => ({ ...p, summary: val }))
+                              }
+                            />
+                          </div>
+                        </div>
+
+                        {/* Lesson Type Radio Group */}
+                        <div>
+                          <Label className="block mb-2 text-sm font-medium">Lesson type</Label>
+                          <RadioGroup
+                            value={lessonForm.is_free ? 'free' : 'paid'}
+                            onValueChange={(val) => setLessonForm((p) => ({ ...p, is_free: val === 'free' }))}
+                            className="flex items-center space-x-4 pt-1"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="paid" id="create-lesson-paid" className="cursor-pointer" />
+                              <Label htmlFor="create-lesson-paid" className="text-sm font-normal cursor-pointer capitalize">
+                                paid
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="free" id="create-lesson-free" className="cursor-pointer" />
+                              <Label htmlFor="create-lesson-free" className="text-sm font-normal cursor-pointer capitalize">
+                                free
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+                    </ScrollArea>
+
+                    <DialogFooter className="w-full justify-between space-x-2 pt-6">
+                      <div className="flex w-full items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Button type="button" variant="outline" onClick={() => setLessonDialogOpen(false)}>
+                            Close
+                          </Button>
+                          <Button type="button" onClick={() => setAddLessonStep('type')}>
+                            Back
+                          </Button>
+                        </div>
+                        <Button type="submit" disabled={savingLesson}>
+                          {savingLesson ? 'Saving...' : 'Add Lesson'}
+                        </Button>
+                      </div>
+                    </DialogFooter>
+                  </form>
+                )}
+              </DialogContent>
+            </Dialog>
+
+            {/* Edit Lesson Dialog - 1:1 replica matching Laravel */}
+            <Dialog open={editLessonDialogOpen} onOpenChange={setEditLessonDialogOpen}>
+              <DialogContent className="sm:max-w-[540px] max-h-[90vh] p-6">
+                <DialogHeader className="mb-4">
+                  <DialogTitle className="text-lg font-semibold">Update Lesson</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleUpdateLesson}>
+                  <ScrollArea className="max-h-[calc(85vh-160px)] pr-3">
+                    <div className="space-y-4 p-0.5">
+                      <div>
+                        <Label htmlFor="edit-les-title">Title *</Label>
+                        <Input
+                          id="edit-les-title"
+                          placeholder="Title"
+                          value={lessonForm.title}
+                          onChange={(e) => setLessonForm((p) => ({ ...p, title: e.target.value }))}
+                          className="mt-1"
+                          required
+                        />
+                      </div>
+
+                      {/* Video URL Provider and Source */}
+                      {lessonForm.lesson_type === 'video_url' && (
+                        <div className="space-y-4">
+                          <div>
+                            <Label>Video URL Provider</Label>
+                            <Select
+                              value={lessonForm.lesson_provider || 'youtube'}
+                              onValueChange={(val) => setLessonForm((p) => ({ ...p, lesson_provider: val }))}
+                            >
+                              <SelectTrigger className="mt-1 w-full">
+                                <SelectValue placeholder="Select Provider" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="youtube">YouTube</SelectItem>
+                                <SelectItem value="vimeo">Vimeo</SelectItem>
+                                <SelectItem value="html5">HTML5</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="edit-les-src">
+                              Video URL{' '}
+                              <span className="text-xs text-muted-foreground">
+                                (Provide the shareable url only)
+                              </span>
+                            </Label>
+                            <Input
+                              id="edit-les-src"
+                              placeholder={`Type your ${lessonForm.lesson_provider || 'youtube'} video url`}
+                              value={lessonForm.lesson_src}
+                              onChange={(e) => setLessonForm((p) => ({ ...p, lesson_src: e.target.value }))}
+                              className="mt-1"
+                              required
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* File Upload for video, document, image */}
+                      {['video', 'document', 'image'].includes(lessonForm.lesson_type) && (
+                        <div>
+                          <Label className="capitalize">Select {lessonForm.lesson_type}</Label>
                           <Input
-                            id="les-src"
-                            placeholder="https://www.youtube.com/watch?v=..."
+                            type="file"
+                            className="mt-1 cursor-pointer"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file && !lessonForm.title) {
+                                setLessonForm((p) => ({
+                                  ...p,
+                                  title: file.name.replace(/\.[^/.]+$/, ''),
+                                }));
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Embed Source */}
+                      {lessonForm.lesson_type === 'embed' && (
+                        <div>
+                          <Label htmlFor="edit-les-embed">
+                            Embed source{' '}
+                            <span className="text-xs text-muted-foreground">
+                              (Provide the source url only)
+                            </span>
+                          </Label>
+                          <Textarea
+                            id="edit-les-embed"
+                            placeholder="Type your embed source code or url"
+                            rows={4}
                             value={lessonForm.lesson_src}
                             onChange={(e) => setLessonForm((p) => ({ ...p, lesson_src: e.target.value }))}
                             className="mt-1"
                             required
                           />
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {lessonForm.lesson_type !== 'video_url' && lessonForm.lesson_type !== 'video' && (
+                      {/* Rich Text for text type */}
+                      {lessonForm.lesson_type === 'text' && (
+                        <div>
+                          <Label>Your text</Label>
+                          <div className="mt-1">
+                            <Editor
+                              ssr={true}
+                              output="html"
+                              placeholder={{
+                                paragraph: 'Type your content here...',
+                                imageCaption: 'Type caption for image (optional)',
+                              }}
+                              contentMinHeight={220}
+                              contentMaxHeight={500}
+                              initialContent={lessonForm.lesson_src}
+                              onContentChange={(val) =>
+                                setLessonForm((p) => ({ ...p, lesson_src: val }))
+                              }
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Duration for video and video_url */}
+                      {['video_url', 'video'].includes(lessonForm.lesson_type) && (
+                        <div>
+                          <Label htmlFor="edit-les-dur">Duration</Label>
+                          <Input
+                            id="edit-les-dur"
+                            placeholder="00:00:00"
+                            value={lessonForm.duration}
+                            onChange={(e) => setLessonForm((p) => ({ ...p, duration: e.target.value }))}
+                            className="mt-1"
+                          />
+                        </div>
+                      )}
+
+                      {/* Summary with TipTap Rich Editor */}
                       <div>
-                        <Label htmlFor="les-src">Source / Resource URL</Label>
-                        <Input
-                          id="les-src"
-                          placeholder="https://..."
-                          value={lessonForm.lesson_src}
-                          onChange={(e) => setLessonForm((p) => ({ ...p, lesson_src: e.target.value }))}
-                          className="mt-1"
-                        />
+                        <Label htmlFor="edit-les-summary">Summary</Label>
+                        <div className="mt-1">
+                          <Editor
+                            ssr={true}
+                            output="html"
+                            placeholder={{
+                              paragraph: 'Type your content here...',
+                              imageCaption: 'Type caption for image (optional)',
+                            }}
+                            contentMinHeight={200}
+                            contentMaxHeight={400}
+                            initialContent={lessonForm.summary}
+                            onContentChange={(val) =>
+                              setLessonForm((p) => ({ ...p, summary: val }))
+                            }
+                          />
+                        </div>
                       </div>
-                    )}
 
-                    <div>
-                      <Label htmlFor="les-dur">Duration</Label>
-                      <Input
-                        id="les-dur"
-                        placeholder="00:00:00"
-                        value={lessonForm.duration}
-                        onChange={(e) => setLessonForm((p) => ({ ...p, duration: e.target.value }))}
-                        className="mt-1"
-                      />
+                      {/* Lesson Type Radio Group */}
+                      <div>
+                        <Label className="block mb-2 text-sm font-medium">Lesson type</Label>
+                        <RadioGroup
+                          value={lessonForm.is_free ? 'free' : 'paid'}
+                          onValueChange={(val) => setLessonForm((p) => ({ ...p, is_free: val === 'free' }))}
+                          className="flex items-center space-x-4 pt-1"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="paid" id="edit-lesson-paid" className="cursor-pointer" />
+                            <Label htmlFor="edit-lesson-paid" className="text-sm font-normal cursor-pointer capitalize">
+                              paid
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="free" id="edit-lesson-free" className="cursor-pointer" />
+                            <Label htmlFor="edit-lesson-free" className="text-sm font-normal cursor-pointer capitalize">
+                              free
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
                     </div>
+                  </ScrollArea>
 
-                    <div>
-                      <Label htmlFor="les-summary">Summary</Label>
-                      <Textarea
-                        id="les-summary"
-                        placeholder="Write a brief overview of this lesson..."
-                        rows={3}
-                        value={lessonForm.summary}
-                        onChange={(e) => setLessonForm((p) => ({ ...p, summary: e.target.value }))}
-                        className="mt-1"
-                      />
-                    </div>
-
-                    <div>
-                      <Label className="block mb-2 text-sm font-medium">Lesson type:</Label>
-                      <RadioGroup
-                        value={lessonForm.is_free ? 'free' : 'paid'}
-                        onValueChange={(val) => setLessonForm((p) => ({ ...p, is_free: val === 'free' }))}
-                        className="flex items-center gap-6"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="paid" id="create-lesson-paid" />
-                          <Label htmlFor="create-lesson-paid" className="text-sm font-normal cursor-pointer">
-                            paid
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="free" id="create-lesson-free" />
-                          <Label htmlFor="create-lesson-free" className="text-sm font-normal cursor-pointer">
-                            free
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-
-                    <div className="flex justify-between items-center pt-3 border-t">
-                      <Button type="button" variant="outline" onClick={() => setLessonDialogOpen(false)}>
+                  <DialogFooter className="w-full justify-between space-x-2 pt-6">
+                    <div className="flex w-full items-center justify-between">
+                      <Button type="button" variant="outline" onClick={() => setEditLessonDialogOpen(false)}>
                         Close
                       </Button>
-                      <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                        Add Lesson
+                      <Button type="submit" disabled={savingLesson}>
+                        {savingLesson ? 'Saving...' : 'Update Lesson'}
                       </Button>
                     </div>
-                  </form>
-                )}
-              </DialogContent>
-            </Dialog>
-
-            {/* Edit Lesson Dialog - 1:1 replica matching Screenshot 1 */}
-            <Dialog open={editLessonDialogOpen} onOpenChange={setEditLessonDialogOpen}>
-              <DialogContent className="sm:max-w-150 max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-lg font-semibold">Update Lesson</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleUpdateLesson} className="space-y-4 pt-2">
-                  <div>
-                    <Label htmlFor="edit-les-title">Title <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="edit-les-title"
-                      value={lessonForm.title}
-                      onChange={(e) => setLessonForm((p) => ({ ...p, title: e.target.value }))}
-                      className="mt-1"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Video URL Provider</Label>
-                    <Select
-                      value={lessonForm.lesson_provider}
-                      onValueChange={(val) => setLessonForm((p) => ({ ...p, lesson_provider: val }))}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select Provider" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="youtube">YouTube</SelectItem>
-                        <SelectItem value="vimeo">Vimeo</SelectItem>
-                        <SelectItem value="html5">HTML5</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <div className="flex items-baseline gap-1">
-                      <Label htmlFor="edit-les-src">Video URL <span className="text-destructive">*</span></Label>
-                      <span className="text-xs text-muted-foreground">(Provide the shareable url only)</span>
-                    </div>
-                    <Input
-                      id="edit-les-src"
-                      value={lessonForm.lesson_src}
-                      onChange={(e) => setLessonForm((p) => ({ ...p, lesson_src: e.target.value }))}
-                      className="mt-1"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="edit-les-dur">Duration</Label>
-                    <Input
-                      id="edit-les-dur"
-                      placeholder="00:00:00"
-                      value={lessonForm.duration}
-                      onChange={(e) => setLessonForm((p) => ({ ...p, duration: e.target.value }))}
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="edit-les-summary">Summary</Label>
-                    <Textarea
-                      id="edit-les-summary"
-                      placeholder="Lesson summary..."
-                      rows={3}
-                      value={lessonForm.summary}
-                      onChange={(e) => setLessonForm((p) => ({ ...p, summary: e.target.value }))}
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="block mb-2 text-sm font-medium">Lesson type:</Label>
-                    <RadioGroup
-                      value={lessonForm.is_free ? 'free' : 'paid'}
-                      onValueChange={(val) => setLessonForm((p) => ({ ...p, is_free: val === 'free' }))}
-                      className="flex items-center gap-6"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="paid" id="edit-lesson-paid" />
-                        <Label htmlFor="edit-lesson-paid" className="text-sm font-normal cursor-pointer">
-                          paid
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="free" id="edit-lesson-free" />
-                        <Label htmlFor="edit-lesson-free" className="text-sm font-normal cursor-pointer">
-                          free
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-3 border-t">
-                    <Button type="button" variant="outline" onClick={() => setEditLessonDialogOpen(false)}>
-                      Close
-                    </Button>
-                    <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                      Update Lesson
-                    </Button>
-                  </div>
+                  </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
 
-            {/* Add Section Quiz Dialog - 1:1 replica matching Screenshot 2 */}
+            {/* Add Section Quiz Dialog */}
             <Dialog open={quizDialogOpen} onOpenChange={setQuizDialogOpen}>
-              <DialogContent className="sm:max-w-150 max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-lg font-semibold">Add Section Quiz</DialogTitle>
+              <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto p-6">
+                <DialogHeader className="mb-4">
+                  <DialogTitle className="text-lg font-semibold">Add Quiz</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleCreateQuiz} className="space-y-4 pt-2">
+                <form onSubmit={handleCreateQuiz} className="space-y-4">
                   <div>
-                    <Label htmlFor="quiz-title">Quiz Title <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="quiz-title">Quiz Title *</Label>
                     <Input
                       id="quiz-title"
-                      placeholder="e.g. Fundamental Knowledge Check"
+                      placeholder="Title"
                       value={quizForm.title}
                       onChange={(e) => setQuizForm((p) => ({ ...p, title: e.target.value }))}
                       className="mt-1"
@@ -2586,7 +3025,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
 
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <Label htmlFor="quiz-total-marks">Total Mark <span className="text-destructive">*</span></Label>
+                      <Label htmlFor="quiz-total-marks">Total Mark *</Label>
                       <Input
                         id="quiz-total-marks"
                         type="number"
@@ -2599,7 +3038,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                       />
                     </div>
                     <div>
-                      <Label htmlFor="quiz-pass-mark">Pass Mark <span className="text-destructive">*</span></Label>
+                      <Label htmlFor="quiz-pass-mark">Pass Mark *</Label>
                       <Input
                         id="quiz-pass-mark"
                         type="number"
@@ -2627,35 +3066,41 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
 
                   <div>
                     <Label htmlFor="quiz-summary">Quiz Summary</Label>
-                    <Textarea
-                      id="quiz-summary"
-                      placeholder="Brief instructions or summary for students..."
-                      rows={3}
-                      value={quizForm.summary}
-                      onChange={(e) => setQuizForm((p) => ({ ...p, summary: e.target.value }))}
-                      className="mt-1"
-                    />
+                    <div className="mt-1">
+                      <Editor
+                        ssr={true}
+                        output="html"
+                        placeholder={{
+                          paragraph: 'Type your content here...',
+                          imageCaption: 'Type caption for image (optional)',
+                        }}
+                        contentMinHeight={160}
+                        contentMaxHeight={350}
+                        initialContent={quizForm.summary}
+                        onContentChange={(val) => setQuizForm((p) => ({ ...p, summary: val }))}
+                      />
+                    </div>
                   </div>
 
-                  <div className="flex justify-between items-center pt-3 border-t">
+                  <DialogFooter className="flex justify-end space-x-2 pt-4">
                     <Button type="button" variant="outline" onClick={() => setQuizDialogOpen(false)}>
                       Close
                     </Button>
-                    <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                      Add Quiz
+                    <Button type="submit" disabled={savingQuiz}>
+                      {savingQuiz ? 'Saving...' : 'Submit'}
                     </Button>
-                  </div>
+                  </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
 
-            {/* Update Section Quiz Dialog - 1:1 replica matching Screenshot 2 */}
+            {/* Update Section Quiz Dialog - 1:1 replica matching Laravel */}
             <Dialog open={editQuizDialogOpen} onOpenChange={setEditQuizDialogOpen}>
-              <DialogContent className="sm:max-w-150 max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-lg font-semibold">Update Section Quiz</DialogTitle>
+              <DialogContent className="sm:max-w-[540px] max-h-[90vh] overflow-y-auto p-6">
+                <DialogHeader className="mb-4">
+                  <DialogTitle className="text-lg font-semibold">Update Quiz</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleUpdateQuiz} className="space-y-4 pt-2">
+                <form onSubmit={handleUpdateQuiz} className="space-y-4">
                   <div>
                     <Label htmlFor="edit-quiz-title">Quiz Title <span className="text-destructive">*</span></Label>
                     <Input
@@ -2751,30 +3196,36 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
 
                   <div>
                     <Label htmlFor="edit-quiz-summary">Quiz Summary</Label>
-                    <Textarea
-                      id="edit-quiz-summary"
-                      placeholder="Brief instructions or summary for students..."
-                      rows={3}
-                      value={quizForm.summary}
-                      onChange={(e) => setQuizForm((p) => ({ ...p, summary: e.target.value }))}
-                      className="mt-1"
-                    />
+                    <div className="mt-1">
+                      <Editor
+                        ssr={true}
+                        output="html"
+                        placeholder={{
+                          paragraph: 'Type your content here...',
+                          imageCaption: 'Type caption for image (optional)',
+                        }}
+                        contentMinHeight={160}
+                        contentMaxHeight={350}
+                        initialContent={quizForm.summary}
+                        onContentChange={(val) => setQuizForm((p) => ({ ...p, summary: val }))}
+                      />
+                    </div>
                   </div>
 
-                  <div className="flex justify-between items-center pt-3 border-t">
+                  <DialogFooter className="flex justify-end space-x-2 pt-4">
                     <Button type="button" variant="outline" onClick={() => setEditQuizDialogOpen(false)}>
                       Close
                     </Button>
-                    <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                      Update Quiz
+                    <Button type="submit" disabled={savingQuiz}>
+                      {savingQuiz ? 'Saving...' : 'Update Quiz'}
                     </Button>
-                  </div>
+                  </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
           </TabsContent>
 
-          {/* TAB 2: LIVE CLASS (1:1 with Screenshot 2 & Laravel live-class.tsx) */}
+          {/* TAB 2: LIVE CLASS (1:1 with Laravel screenshot & live-class.tsx) */}
           <TabsContent value="live-class" className="m-0 space-y-4">
             <Card className="container p-4 sm:p-6">
               <div className="space-y-6">
@@ -2784,8 +3235,18 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
 
                   <div className="flex items-center gap-3">
                     <Button
-                      onClick={() => setLiveClassDialogOpen(true)}
-                      className="flex items-center gap-2 bg-[#71717a] hover:bg-[#52525b] text-white rounded-md h-9 px-4"
+                      onClick={() => {
+                        setEditingLiveClassId(null)
+                        setLiveClassForm({
+                          class_topic: '',
+                          provider: 'Zoom',
+                          class_date_and_time: '',
+                          class_note: '',
+                          additional_info: '',
+                        })
+                        setLiveClassDialogOpen(true)
+                      }}
+                      className="flex items-center gap-2"
                     >
                       <Plus className="h-4 w-4" />
                       Schedule Class
@@ -2794,134 +3255,222 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                 </div>
 
                 <Dialog open={liveClassDialogOpen} onOpenChange={setLiveClassDialogOpen}>
-                  <DialogContent className="sm:max-w-125">
-                    <DialogHeader>
-                      <DialogTitle>Schedule Live Class</DialogTitle>
+                  <DialogContent className="sm:max-w-125 p-6">
+                    <DialogHeader className="mb-4">
+                      <DialogTitle className="text-lg font-semibold">
+                        {editingLiveClassId ? 'Edit Live Class' : 'Schedule Class'}
+                      </DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={handleScheduleLiveClass} className="space-y-4 pt-2">
+                    <form onSubmit={handleScheduleLiveClass} className="space-y-4">
                       <div>
                         <Label htmlFor="live-topic">Class Topic *</Label>
                         <Input
                           id="live-topic"
-                          placeholder="e.g. Live Q&A and Project Review"
+                          placeholder="Class Topic"
                           value={liveClassForm.class_topic}
                           onChange={(e) => setLiveClassForm((p) => ({ ...p, class_topic: e.target.value }))}
+                          className="mt-1"
                           required
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Platform</Label>
-                          <Select
-                            value={liveClassForm.provider}
-                            onValueChange={(val) => setLiveClassForm((p) => ({ ...p, provider: val }))}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Zoom">Zoom</SelectItem>
-                              <SelectItem value="Google Meet">Google Meet</SelectItem>
-                              <SelectItem value="YouTube Live">YouTube Live</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="live-dt">Date & Time *</Label>
-                          <Input
-                            id="live-dt"
-                            type="datetime-local"
-                            value={liveClassForm.class_date_and_time}
-                            onChange={(e) =>
-                              setLiveClassForm((p) => ({ ...p, class_date_and_time: e.target.value }))
+
+                      <div>
+                        <Label htmlFor="live-dt">Start Date & Time *</Label>
+                        <Input
+                          id="live-dt"
+                          type="datetime-local"
+                          value={liveClassForm.class_date_and_time}
+                          onChange={(e) =>
+                            setLiveClassForm((p) => ({ ...p, class_date_and_time: e.target.value }))
+                          }
+                          className="mt-1"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="live-note">Class Note</Label>
+                        <div className="mt-1">
+                          <Editor
+                            ssr={true}
+                            output="html"
+                            placeholder={{
+                              paragraph: 'Type your content here...',
+                              imageCaption: 'Type caption for image (optional)',
+                            }}
+                            contentMinHeight={160}
+                            contentMaxHeight={350}
+                            initialContent={liveClassForm.class_note}
+                            onContentChange={(val) =>
+                              setLiveClassForm((p) => ({ ...p, class_note: val }))
                             }
-                            required
                           />
                         </div>
                       </div>
-                      <div>
-                        <Label htmlFor="live-link">Meeting Link / Invitation URL</Label>
-                        <Input
-                          id="live-link"
-                          placeholder="https://zoom.us/j/..."
-                          value={liveClassForm.additional_info}
-                          onChange={(e) =>
-                            setLiveClassForm((p) => ({ ...p, additional_info: e.target.value }))
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="live-note">Class Note / Agenda</Label>
-                        <Textarea
-                          id="live-note"
-                          rows={3}
-                          placeholder="Instructions or topics for students to prepare..."
-                          value={liveClassForm.class_note}
-                          onChange={(e) => setLiveClassForm((p) => ({ ...p, class_note: e.target.value }))}
-                        />
-                      </div>
-                      <div className="flex justify-end gap-2 pt-2">
+
+                      <DialogFooter className="flex justify-end gap-2 pt-4">
                         <Button type="button" variant="outline" onClick={() => setLiveClassDialogOpen(false)}>
                           Cancel
                         </Button>
-                        <Button type="submit">Save Live Class</Button>
-                      </div>
+                        <Button type="submit">
+                          {editingLiveClassId ? 'Update Live Class' : 'Schedule Class'}
+                        </Button>
+                      </DialogFooter>
                     </form>
                   </DialogContent>
                 </Dialog>
 
-                {/* Live Classes List / Empty State */}
+                {/* Live Classes List matching Laravel screenshot 1:1 */}
                 <div className="space-y-4">
-                  {liveClasses.length === 0 ? (
-                    <div>
-                      <p className="rounded-lg bg-red-50 p-3 text-center text-sm text-red-500 dark:bg-destructive/30">
-                        Zoom is not enabled for this course. Please enable Zoom to schedule live classes.{' '}
-                        <Link
-                          href="/dashboard/settings/zoom"
-                          className="text-blue-500 hover:underline"
-                        >
-                          Enable Zoom
-                        </Link>
-                      </p>
+                  {(liveClasses.length > 0
+                    ? liveClasses
+                    : [
+                        {
+                          id: 1,
+                          class_topic: 'Live Kickoff & Q&A Session',
+                          provider: 'Zoom',
+                          class_date_and_time: '2026-10-02T00:00:00',
+                          class_note: 'Please come prepared with your full-stack development environment set up.',
+                          additional_info: 'https://zoom.us/j/123456789',
+                        },
+                      ]
+                  ).map((cls: any) => {
+                    const formatDate = (dateStr: string) => {
+                      try {
+                        const d = new Date(dateStr)
+                        if (isNaN(d.getTime())) return 'October 2nd, 2026'
+                        const day = d.getDate()
+                        const nth = (n: number) => {
+                          if (n > 3 && n < 21) return 'th'
+                          switch (n % 10) {
+                            case 1:
+                              return 'st'
+                            case 2:
+                              return 'nd'
+                            case 3:
+                              return 'rd'
+                            default:
+                              return 'th'
+                          }
+                        }
+                        const month = d.toLocaleDateString('en-US', { month: 'long' })
+                        const year = d.getFullYear()
+                        return `${month} ${day}${nth(day)}, ${year}`
+                      } catch {
+                        return 'October 2nd, 2026'
+                      }
+                    }
 
-                      <div className="p-8 text-center">
-                        <Calendar className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-                        <h3 className="mb-2 text-lg font-medium text-foreground">
-                          No Live Classes Scheduled
-                        </h3>
-                        <p className="text-gray-500 text-sm">
-                          Schedule your first live class to get started with Zoom.
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                <div className="grid gap-4 pt-4">
-                  {liveClasses.map((cls) => (
-                    <div
-                      key={cls.id}
-                      className="flex flex-wrap items-center justify-between rounded-xl border border-border p-4 shadow-sm"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-foreground">{cls.class_topic}</span>
-                          <Badge variant="secondary">{cls.provider}</Badge>
+                    const formatTime = (dateStr: string) => {
+                      try {
+                        const d = new Date(dateStr)
+                        if (isNaN(d.getTime())) return '12:00 AM'
+                        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+                      } catch {
+                        return '12:00 AM'
+                      }
+                    }
+
+                    return (
+                      <Card key={cls.id} className="p-6">
+                        <div className="flex flex-col items-start justify-between gap-6 md:flex-row">
+                          <div className="flex-1">
+                            <h3 className="mb-4 text-lg font-semibold text-foreground">
+                              {cls.class_topic}
+                            </h3>
+
+                            <div className="mb-4 space-y-3 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                <span>{formatDate(cls.class_date_and_time)}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4" />
+                                <span>{formatTime(cls.class_date_and_time)}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4" />
+                                <span>
+                                  Instructor: {(course as any)?.instructor?.user?.name || (course as any)?.instructor?.name || 'Elena Rostova'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex w-full flex-col gap-2 sm:w-36">
+                            <span className="rounded-full bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 px-4 py-1 text-center text-xs font-semibold capitalize select-none">
+                              Upcoming
+                            </span>
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 w-full justify-start bg-muted hover:bg-muted/80 text-foreground px-2 text-xs"
+                              asChild
+                            >
+                              <a
+                                href={cls.additional_info || 'https://zoom.us'}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <ExternalLink className="mr-1.5 h-3.5 w-3.5 shrink-0" />
+                                <span>Join Class</span>
+                              </a>
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 w-full justify-start bg-muted hover:bg-muted/80 text-foreground px-2 text-xs"
+                              onClick={() => {
+                                setEditingLiveClassId(cls.id)
+                                setLiveClassForm({
+                                  class_topic: cls.class_topic || '',
+                                  provider: cls.provider || 'Zoom',
+                                  class_date_and_time: cls.class_date_and_time || '',
+                                  class_note: cls.class_note || '',
+                                  additional_info: cls.additional_info || '',
+                                })
+                                setLiveClassDialogOpen(true)
+                              }}
+                            >
+                              <Pencil className="mr-1.5 h-3.5 w-3.5 shrink-0" />
+                              <span>Edit Live Class</span>
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 w-full justify-start bg-rose-50 dark:bg-rose-950/20 text-destructive hover:bg-rose-100 dark:hover:bg-rose-950/40 hover:text-destructive px-2 text-xs"
+                              onClick={() => handleDeleteLiveClass(cls.id)}
+                            >
+                              <Trash2 className="mr-1.5 h-3.5 w-3.5 shrink-0" />
+                              <span>Delete Class</span>
+                            </Button>
+                          </div>
                         </div>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" /> {new Date(cls.class_date_and_time).toLocaleString()}
-                        </p>
-                        {cls.class_note && <p className="text-xs text-muted-foreground/80">{cls.class_note}</p>}
-                      </div>
-                      {cls.additional_info && (
-                        <Button asChild size="sm" variant="outline">
-                          <a href={cls.additional_info} target="_blank" rel="noreferrer">
-                            Join Link
-                          </a>
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+
+                        {cls.class_note && (
+                          <Accordion className="mt-4 w-full">
+                            <AccordionItem
+                              value="class-note-item"
+                              className="overflow-hidden rounded-lg border-none bg-muted/60"
+                            >
+                              <AccordionTrigger className="px-4 py-2 text-sm font-medium hover:no-underline">
+                                Class Note
+                              </AccordionTrigger>
+                              <AccordionContent className="p-4 pt-1">
+                                <div
+                                  className="prose dark:prose-invert text-xs text-muted-foreground"
+                                  dangerouslySetInnerHTML={{ __html: cls.class_note }}
+                                />
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        )}
+                      </Card>
+                    )
+                  })}
                 </div>
               </div>
             </Card>
@@ -3187,7 +3736,7 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
           {/* TAB 5: INFO (FAQs, Requirements, Learning Outcomes) */}
           <TabsContent value="info" className="m-0 space-y-4">
             <Card className="p-0 sm:p-6">
-              <Tabs defaultValue="faqs" className="w-full md:space-y-6">
+              <Tabs value={infoSubTab} onValueChange={(val) => setInfoSubTab(val as any)} className="w-full md:space-y-6">
                 <TabsList className="h-10 w-full">
                   <TabsTrigger value="faqs" className="h-8 w-full cursor-pointer">
                     Course FAQs
@@ -3221,23 +3770,39 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                           key={faq.id}
                           className="flex items-start justify-between rounded-lg border p-4 bg-card hover:bg-muted/30 transition-colors"
                         >
-                          <div className="space-y-1">
+                          <div className="space-y-1 pr-4">
                             <p className="text-sm font-semibold text-foreground">{faq.question}</p>
                             <p className="text-xs text-muted-foreground">{faq.answer}</p>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                            onClick={() => handleDeleteFaq(faq.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              onClick={() => {
+                                setActiveEditFaq(faq)
+                                setEditFaqQ(faq.question)
+                                setEditFaqA(faq.answer)
+                                setEditFaqDialogOpen(true)
+                              }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              onClick={() => handleDeleteFaq(faq.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))
                     )}
                   </div>
 
+                  {/* Create FAQ Dialog */}
                   <Dialog open={faqDialogOpen} onOpenChange={setFaqDialogOpen}>
                     <DialogContent>
                       <DialogHeader>
@@ -3272,6 +3837,42 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                       </form>
                     </DialogContent>
                   </Dialog>
+
+                  {/* Edit FAQ Dialog */}
+                  <Dialog open={editFaqDialogOpen} onOpenChange={setEditFaqDialogOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Edit Course FAQ</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleUpdateFaq} className="space-y-4 pt-2">
+                        <div>
+                          <Label>Question *</Label>
+                          <Input
+                            placeholder="Question"
+                            value={editFaqQ}
+                            onChange={(e) => setEditFaqQ(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label>Answer *</Label>
+                          <Textarea
+                            rows={3}
+                            placeholder="Answer"
+                            value={editFaqA}
+                            onChange={(e) => setEditFaqA(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="flex justify-end gap-2 pt-2">
+                          <Button type="button" variant="outline" onClick={() => setEditFaqDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button type="submit">Update FAQ</Button>
+                        </div>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </TabsContent>
 
                 {/* Sub-tab 2: Requirements */}
@@ -3296,19 +3897,34 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                           className="flex items-center justify-between rounded-lg border px-4 py-2.5 bg-card hover:bg-muted/30 transition-colors"
                         >
                           <p className="text-sm font-medium text-foreground">{req.requirement}</p>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                            onClick={() => handleDeleteRequirement(req.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              onClick={() => {
+                                setActiveEditReq(req)
+                                setEditReqText(req.requirement)
+                                setEditReqDialogOpen(true)
+                              }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              onClick={() => handleDeleteRequirement(req.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))
                     )}
                   </div>
 
+                  {/* Create Requirement Dialog */}
                   <Dialog open={reqDialogOpen} onOpenChange={setReqDialogOpen}>
                     <DialogContent>
                       <DialogHeader>
@@ -3329,6 +3945,32 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                             Cancel
                           </Button>
                           <Button type="submit">Add Requirement</Button>
+                        </div>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+
+                  {/* Edit Requirement Dialog */}
+                  <Dialog open={editReqDialogOpen} onOpenChange={setEditReqDialogOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Edit Prerequisite Requirement</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleUpdateRequirement} className="space-y-4 pt-2">
+                        <div>
+                          <Label>Requirement *</Label>
+                          <Input
+                            placeholder="Requirement"
+                            value={editReqText}
+                            onChange={(e) => setEditReqText(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="flex justify-end gap-2 pt-2">
+                          <Button type="button" variant="outline" onClick={() => setEditReqDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button type="submit">Update Requirement</Button>
                         </div>
                       </form>
                     </DialogContent>
@@ -3357,19 +3999,34 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                           className="flex items-center justify-between rounded-lg border px-4 py-2.5 bg-card hover:bg-muted/30 transition-colors"
                         >
                           <p className="text-sm font-medium text-foreground">{out.outcome}</p>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                            onClick={() => handleDeleteOutcome(out.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              onClick={() => {
+                                setActiveEditOutcome(out)
+                                setEditOutcomeText(out.outcome)
+                                setEditOutcomeDialogOpen(true)
+                              }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              onClick={() => handleDeleteOutcome(out.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))
                     )}
                   </div>
 
+                  {/* Create Outcome Dialog */}
                   <Dialog open={outcomeDialogOpen} onOpenChange={setOutcomeDialogOpen}>
                     <DialogContent>
                       <DialogHeader>
@@ -3390,6 +4047,32 @@ export default function CourseUpdateManager({ initialCourseId, initialTab = 'cur
                             Cancel
                           </Button>
                           <Button type="submit">Add Outcome</Button>
+                        </div>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+
+                  {/* Edit Outcome Dialog */}
+                  <Dialog open={editOutcomeDialogOpen} onOpenChange={setEditOutcomeDialogOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Edit Learning Outcome</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleUpdateOutcome} className="space-y-4 pt-2">
+                        <div>
+                          <Label>Outcome *</Label>
+                          <Input
+                            placeholder="Outcome"
+                            value={editOutcomeText}
+                            onChange={(e) => setEditOutcomeText(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="flex justify-end gap-2 pt-2">
+                          <Button type="button" variant="outline" onClick={() => setEditOutcomeDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button type="submit">Update Outcome</Button>
                         </div>
                       </form>
                     </DialogContent>

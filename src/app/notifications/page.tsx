@@ -153,7 +153,7 @@ export default function NotificationsPage() {
               <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
                 Notifications Inbox
                 {unreadCount > 0 && (
-                  <Badge className="bg-primary text-primary-foreground text-xs">
+                  <Badge className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold border-transparent text-xs">
                     {unreadCount} Unread
                   </Badge>
                 )}
@@ -168,7 +168,7 @@ export default function NotificationsPage() {
                 variant="outline"
                 size="sm"
                 onClick={handleMarkAllRead}
-                className="self-start sm:self-auto text-xs border-border"
+                className="self-start sm:self-auto text-xs border-border rounded-xl"
               >
                 <CheckCheck className="h-4 w-4 mr-1.5" />
                 Mark all as read
@@ -181,9 +181,9 @@ export default function NotificationsPage() {
             <button
               onClick={() => setFilter('all')}
               className={cn(
-                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors',
+                'px-4 py-1.5 rounded-xl text-xs font-bold transition-colors',
                 filter === 'all'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  ? 'bg-[#D8FC38] text-slate-950 shadow-xs'
                   : 'bg-muted text-muted-foreground hover:text-foreground'
               )}
             >
@@ -192,9 +192,9 @@ export default function NotificationsPage() {
             <button
               onClick={() => setFilter('unread')}
               className={cn(
-                'px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors',
+                'px-4 py-1.5 rounded-xl text-xs font-bold transition-colors',
                 filter === 'unread'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  ? 'bg-[#D8FC38] text-slate-950 shadow-xs'
                   : 'bg-muted text-muted-foreground hover:text-foreground'
               )}
             >
@@ -214,7 +214,7 @@ export default function NotificationsPage() {
                 onClick={() => handleMarkRead(notif.id)}
                 className={cn(
                   'p-5 transition-colors flex items-start gap-4 hover:bg-muted/30 cursor-pointer',
-                  !notif.isRead && 'bg-primary/3'
+                  !notif.isRead && 'bg-muted/30 border-l-2 border-l-[#D8FC38]'
                 )}
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted shrink-0 mt-0.5">
@@ -225,7 +225,7 @@ export default function NotificationsPage() {
                   <div className="flex items-center justify-between gap-2">
                     <h3 className={cn(
                       'text-sm font-bold text-foreground',
-                      !notif.isRead && 'text-primary'
+                      !notif.isRead && 'font-black'
                     )}>
                       {notif.title}
                     </h3>
@@ -240,14 +240,14 @@ export default function NotificationsPage() {
                   </p>
 
                   <div className="pt-2 flex items-center justify-between">
-                    <span className="inline-flex items-center text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    <span className="inline-flex items-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       {notif.category}
                     </span>
 
                     {notif.actionUrl && (
                       <Link
                         href={notif.actionUrl}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                        className="inline-flex items-center gap-1 text-xs font-bold text-foreground hover:underline"
                         onClick={e => e.stopPropagation()}
                       >
                         Open context

@@ -53,35 +53,86 @@ function setStoredJson<T>(key: string, value: T): void {
 }
 
 export function useUserStore() {
-  const [role, setRoleState] = useState<UserRole>('student')
-  const [purchasedProducts, setPurchasedProducts] = useState<number[]>([4]) // ID 4 (PostgreSQL free cheatsheet) owned by default
-  const [enrolledCourses, setEnrolledCourses] = useState<number[]>([1])
-  const [enrolledExams, setEnrolledExams] = useState<number[]>([1])
-  const [wishlistProducts, setWishlistProducts] = useState<number[]>([1])
+  const [role, setRoleState] = useState<UserRole>('guest')
+  const [purchasedProducts, setPurchasedProducts] = useState<number[]>([])
+  const [enrolledCourses, setEnrolledCourses] = useState<number[]>([])
+  const [enrolledExams, setEnrolledExams] = useState<number[]>([])
+  const [wishlistProducts, setWishlistProducts] = useState<number[]>([])
   const [wishlistCourses, setWishlistCourses] = useState<number[]>([])
   const [wishlistExams, setWishlistExams] = useState<number[]>([])
   const [customReviews, setCustomReviews] = useState<Record<number, UserReviewPayload[]>>({})
   const [isLoaded, setIsLoaded] = useState(false)
 
-  const syncFromStorage = () => {
+  const syncFromStorage = async () => {
     if (typeof window === 'undefined') return
-    const storedRole = (localStorage.getItem(STORAGE_KEYS.ROLE) as UserRole) || 'student'
-    const storedPurchases = getStoredJson<number[]>(STORAGE_KEYS.PURCHASES, [4])
-    const storedCourses = getStoredJson<number[]>(STORAGE_KEYS.ENROLLED_COURSES, [1])
-    const storedExams = getStoredJson<number[]>(STORAGE_KEYS.ENROLLED_EXAMS, [1])
-    const storedWishlistProds = getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_PRODUCTS, [1])
-    const storedWishlistCourses = getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_COURSES, [])
-    const storedWishlistExams = getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_EXAMS, [])
-    const storedReviews = getStoredJson<Record<number, UserReviewPayload[]>>(STORAGE_KEYS.CUSTOM_REVIEWS, {})
 
-    setRoleState(storedRole)
-    setPurchasedProducts(storedPurchases)
-    setEnrolledCourses(storedCourses)
-    setEnrolledExams(storedExams)
-    setWishlistProducts(storedWishlistProds)
-    setWishlistCourses(storedWishlistCourses)
-    setWishlistExams(storedWishlistExams)
-    setCustomReviews(storedReviews)
+    // 1. Check server session from /api/auth/me
+    try {
+      const res = await fetch('/api/auth/me')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.success && data.user) {
+          const userRole = (data.user.role as UserRole) || 'student'
+          setRoleState(userRole)
+
+          // Fetch real enrollments from database for logged in user
+          try {
+            const [cRes, eRes, pRes] = await Promise.all([
+              fetch('/api/student/courses'),
+              fetch('/api/student/exams'),
+              fetch('/api/student/purchases'),
+            ])
+            if (cRes.ok) {
+              const cData = await cRes.json()
+              const cIds = (cData.courses || []).map((c: any) => Number(c.id || c.course_id)).filter(Boolean)
+              setEnrolledCourses(cIds)
+            }
+            if (eRes.ok) {
+              const eData = await eRes.json()
+              const eIds = (eData.exams || []).map((e: any) => Number(e.id || e.exam_id)).filter(Boolean)
+              setEnrolledExams(eIds)
+            }
+            if (pRes.ok) {
+              const pData = await pRes.json()
+              const pIds = (pData.purchases || []).map((p: any) => Number(p.id || p.product_id)).filter(Boolean)
+              setPurchasedProducts(pIds)
+            }
+          } catch {}
+
+          setWishlistProducts(getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_PRODUCTS, []))
+          setWishlistCourses(getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_COURSES, []))
+          setWishlistExams(getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_EXAMS, []))
+          setCustomReviews(getStoredJson<Record<number, UserReviewPayload[]>>(STORAGE_KEYS.CUSTOM_REVIEWS, {}))
+          setIsLoaded(true)
+          return
+        }
+      }
+    } catch {}
+
+    // 2. Check localStorage demo_user or explicit role
+    const demoStored = localStorage.getItem('demo_user')
+    const storedRole = localStorage.getItem(STORAGE_KEYS.ROLE) as UserRole
+
+    if (demoStored || (storedRole && storedRole !== 'guest')) {
+      const activeRole = (storedRole || 'student') as UserRole
+      setRoleState(activeRole)
+      setPurchasedProducts(getStoredJson<number[]>(STORAGE_KEYS.PURCHASES, []))
+      setEnrolledCourses(getStoredJson<number[]>(STORAGE_KEYS.ENROLLED_COURSES, []))
+      setEnrolledExams(getStoredJson<number[]>(STORAGE_KEYS.ENROLLED_EXAMS, []))
+      setWishlistProducts(getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_PRODUCTS, []))
+      setWishlistCourses(getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_COURSES, []))
+      setWishlistExams(getStoredJson<number[]>(STORAGE_KEYS.WISHLIST_EXAMS, []))
+    } else {
+      setRoleState('guest')
+      setPurchasedProducts([])
+      setEnrolledCourses([])
+      setEnrolledExams([])
+      setWishlistProducts([])
+      setWishlistCourses([])
+      setWishlistExams([])
+    }
+
+    setCustomReviews(getStoredJson<Record<number, UserReviewPayload[]>>(STORAGE_KEYS.CUSTOM_REVIEWS, {}))
     setIsLoaded(true)
   }
 
@@ -103,10 +154,14 @@ export function useUserStore() {
     setRoleState(newRole)
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.ROLE, newRole)
-      // also sync demo_user cookie if needed
       if (newRole === 'guest') {
         localStorage.removeItem('demo_user')
+        localStorage.removeItem(STORAGE_KEYS.ENROLLED_COURSES)
+        localStorage.removeItem(STORAGE_KEYS.ENROLLED_EXAMS)
+        localStorage.removeItem(STORAGE_KEYS.PURCHASES)
         document.cookie = 'demo_user=; path=/; max-age=0'
+        document.cookie = 'mentor_session=; path=/; max-age=0'
+        document.cookie = 'lms_session=; path=/; max-age=0'
       } else if (newRole === 'student') {
         const u = DEMO_USERS['student@mentor.test']
         localStorage.setItem('demo_user', JSON.stringify(u))
@@ -122,34 +177,34 @@ export function useUserStore() {
   }
 
   const isProductPurchased = (productId: number): boolean => {
-    if (role === 'admin' || role === 'instructor') return true
-    return purchasedProducts.includes(productId)
+    if (role === 'guest' || !role) return false
+    return purchasedProducts.includes(Number(productId))
   }
 
   const purchaseProduct = (productId: number) => {
-    const updated = Array.from(new Set([...purchasedProducts, productId]))
+    const updated = Array.from(new Set([...purchasedProducts, Number(productId)]))
     setPurchasedProducts(updated)
     setStoredJson(STORAGE_KEYS.PURCHASES, updated)
   }
 
   const isCourseEnrolled = (courseId: number): boolean => {
-    if (role === 'admin' || role === 'instructor') return true
-    return enrolledCourses.includes(courseId)
+    if (role === 'guest' || !role) return false
+    return enrolledCourses.includes(Number(courseId))
   }
 
   const enrollCourse = (courseId: number) => {
-    const updated = Array.from(new Set([...enrolledCourses, courseId]))
+    const updated = Array.from(new Set([...enrolledCourses, Number(courseId)]))
     setEnrolledCourses(updated)
     setStoredJson(STORAGE_KEYS.ENROLLED_COURSES, updated)
   }
 
   const isExamEnrolled = (examId: number): boolean => {
-    if (role === 'admin' || role === 'instructor') return true
-    return enrolledExams.includes(examId)
+    if (role === 'guest' || !role) return false
+    return enrolledExams.includes(Number(examId))
   }
 
   const enrollExam = (examId: number) => {
-    const updated = Array.from(new Set([...enrolledExams, examId]))
+    const updated = Array.from(new Set([...enrolledExams, Number(examId)]))
     setEnrolledExams(updated)
     setStoredJson(STORAGE_KEYS.ENROLLED_EXAMS, updated)
   }

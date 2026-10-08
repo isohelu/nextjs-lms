@@ -1,7 +1,7 @@
 'use client'
 
+import React, { useEffect, useRef, useState } from 'react'
 import { Check, ChevronsUpDown, Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -10,105 +10,136 @@ import {
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 
-export interface ComboboxItem {
+export interface ComboboxData {
   id?: number | string
   child_id?: number | string
   label: string
   value: string
 }
 
-interface ComboboxProps {
-  data: ComboboxItem[]
+export type ComboboxItem = ComboboxData
+
+interface Props {
+  data: ComboboxData[]
   placeholder: string
-  onSelect: (selected: ComboboxItem) => void
+  onSelect: (selected: ComboboxData) => void
   defaultValue?: string
+  translate?: any
   name?: string
+  change?: boolean
   className?: string
 }
 
-export default function Combobox({
-  data = [],
+const Combobox = ({
+  data,
   placeholder,
   onSelect,
-  defaultValue = '',
+  defaultValue,
+  translate,
   name,
+  change = false,
   className,
-}: ComboboxProps) {
+}: Props) => {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState(defaultValue)
+  const [value, setValue] = useState(defaultValue || '')
   const [search, setSearch] = useState('')
+  const initialRenderRef = useRef(true)
 
   useEffect(() => {
-    if (defaultValue !== undefined) {
-      setValue(defaultValue)
-    }
-  }, [defaultValue])
+    const isInitial = initialRenderRef.current
 
-  const filteredData = data.filter((item) =>
-    item.label.toLowerCase().includes(search.toLowerCase())
-  )
+    if (defaultValue && (isInitial || defaultValue !== value)) {
+      const defaultItem = data.find((item) => item.value === defaultValue)
+
+      if (defaultItem) {
+        queueMicrotask(() => {
+          setValue(defaultValue)
+          if (!isInitial) {
+            onSelect(defaultItem)
+          }
+        })
+      }
+    }
+
+    initialRenderRef.current = false
+  }, [defaultValue, data, value, onSelect])
+
+  const handleSelect = (selected: ComboboxData) => {
+    const newValue = selected.value === value ? '' : selected.value
+    setValue(newValue)
+    onSelect(selected)
+    setOpen(false)
+  }
 
   const selectedItem = data.find((item) => item.value === value)
 
-  const handleSelect = (item: ComboboxItem) => {
-    setValue(item.value)
-    onSelect(item)
-    setOpen(false)
-    setSearch('')
-  }
+  const filteredData = search.trim()
+    ? data.filter(
+        (item) =>
+          item.label.toLowerCase().includes(search.toLowerCase()) ||
+          item.value.toLowerCase().includes(search.toLowerCase())
+      )
+    : data
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          size="lg"
           type="button"
           variant="outline"
           role="combobox"
           aria-expanded={open}
           className={cn(
-            'h-10 w-full justify-between rounded-lg bg-transparent! px-3 py-2 text-sm font-normal transition-colors hover:border-foreground focus-visible:border-foreground focus-visible:ring-1 focus-visible:ring-foreground',
-            !selectedItem && 'text-muted-foreground',
+            'w-full justify-between rounded-lg !bg-transparent text-xs font-normal transition-[color,box-shadow]',
+            change
+              ? 'hover:border-ring focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring data-[state=open]:border-ring data-[state=open]:ring-1 data-[state=open]:ring-ring'
+              : 'hover:border-zinc-900 focus-visible:border-zinc-900 focus-visible:ring-1 focus-visible:ring-zinc-900 data-[state=open]:border-zinc-900 data-[state=open]:ring-1 data-[state=open]:ring-zinc-900 dark:hover:border-zinc-50 dark:focus-visible:border-zinc-50 dark:focus-visible:ring-zinc-50 dark:data-[state=open]:border-zinc-50 dark:data-[state=open]:ring-zinc-50',
             className
           )}
         >
-          <span className="truncate">
-            {selectedItem ? selectedItem.label : placeholder}
-          </span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <span className="truncate">{selectedItem ? selectedItem.label : placeholder}</span>
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 ml-2" />
         </Button>
       </PopoverTrigger>
       {name && <input type="hidden" name={name} value={value} />}
-      <PopoverContent className="w-(--radix-popover-trigger-width) p-1.5" align="start">
-        <div className="flex items-center border-b border-border/60 px-2.5 pb-2 pt-1">
-          <Search className="mr-2 h-3.5 w-3.5 shrink-0 opacity-50" />
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-2 shadow-lg border border-border bg-popover" align="start">
+        <div className="flex items-center gap-2 border-b border-border/60 pb-2 px-1">
+          <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
           <input
             type="text"
-            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+            placeholder={translate?.input?.search_placeholder || 'Search...'}
+            className="w-full bg-transparent text-xs focus:outline-none placeholder:text-muted-foreground"
+            autoFocus
           />
         </div>
-        <div className="max-h-60 overflow-y-auto pt-1">
+
+        <div className="max-h-[220px] overflow-y-auto mt-1 space-y-0.5">
           {filteredData.length === 0 ? (
-            <div className="py-4 text-center text-xs text-muted-foreground">
-              No results found.
-            </div>
+            <p className="py-3 text-center text-xs text-muted-foreground">
+              {translate?.frontend?.no_element_found || 'No results found.'}
+            </p>
           ) : (
             filteredData.map((item) => (
-              <div
-                key={item.value}
+              <button
+                key={`${item.value}-${item.label}`}
+                type="button"
                 onClick={() => handleSelect(item)}
                 className={cn(
-                  'relative flex cursor-pointer items-center justify-between rounded-md px-2.5 py-1.5 text-xs select-none transition-colors hover:bg-accent hover:text-accent-foreground',
-                  value === item.value && 'bg-accent/70 font-medium'
+                  'w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-left transition hover:bg-accent hover:text-accent-foreground cursor-pointer',
+                  value === item.value && 'bg-accent/80 font-medium'
                 )}
               >
                 <span className="truncate">{item.label}</span>
-                {value === item.value && (
-                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-                )}
-              </div>
+                <Check
+                  className={cn(
+                    'h-3.5 w-3.5 shrink-0 text-primary ml-2',
+                    value === item.value ? 'opacity-100' : 'opacity-0'
+                  )}
+                />
+              </button>
             ))
           )}
         </div>
@@ -116,3 +147,5 @@ export default function Combobox({
     </Popover>
   )
 }
+
+export default Combobox

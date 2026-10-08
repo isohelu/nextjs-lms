@@ -56,8 +56,8 @@ export default function DashboardFrontendApiPage() {
               variant={activeTab === tab ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setActiveTab(tab)}
-              className={`capitalize text-xs font-semibold rounded-lg ${
-                activeTab === tab ? 'bg-[#007867] hover:bg-[#007867]/90 text-white' : ''
+              className={`capitalize text-xs font-bold rounded-xl ${
+                activeTab === tab ? 'bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 shadow-xs' : ''
               }`}
             >
               {tab} Collections
@@ -118,7 +118,7 @@ export default function DashboardFrontendApiPage() {
         </div>
 
         <div className="flex justify-end pt-4">
-          <Button onClick={handleSave} className="bg-[#007867] hover:bg-[#007867]/90 text-white font-semibold">
+          <Button onClick={handleSave} className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs">
             <Save className="h-4 w-4 mr-2" />
             Save Collection Settings
           </Button>

@@ -21,14 +21,20 @@ import {
   CheckCircle,
   Sparkles,
   Loader2,
-  Send
+  Send,
+  Lock,
+  ClipboardList
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import DynamicCertificate from '@/components/certificate/DynamicCertificate'
+import DynamicMarksheet from '@/components/certificate/DynamicMarksheet'
 import {
   Dialog,
   DialogContent,
@@ -200,10 +206,10 @@ export default function StudentCourseDashboardPage() {
               <div className="space-y-1.5 w-full sm:w-44 text-right sm:text-left">
                 <div className="flex justify-between text-xs font-semibold">
                   <span className="text-muted-foreground">Completion</span>
-                  <span className="text-primary">{completion?.percent}%</span>
+                  <span className="text-foreground font-bold">{completion?.percent}%</span>
                 </div>
                 <Progress value={completion?.percent} className="h-2" />
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {completion?.completed_lessons} of {completion?.total_lessons} completed
                 </p>
               </div>
@@ -240,18 +246,18 @@ export default function StudentCourseDashboardPage() {
                   router.push(`/student/courses/${courseId}/${tab.id}`)
                 }}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors',
+                  'flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all',
                   isActive
-                    ? 'bg-primary text-primary-foreground shadow-xs'
-                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                    ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs'
+                    : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
                 )}
               >
                 <Icon className="h-4 w-4" />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span className={cn(
-                    'px-1.5 py-0.5 rounded-full text-[10px] font-bold',
-                    isActive ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted text-muted-foreground'
+                    'px-2 py-0.5 rounded-full text-xs font-bold',
+                    isActive ? 'bg-slate-950 text-[#D8FC38]' : 'bg-muted text-muted-foreground'
                   )}>
                     {tab.count}
                   </span>
@@ -342,7 +348,7 @@ export default function StudentCourseDashboardPage() {
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-semibold text-foreground">{quiz.title}</p>
                                 {quiz.is_passed && (
-                                  <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px]">
+                                  <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-xs font-semibold">
                                     Passed
                                   </Badge>
                                 )}
@@ -653,70 +659,99 @@ export default function StudentCourseDashboardPage() {
         {/* Tab 6: Certificate & Grade Summary */}
         {activeTab === 'certificate' && (
           <div className="space-y-6 max-w-4xl mx-auto">
-            <div>
-              <h2 className="text-xl font-bold text-foreground">Academic Performance & Certificate</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Evaluation breakdown based on quizzes, assignments, and lesson milestones.</p>
-            </div>
-
-            {/* Marks Breakdown Card */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="p-5 border-border bg-card text-center space-y-1">
-                <span className="text-xs text-muted-foreground font-semibold uppercase">Assignments</span>
-                <p className="text-2xl font-bold text-foreground">
-                  {student_marks?.assignment?.obtained} / {student_marks?.assignment?.total}
-                </p>
-                <p className="text-xs text-muted-foreground">{student_marks?.assignment?.percentage}% average</p>
-              </Card>
-
-              <Card className="p-5 border-border bg-card text-center space-y-1">
-                <span className="text-xs text-muted-foreground font-semibold uppercase">Quizzes</span>
-                <p className="text-2xl font-bold text-foreground">
-                  {student_marks?.quiz?.obtained} / {student_marks?.quiz?.total}
-                </p>
-                <p className="text-xs text-muted-foreground">{student_marks?.quiz?.percentage}% average</p>
-              </Card>
-
-              <Card className="p-5 border-border bg-primary/5 text-center space-y-1">
-                <span className="text-xs text-primary font-bold uppercase">Overall Grade</span>
-                <p className="text-3xl font-black text-primary">
-                  {student_marks?.overall?.grade}
-                </p>
-                <p className="text-xs text-muted-foreground">{student_marks?.overall?.percentage}% final score</p>
-              </Card>
-            </div>
-
-            {/* Certificate Status */}
-            <Card className="p-8 border-border text-center space-y-4 bg-card">
-              <div className="h-16 w-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
-                <Award className="h-8 w-8" />
+            {completion?.percent < 100 ? (
+              <Alert>
+                <Lock className="h-4 w-4 text-primary" />
+                <AlertTitle className="font-bold text-foreground">Certificate & Marksheet Locked</AlertTitle>
+                <AlertDescription>
+                  Complete all course modules to unlock your certificate and marksheet. Your current progress: {completion?.percent || 0}%
+                </AlertDescription>
+              </Alert>
+            ) : !data.certificate_template && !data.marksheet_template ? (
+              <div className="p-6">
+                <Card className="border-border bg-card">
+                  <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+                    <Award className="mb-4 h-16 w-16 text-muted-foreground" />
+                    <h3 className="mb-2 text-xl font-semibold text-foreground">
+                      No Certificate or Marksheet Available
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      The instructor hasn't set up certificates or marksheets for this course yet.
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-foreground">Official Course Completion Certificate</h3>
-                <p className="text-xs text-muted-foreground max-w-md mx-auto">
-                  {completion?.percent >= 100
-                    ? 'Congratulations! You have successfully satisfied all curriculum requirements for this course.'
-                    : `Complete remaining lessons (${completion?.percent}% finished) to unlock your verified credential.`}
-                </p>
-              </div>
+            ) : (
+              <div>
+                <Tabs defaultValue="certificate" className="w-full">
+                  <TabsList className="mb-6 grid h-11 w-full grid-cols-2">
+                    <TabsTrigger
+                      value="certificate"
+                      className="flex h-9 cursor-pointer items-center gap-2 text-xs font-semibold"
+                    >
+                      <Award className="h-4 w-4" />
+                      Certificate
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="marksheet"
+                      className="flex h-9 cursor-pointer items-center gap-2 text-xs font-semibold"
+                    >
+                      <ClipboardList className="h-4 w-4" />
+                      Marksheet
+                    </TabsTrigger>
+                  </TabsList>
 
-              {completion?.percent >= 100 ? (
-                <div className="flex justify-center gap-3 pt-2">
-                  <Button asChild>
-                    <Link href={`/certificates/CERT-MLMS-2026-9901`}>
-                      <Award className="mr-2 h-4 w-4" />
-                      View & Download Certificate
-                    </Link>
-                  </Button>
-                </div>
-              ) : (
-                <Button asChild variant="outline">
-                  <Link href={`/courses/${course.slug}/learn`}>
-                    <PlayCircle className="mr-2 h-4 w-4" />
-                    Complete Course Lessons
-                  </Link>
-                </Button>
-              )}
-            </Card>
+                  <TabsContent value="certificate">
+                    {!data.certificate_template ? (
+                      <Card className="border-border bg-card">
+                        <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+                          <Award className="mb-4 h-16 w-16 text-muted-foreground" />
+                          <h3 className="mb-2 text-xl font-semibold text-foreground">
+                            No Certificate Available
+                          </h3>
+                          <p className="text-muted-foreground text-sm">
+                            The instructor hasn't set up certificates for this course yet.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <DynamicCertificate
+                        template={data.certificate_template}
+                        courseName={course.title}
+                        studentName={data.student?.name || 'Student'}
+                        completionDate={new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                      />
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="marksheet">
+                    {!data.marksheet_template || !student_marks ? (
+                      <Card className="border-border bg-card">
+                        <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+                          <ClipboardList className="mb-4 h-16 w-16 text-muted-foreground" />
+                          <h3 className="mb-2 text-xl font-semibold text-foreground">
+                            No Marksheet Available
+                          </h3>
+                          <p className="text-muted-foreground text-sm">
+                            {!data.marksheet_template
+                              ? "The instructor hasn't set up marksheets for this course yet."
+                              : 'No marks data available. Complete assignments and quizzes to view your marksheet.'}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <DynamicMarksheet
+                        template={data.marksheet_template}
+                        courseName={course.title}
+                        studentName={data.student?.name || 'Student'}
+                        completionDate={new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        studentMarks={student_marks}
+                      />
+                    )}
+                  </TabsContent>
+                </Tabs>
+              </div>
+            )}
           </div>
         )}
       </div>

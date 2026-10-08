@@ -5,8 +5,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Inter', sans-serif, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-heading: 'Inter', sans-serif, ui-sans-serif, system-ui;
+  --font-sans: var(--font-sans), 'Inter', sans-serif, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: var(--font-sans), 'Inter', sans-serif, ui-sans-serif, system-ui;
 
   --radius: 0.625rem;
   --radius-lg: var(--radius);
@@ -23,6 +23,7 @@
   --color-popover-foreground: var(--popover-foreground);
 
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-900: var(--primary-900);
   --color-primary-800: var(--primary-800);
@@ -100,17 +101,18 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
 
-  --primary: oklch(0.265 0.0216 248.65);
-  --primary-foreground: oklch(0.985 0 0);
-  --primary-900: color-mix(in oklch, var(--primary) 90%, black);
-  --primary-800: color-mix(in oklch, var(--primary) 80%, black);
-  --primary-700: color-mix(in oklch, var(--primary) 70%, black);
-  --primary-600: color-mix(in oklch, var(--primary) 60%, black);
-  --primary-400: color-mix(in oklch, var(--primary) 90%, white);
-  --primary-300: color-mix(in oklch, var(--primary) 80%, white);
-  --primary-200: color-mix(in oklch, var(--primary) 70%, white);
-  --primary-100: color-mix(in oklch, var(--primary) 60%, white);
-  --primary-50: color-mix(in oklch, var(--primary) 50%, white);
+  --primary: #D8FC38; /* Electric Lime brand primary */
+  --primary-hover: #CBF128; /* Electric Lime hover state */
+  --primary-foreground: #020617; /* Deep slate high-contrast readable text */
+  --primary-900: color-mix(in srgb, var(--primary) 20%, black);
+  --primary-800: color-mix(in srgb, var(--primary) 40%, black);
+  --primary-700: color-mix(in srgb, var(--primary) 60%, black);
+  --primary-600: color-mix(in srgb, var(--primary) 80%, black);
+  --primary-400: color-mix(in srgb, var(--primary) 80%, white);
+  --primary-300: color-mix(in srgb, var(--primary) 60%, white);
+  --primary-200: color-mix(in srgb, var(--primary) 40%, white);
+  --primary-100: color-mix(in srgb, var(--primary) 20%, white);
+  --primary-50: color-mix(in srgb, var(--primary) 10%, white);
 
   --secondary: oklch(0.643 0.144 160.62 / 10.2%);
   --secondary-foreground: oklch(0.6468 0.144588 160.7462);
@@ -136,7 +138,7 @@
 
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.87 0 0);
+  --ring: #D8FC38;
 
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -179,17 +181,18 @@
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
 
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --primary-900: color-mix(in oklch, var(--primary) 90%, black);
-  --primary-800: color-mix(in oklch, var(--primary) 80%, black);
-  --primary-700: color-mix(in oklch, var(--primary) 70%, black);
-  --primary-600: color-mix(in oklch, var(--primary) 60%, black);
-  --primary-400: color-mix(in oklch, var(--primary) 80%, white);
-  --primary-300: color-mix(in oklch, var(--primary) 60%, white);
-  --primary-200: color-mix(in oklch, var(--primary) 40%, white);
-  --primary-100: color-mix(in oklch, var(--primary) 20%, white);
-  --primary-50: color-mix(in oklch, var(--primary) 10%, white);
+  --primary: #D8FC38; /* Electric Lime brand primary */
+  --primary-hover: #CBF128; /* Electric Lime hover state */
+  --primary-foreground: #020617; /* Deep slate high-contrast readable text */
+  --primary-900: color-mix(in srgb, var(--primary) 20%, black);
+  --primary-800: color-mix(in srgb, var(--primary) 40%, black);
+  --primary-700: color-mix(in srgb, var(--primary) 60%, black);
+  --primary-600: color-mix(in srgb, var(--primary) 80%, black);
+  --primary-400: color-mix(in srgb, var(--primary) 80%, white);
+  --primary-300: color-mix(in srgb, var(--primary) 60%, white);
+  --primary-200: color-mix(in srgb, var(--primary) 40%, white);
+  --primary-100: color-mix(in srgb, var(--primary) 20%, white);
+  --primary-50: color-mix(in srgb, var(--primary) 10%, white);
 
   --secondary: oklch(0.643 0.144 160.62 / 10.2%);
   --secondary-foreground: oklch(0.6468 0.144588 160.7462);
@@ -215,7 +218,7 @@
 
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
+  --ring: #D8FC38;
 
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -230,7 +233,7 @@
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --sidebar-ring: #D8FC38;
 
   --card-shadow:
     0 0 2px 0 rgba(0 0 0 / 0.3), 0 12px 24px -4px rgba(0 0 0 / 0.2);
@@ -251,8 +254,14 @@
     @apply border-border;
   }
 
+  html,
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden max-w-full leading-relaxed;
+    letter-spacing: -0.011em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
   }
 
   a,
@@ -315,3 +324,418 @@
 [data-radix-popper-content-wrapper] {
   z-index: 100 !important;
 }
+
+@media print {
+  html, body {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: 100% !important;
+  }
+
+  header,
+  nav,
+  footer,
+  aside,
+  .no-print,
+  .print\:hidden,
+  [role="navigation"],
+  [role="banner"],
+  [data-radix-popper-content-wrapper],
+  .sonner-toaster {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+  }
+
+  .print-invoice-root {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 10mm 15mm;
+  }
+}
+
+/* ==========================================================================
+   White-Label Video Player & Plyr Engine Styles
+   Eliminates all third-party YouTube UI overlays:
+   - Channel avatar & title bar (top left)
+   - Share button & Watch later icons (bottom left)
+   - "More videos" overlay & YouTube watermark (bottom right)
+   ========================================================================== */
+
+.plyr {
+  --plyr-color-main: var(--primary, #059669);
+  --plyr-video-background: #000000;
+  --plyr-control-spacing: 10px;
+  --plyr-control-radius: 8px;
+  --plyr-menu-background: rgba(18, 18, 22, 0.96);
+  --plyr-menu-color: #ffffff;
+  --plyr-menu-arrow-color: #ffffff;
+  --plyr-menu-item-hover-color: #ffffff;
+  --plyr-menu-item-hover-background: rgba(255, 255, 255, 0.16);
+  --plyr-menu-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  --plyr-menu-radius: 12px;
+  font-family: var(--font-sans, inherit);
+  border-radius: inherit;
+  overflow: hidden !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.plyr-wrapper {
+  position: relative;
+  overflow: hidden !important;
+  border-radius: 1rem;
+  background-color: #000000;
+}
+
+.plyr--video {
+  border-radius: inherit;
+  overflow: hidden !important;
+}
+
+.plyr__video-wrapper {
+  position: relative;
+  overflow: hidden !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #000 !important;
+}
+
+/* White-label YouTube iframe cropping and overlay suppression */
+.plyr__video-embed {
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding-bottom: 56.25% !important;
+}
+
+.plyr__video-embed iframe,
+.plyr__video-wrapper iframe {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 124% !important;
+  height: 124% !important;
+  transform: translate(-50%, -50%) !important;
+  border: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Ensure Plyr custom control bar and big play overlay are on top and clickable */
+.plyr--video .plyr__controls {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 40 !important;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%) !important;
+  padding: 12px 16px !important;
+}
+
+.plyr__control--overlaid {
+  z-index: 35 !important;
+  background: var(--primary, #059669) !important;
+}
+
+.plyr__control--overlaid:hover {
+  background: var(--primary-600, #047857) !important;
+}
+
+/* Plyr Settings Menu (Speed, Quality, Captions) - High-Contrast Visual Styling */
+.plyr__menu__container {
+  z-index: 60 !important;
+  background: rgba(18, 18, 22, 0.96) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
+  padding: 8px 6px !important;
+  color: #ffffff !important;
+}
+
+.plyr__menu__container [role='menu'] {
+  color: #ffffff !important;
+}
+
+.plyr__menu__container [role='menuitem'],
+.plyr__menu__container [role='menuitemradio'],
+.plyr__menu__container button.plyr__control {
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  transition: all 0.15s ease !important;
+}
+
+.plyr__menu__container button.plyr__control:hover,
+.plyr__menu__container button.plyr__control:focus,
+.plyr__menu__container [role='menuitem']:hover,
+.plyr__menu__container [role='menuitemradio']:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+}
+
+.plyr__menu__container [role='menuitemradio'][aria-checked='true'] {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  background: rgba(16, 185, 129, 0.25) !important;
+}
+
+.plyr__menu__container [role='menuitemradio'][aria-checked='true']::before {
+  background: #10b981 !important;
+}
+
+.plyr__menu__container .plyr__control--back {
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  margin-bottom: 6px !important;
+  padding-bottom: 10px !important;
+}
+
+.plyr__menu__container .plyr__control--back::after {
+  border-left-color: #ffffff !important;
+}
+
+.plyr__menu__container .plyr__control--forward::after {
+  border-left-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.plyr__menu__container .plyr__menu__value {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 12px !important;
+}
+
+/* ========================================================================= */
+/* SUPER-PRO CINEMATIC HERO ANIMATION SYSTEM (Awwwards / Studio Grade)        */
+/* ========================================================================= */
+@keyframes heroLineReveal {
+  0% {
+    transform: translateY(115%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes heroArcLaserDraw {
+  0% {
+    stroke-dashoffset: 650;
+    opacity: 0.1;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.85;
+  }
+}
+
+@keyframes heroModelBloom {
+  0% {
+    transform: translateY(35px) scale(0.94);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes heroAvatarPop {
+  0% {
+    transform: scale(0) translateY(12px);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15) translateY(-2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes heroContainerEntrance {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heroFadeUpSmooth {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-anim-container {
+  animation: heroContainerEntrance 0.75s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.hero-line-reveal-1 {
+  animation: heroLineReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.02s backwards;
+}
+
+.hero-line-reveal-2 {
+  animation: heroLineReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.12s backwards;
+}
+
+.hero-line-reveal-3 {
+  animation: heroLineReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.22s backwards;
+}
+
+.hero-arc-laser {
+  stroke-dasharray: 650;
+  animation: heroArcLaserDraw 1.1s cubic-bezier(0.2, 0.9, 0.3, 1) 0.15s backwards;
+}
+
+.hero-anim-desc {
+  animation: heroFadeUpSmooth 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.28s backwards;
+}
+
+.hero-anim-cta {
+  animation: heroFadeUpSmooth 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.35s backwards;
+}
+
+.hero-anim-stats {
+  animation: heroFadeUpSmooth 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.30s backwards;
+}
+
+.hero-avatar-pop-1 {
+  animation: heroAvatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.38s backwards;
+}
+.hero-avatar-pop-2 {
+  animation: heroAvatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.44s backwards;
+}
+.hero-avatar-pop-3 {
+  animation: heroAvatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.50s backwards;
+}
+.hero-avatar-pop-4 {
+  animation: heroAvatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.56s backwards;
+}
+.hero-avatar-pop-more {
+  animation: heroAvatarPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.62s backwards;
+}
+
+.hero-anim-pill-1 {
+  animation: heroFadeUpSmooth 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.36s backwards;
+}
+
+.hero-anim-pill-2 {
+  animation: heroFadeUpSmooth 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.44s backwards;
+}
+
+.hero-anim-pill-3 {
+  animation: heroFadeUpSmooth 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.52s backwards;
+}
+
+.hero-anim-model {
+  animation: heroModelBloom 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.18s backwards;
+}
+
+.hero-anim-bottom-1 {
+  animation: heroFadeUpSmooth 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.36s backwards;
+}
+
+.hero-anim-bottom-2 {
+  animation: heroFadeUpSmooth 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.44s backwards;
+}
+
+.hero-anim-bottom-3 {
+  animation: heroFadeUpSmooth 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.52s backwards;
+}
+
+/* ========================================================================= */
+/* BUTTON LOADING HOVER ANIMATION (No Shake, Pure Animated Progress Fill)   */
+/* ========================================================================= */
+@keyframes button-loading-stripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 32px 0;
+  }
+}
+
+.btn-loading-stripes {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 20px 20px;
+  animation: button-loading-stripes 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-anim-container,
+  .hero-line-reveal-1,
+  .hero-line-reveal-2,
+  .hero-line-reveal-3,
+  .hero-arc-laser,
+  .hero-anim-desc,
+  .hero-anim-cta,
+  .hero-anim-stats,
+  .hero-avatar-pop-1,
+  .hero-avatar-pop-2,
+  .hero-avatar-pop-3,
+  .hero-avatar-pop-4,
+  .hero-avatar-pop-more,
+  .hero-anim-pill-1,
+  .hero-anim-pill-2,
+  .hero-anim-pill-3,
+  .hero-anim-model,
+  .hero-anim-bottom-1,
+  .hero-anim-bottom-2,
+  .hero-anim-bottom-3 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
+
+

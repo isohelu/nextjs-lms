@@ -265,7 +265,7 @@ export default function CreateBlogPage() {
                 ssr={true}
                 output="html"
                 placeholder={{
-                  paragraph: 'Write blog content here...',
+                  paragraph: 'Write your blog content here...',
                   imageCaption: 'Type caption (optional)',
                 }}
                 contentMinHeight={256}

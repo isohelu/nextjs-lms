@@ -269,7 +269,7 @@ export default function EditBlogPage() {
               </div>
 
               <div>
-                <Label htmlFor="description">Content *</Label>
+                <Label htmlFor="description">Description *</Label>
                 <Editor
                   ssr={true}
                   output="html"

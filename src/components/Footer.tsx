@@ -10,19 +10,19 @@ export function Footer() {
           {/* Col 1 */}
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-3">
-              <div className="flex size-9 items-center justify-center rounded-xl bg-linear-to-tr from-violet-600 to-indigo-600 shadow-md">
-                <Sparkles className="size-4 text-white" />
+              <div className="flex size-9 items-center justify-center rounded-xl bg-slate-950 text-[#D8FC38] shadow-sm">
+                <Sparkles className="size-4" />
               </div>
-              <span className="font-extrabold text-lg tracking-tight">
-                Mentor<span className="text-indigo-500">LMS</span>
+              <span className="font-extrabold text-lg tracking-tight text-foreground">
+                Mentor<span className="text-slate-950 bg-[#D8FC38] px-1 py-0.5 rounded ml-1 text-xs font-black">LMS</span>
               </span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Empowering engineers and developers worldwide with production-ready curriculum, interactive coding labs, and real-time mentor feedback.
             </p>
             <div className="flex items-center gap-3 text-muted-foreground">
-              <a href="#" className="hover:text-indigo-500 transition-colors" title="Global Network"><Globe className="size-4" /></a>
-              <a href="#" className="hover:text-indigo-500 transition-colors" title="Community"><Share2 className="size-4" /></a>
+              <a href="#" className="hover:text-foreground transition-colors" title="Global Network"><Globe className="size-4" /></a>
+              <a href="#" className="hover:text-foreground transition-colors" title="Community"><Share2 className="size-4" /></a>
             </div>
           </div>
 
@@ -54,7 +54,7 @@ export function Footer() {
             <p className="text-xs text-muted-foreground leading-relaxed">
               Powered by Next.js 15, Supabase PostgreSQL, Row Level Security, shadcn/ui, and GSAP micro-interactions.
             </p>
-            <div className="flex items-center gap-2 text-[11px] text-emerald-500 font-medium">
+            <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
               <Shield className="size-3.5" />
               <span>SOC2 & RLS Secured Database</span>
             </div>

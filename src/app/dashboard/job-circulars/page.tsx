@@ -118,27 +118,27 @@ export default function DashboardJobCircularsPage() {
     const s = status?.toLowerCase()
     if (s === 'active' || s === 'published') {
       return (
-        <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/20 border-emerald-300 text-[11px] font-semibold">
+        <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/20 border-emerald-300 text-xs font-semibold">
           Active
         </Badge>
       )
     }
     if (s === 'draft') {
       return (
-        <Badge variant="outline" className="text-slate-600 border-slate-300 text-[11px] font-medium">
+        <Badge variant="outline" className="text-slate-600 border-slate-300 text-xs font-medium">
           Draft
         </Badge>
       )
     }
     if (s === 'closed') {
       return (
-        <Badge variant="destructive" className="text-[11px] font-medium">
+        <Badge variant="destructive" className="text-xs font-medium">
           Closed
         </Badge>
       )
     }
     return (
-      <Badge variant="secondary" className="text-[11px] font-medium">
+      <Badge variant="secondary" className="text-xs font-medium">
         {status}
       </Badge>
     )
@@ -245,7 +245,7 @@ export default function DashboardJobCircularsPage() {
                             <p className="font-semibold text-sm text-foreground hover:text-primary transition-colors">
                               {job.title}
                             </p>
-                            <p className="text-[11px] text-muted-foreground">ID: #{job.id}</p>
+                            <p className="text-xs text-muted-foreground">ID: #{job.id}</p>
                           </div>
                         </TableCell>
                         <TableCell className="py-3.5 text-xs text-muted-foreground capitalize">

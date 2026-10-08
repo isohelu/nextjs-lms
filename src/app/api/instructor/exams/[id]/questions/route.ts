@@ -5,15 +5,24 @@ import { examRepository } from '@/lib/repositories/examRepository'
 import db from '@/lib/db'
 
 const questionSchema = z.object({
-  title: z.string().min(3, 'Question title must be at least 3 characters'),
-  question_type: z.enum(['multiple_choice', 'single_choice', 'true_false']).default('multiple_choice'),
-  marks: z.coerce.number().min(1).default(10),
+  title: z.string().min(1, 'Question title is required'),
+  description: z.string().optional().nullable(),
+  question_type: z.enum([
+    'multiple_choice',
+    'multiple_select',
+    'matching',
+    'fill_blank',
+    'ordering',
+    'short_answer',
+    'listening',
+  ]).default('multiple_choice'),
+  marks: z.coerce.number().min(0.5).default(1),
   options: z.array(
     z.object({
       option_text: z.string().min(1, 'Option text is required'),
       is_correct: z.union([z.boolean(), z.number()]).transform((val) => Boolean(val)).default(false)
     })
-  ).min(2, 'At least 2 options are required')
+  ).optional().default([])
 })
 
 export async function POST(
@@ -48,15 +57,15 @@ export async function POST(
       )
     }
 
-    const { title, question_type, marks, options } = parsed.data
+    const { title, description, question_type, marks, options } = parsed.data
 
     const qCount = (db.prepare(
       'SELECT COUNT(*) as c FROM exam_questions WHERE exam_id = ?'
     ).get(examId) as { c: number }).c + 1
 
     const insertQ = db.prepare(`
-      INSERT INTO exam_questions (exam_id, question_type, title, marks, sort, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      INSERT INTO exam_questions (exam_id, question_type, title, description, marks, sort, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
     `)
 
     const insertOpt = db.prepare(`
@@ -65,12 +74,14 @@ export async function POST(
     `)
 
     const transaction = db.transaction(() => {
-      const qRes = insertQ.run(examId, question_type, title, marks, qCount)
+      const qRes = insertQ.run(examId, question_type, title, description || null, marks, qCount)
       const questionId = Number(qRes.lastInsertRowid)
 
-      options.forEach((opt, idx) => {
-        insertOpt.run(questionId, opt.option_text, opt.is_correct ? 1 : 0, idx + 1)
-      })
+      if (Array.isArray(options) && options.length > 0) {
+        options.forEach((opt, idx) => {
+          insertOpt.run(questionId, opt.option_text, opt.is_correct ? 1 : 0, idx + 1)
+        })
+      }
 
       // Update total_questions in exams table
       db.prepare(`UPDATE exams SET total_questions = total_questions + 1 WHERE id = ?`).run(examId)

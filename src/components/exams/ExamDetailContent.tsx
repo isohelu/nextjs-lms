@@ -31,7 +31,7 @@ import { cn } from '@/lib/utils'
 export default function ExamDetailContent({ slug }: { slug: string }) {
   const [activeTab, setActiveTab] = useState<'overview' | 'syllabus' | 'instructor' | 'reviews'>('overview')
   const { addItem, openCart } = useCartStore()
-  const { isExamEnrolled, enrollExam, toggleExamWishlist, isExamWishlisted } = useUserStore()
+  const { currentUser, isExamEnrolled, enrollExam, toggleExamWishlist, isExamWishlisted } = useUserStore()
 
   // Find exam or fallback to primary demo
   const [exam, setExam] = useState(() => EXAMS_DATA.find((e) => e.slug === slug) || EXAMS_DATA[0])
@@ -54,12 +54,45 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
 
   const examIdNum = typeof exam.id === 'string' ? parseInt(exam.id, 10) : exam.id
   const isFree = exam.pricing_type === 'free' || (exam.price ?? 0) === 0
-  const isEnrolled = isExamEnrolled(examIdNum)
-  const isWishlisted = isExamWishlisted(examIdNum)
+  const isEnrolled = Boolean(currentUser && isExamEnrolled(examIdNum))
+  const isWishlisted = Boolean(currentUser && isExamWishlisted(examIdNum))
+
+  const checkoutRedirectUrl = `/checkout?examId=${exam.id}&slug=${exam.slug}&title=${encodeURIComponent(exam.title)}&price=${exam.discount_price ?? exam.price ?? 0}`
+  const enrollRedirectUrl = `/exams/${slug}?action=enroll`
+
+  const getLoginRedirectUrl = () => {
+    return `/login?redirect=${encodeURIComponent(isFree ? enrollRedirectUrl : checkoutRedirectUrl)}`
+  }
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('action') === 'enroll' && currentUser && !isEnrolled && isFree) {
+      handleEnrollExam()
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [currentUser, isEnrolled, isFree])
 
   const handleEnrollExam = async () => {
+    if (!currentUser) {
+      window.location.assign(getLoginRedirectUrl())
+      return
+    }
+
     if (!isFree) {
-      handleAddToCart()
+      addItem({
+        id: `exam-${exam.id}`,
+        title: exam.title,
+        slug: exam.slug,
+        thumbnail:
+          exam.thumbnail ||
+          'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=80',
+        price: exam.discount_price ?? exam.price ?? 0,
+        discount_price: exam.discount_price,
+        type: 'exam',
+        instructor_name: exam.instructor_name,
+      })
+      window.location.assign('/checkout')
       return
     }
 
@@ -71,7 +104,7 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
       })
 
       if (res.status === 401) {
-        window.location.assign(`/login?redirect=/exams/${slug}`)
+        window.location.assign(getLoginRedirectUrl())
         return
       }
 
@@ -85,6 +118,10 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
   }
 
   const handleAddToCart = () => {
+    if (!currentUser) {
+      window.location.assign(getLoginRedirectUrl())
+      return
+    }
     addItem({
       id: `exam-${exam.id}`,
       title: exam.title,
@@ -126,7 +163,7 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
                 <Badge variant="outline" className="capitalize text-xs">
                   {exam.level} Level
                 </Badge>
-                <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
+                <Badge className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold border-transparent text-xs">
                   Verified Exam
                 </Badge>
               </div>
@@ -210,6 +247,14 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
                       </Link>
                     </Button>
                   </div>
+                ) : !currentUser ? (
+                  <div className="space-y-3">
+                    <Button asChild size="lg" className="w-full font-bold cursor-pointer">
+                      <Link href={getLoginRedirectUrl()}>
+                        {isFree ? 'Login to Enroll' : 'Login to Buy Exam'}
+                      </Link>
+                    </Button>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     <Button
@@ -276,7 +321,7 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
                     onClick={() => setActiveTab(tab)}
                     className={`pb-3 capitalize transition-colors border-b-2 -mb-px ${
                       activeTab === tab
-                        ? 'border-primary text-primary font-bold'
+                        ? 'border-[#D8FC38] text-foreground font-bold'
                         : 'border-transparent text-muted-foreground hover:text-foreground'
                     }`}
                   >
@@ -300,7 +345,7 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
                     'Domain-by-domain knowledge analysis',
                     'Accredited certification on completion',
                   ].map((feat, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-foreground font-medium">
+                    <div key={idx} className="flex items-center gap-2 text-foreground font-medium text-sm">
                       <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                       <span>{feat}</span>
                     </div>
@@ -317,7 +362,7 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
                     <h4 className="font-bold text-foreground text-sm">
                       Domain 1: Core Fundamentals & Protocols (30%)
                     </h4>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Architecture models, request lifecycles, and core primitives.
                     </p>
                   </div>
@@ -325,7 +370,7 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
                     <h4 className="font-bold text-foreground text-sm">
                       Domain 2: Performance, Scalability & Storage (35%)
                     </h4>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Query optimization, caching, distributed locks, and state management.
                     </p>
                   </div>
@@ -333,7 +378,7 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
                     <h4 className="font-bold text-foreground text-sm">
                       Domain 3: Security & Cryptography (35%)
                     </h4>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       OWASP defense, nonce-based CSP, token authentication, and data isolation.
                     </p>
                   </div>
@@ -344,14 +389,14 @@ export default function ExamDetailContent({ slug }: { slug: string }) {
             {activeTab === 'instructor' && (
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-foreground">Lead Examiner</h3>
-                <Card className="p-6 border-border flex items-start gap-4">
-                  <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xl shrink-0">
+                <Card className="p-6 border-border flex items-start gap-4 rounded-2xl">
+                  <div className="h-14 w-14 rounded-full bg-[#D8FC38] text-slate-950 flex items-center justify-center font-bold text-xl shrink-0 shadow-xs">
                     {exam.instructor_name?.charAt(0) || 'I'}
                   </div>
                   <div className="space-y-1">
                     <h4 className="font-bold text-foreground text-base">{exam.instructor_name}</h4>
-                    <p className="text-xs text-primary font-medium">Senior Examination Fellow</p>
-                    <p className="text-xs text-muted-foreground pt-1 leading-relaxed">
+                    <p className="text-xs text-muted-foreground font-semibold">Senior Examination Fellow</p>
+                    <p className="text-sm text-muted-foreground pt-1 leading-relaxed">
                       Industry veteran with over 12 years of specialized architectural experience
                       assessing enterprise software engineering candidates.
                     </p>

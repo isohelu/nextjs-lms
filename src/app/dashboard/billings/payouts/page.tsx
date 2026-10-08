@@ -367,7 +367,7 @@ export default function DashboardPayoutsPage() {
                 placeholder="500"
                 required
               />
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 Available to withdraw: ${balance.toLocaleString()}
               </span>
             </div>

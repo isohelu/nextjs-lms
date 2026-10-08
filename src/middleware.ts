@@ -17,10 +17,11 @@ export async function middleware(request: NextRequest) {
     default-src 'self';
     script-src ${scriptSrc};
     style-src 'self' 'unsafe-inline' https://fonts.bunny.net;
-    img-src 'self' blob: data: https: https://*.supabase.co https://images.unsplash.com;
+    img-src 'self' blob: data: https: https://*.supabase.co https://images.unsplash.com https://*.ytimg.com https://*.amazonaws.com https://*.r2.cloudflarestorage.com https://*.r2.dev https://*.b-cdn.net;
     font-src 'self' data: https://fonts.bunny.net;
-    connect-src 'self' https://*.supabase.co wss://*.supabase.co;
-    frame-src 'self' https://www.youtube.com https://player.vimeo.com;
+    connect-src 'self' https: https://*.supabase.co wss://*.supabase.co https://*.youtube.com https://*.google.com https://video.bunnycdn.com https://*.bunnycdn.com https://*.amazonaws.com https://*.r2.cloudflarestorage.com;
+    media-src 'self' blob: data: https: https://commondatastorage.googleapis.com https://*.amazonaws.com https://*.r2.cloudflarestorage.com https://*.r2.dev https://*.b-cdn.net https://video.bunnycdn.com;
+    frame-src 'self' https://www.youtube.com https://youtube.com https://*.youtube.com https://www.youtube-nocookie.com https://*.youtube-nocookie.com https://player.vimeo.com https://*.vimeo.com https://iframe.mediadelivery.net https://*.mediadelivery.net https://video.bunnycdn.com https://*.bunnycdn.com blob: data: https:;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
@@ -48,8 +49,8 @@ export async function middleware(request: NextRequest) {
       pathname.startsWith('/instructor') ||
       pathname.startsWith('/student')
     ) {
-      const loginUrl = new URL('/auth/login', request.url)
-      loginUrl.searchParams.set('redirect', pathname)
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', request.nextUrl.pathname + request.nextUrl.search)
       return NextResponse.redirect(loginUrl)
     }
   }

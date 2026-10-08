@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import {
   ShieldCheck,
   Search,
@@ -12,17 +13,22 @@ import {
   User,
   ArrowRight,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
-export default function VerifyCertificatePage() {
-  const [code, setCode] = useState('')
+function VerifyCertificateContent() {
+  const searchParams = useSearchParams()
+  const initialCode = searchParams?.get('code') || ''
+
+  const [code, setCode] = useState(initialCode)
   const [status, setStatus] = useState<'idle' | 'valid' | 'invalid'>('idle')
-  const [searchedCode, setSearchedCode] = useState('')
+  const [searchedCode, setSearchedCode] = useState(
+    initialCode ? initialCode.trim().toUpperCase() : ''
+  )
   const [certData, setCertData] = useState<{
     student_name: string
     course_title: string
@@ -32,11 +38,10 @@ export default function VerifyCertificatePage() {
   } | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!code.trim()) return
+  const verifyCode = async (rawCode: string) => {
+    if (!rawCode.trim()) return
 
-    const clean = code.trim().toUpperCase()
+    const clean = rawCode.trim().toUpperCase()
     setSearchedCode(clean)
     setLoading(true)
 
@@ -58,6 +63,18 @@ export default function VerifyCertificatePage() {
     }
   }
 
+  useEffect(() => {
+    if (initialCode) {
+      setCode(initialCode)
+      verifyCode(initialCode)
+    }
+  }, [initialCode])
+
+  const handleVerify = (e: React.FormEvent) => {
+    e.preventDefault()
+    verifyCode(code)
+  }
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
@@ -69,8 +86,8 @@ export default function VerifyCertificatePage() {
             <span className="text-foreground font-semibold">Verify Certificate</span>
           </div>
 
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-4 shadow-sm">
-            <ShieldCheck className="h-9 w-9" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#D8FC38] text-slate-950 mb-4 shadow-sm">
+            <ShieldCheck className="h-9 w-9 stroke-[2.2]" />
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
@@ -84,7 +101,7 @@ export default function VerifyCertificatePage() {
 
       <div className="container mx-auto px-4 max-w-2xl mt-10">
         {/* Search Box */}
-        <Card className="p-6 sm:p-8 rounded-2xl border border-border shadow-md bg-card">
+        <Card className="p-6 sm:p-8 rounded-2xl border border-border shadow-sm bg-card">
           <form onSubmit={handleVerify} className="space-y-4">
             <div>
               <label htmlFor="certCode" className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
@@ -99,15 +116,15 @@ export default function VerifyCertificatePage() {
                     placeholder="e.g. CERT-2025-98421"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
-                    className="pl-10 uppercase font-mono tracking-wider bg-background h-11 border-border"
+                    className="pl-10 uppercase font-mono tracking-wider bg-background h-11 border-border rounded-xl"
                   />
                 </div>
-                <Button type="submit" disabled={loading} className="h-11 px-6 font-bold shadow-sm cursor-pointer">
+                <Button type="submit" disabled={loading} className="h-11 px-6 font-bold bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 rounded-xl shadow-xs cursor-pointer active:scale-[0.98]">
                   {loading ? 'Verifying...' : 'Verify Record'}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Sample valid ID: <button type="button" onClick={() => setCode('CERT-MLMS-2026-9901')} className="text-primary underline font-mono cursor-pointer">CERT-MLMS-2026-9901</button>
+                Sample valid ID: <button type="button" onClick={() => { setCode('CERT-MLMS-2026-9901'); verifyCode('CERT-MLMS-2026-9901'); }} className="text-foreground underline font-mono font-semibold cursor-pointer">CERT-MLMS-2026-9901</button>
               </p>
             </div>
           </form>
@@ -146,11 +163,11 @@ export default function VerifyCertificatePage() {
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40">
                   <span className="text-xs text-muted-foreground">Accreditation ID</span>
-                  <span className="font-mono text-xs font-bold text-primary">{certData.identifier}</span>
+                  <span className="font-mono text-xs font-bold text-foreground bg-muted px-2 py-0.5 rounded">{certData.identifier}</span>
                 </div>
               </div>
 
-              <Button asChild className="w-full h-11 font-bold shadow-md" size="lg">
+              <Button asChild className="w-full h-11 font-bold bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 rounded-xl shadow-xs" size="lg">
                 <Link href={`/certificates/${searchedCode}`}>
                   View Official Digital Certificate
                   <ExternalLink className="ml-2 h-4 w-4" />
@@ -175,5 +192,13 @@ export default function VerifyCertificatePage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+export default function VerifyCertificatePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <VerifyCertificateContent />
+    </Suspense>
   )
 }

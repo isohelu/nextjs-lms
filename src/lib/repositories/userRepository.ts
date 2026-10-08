@@ -18,17 +18,17 @@ export interface UserRecord {
 
 export const userRepository = {
   findByEmail(email: string): UserRecord | undefined {
-    const stmt = db.prepare<[string], UserRecord>(
+    const stmt = db.prepare(
       'SELECT id, name, role, password, email, status, photo, instructor_id, social_links, email_verified_at FROM users WHERE email = ? COLLATE NOCASE'
     )
-    return stmt.get(email.trim())
+    return stmt.get<UserRecord>(email.trim())
   },
 
   findById(id: number): UserRecord | undefined {
-    const stmt = db.prepare<[number], UserRecord>(
+    const stmt = db.prepare(
       'SELECT id, name, role, email, status, photo, instructor_id, social_links, email_verified_at, created_at FROM users WHERE id = ?'
     )
-    return stmt.get(id)
+    return stmt.get<UserRecord>(id)
   },
 
   create(user: {

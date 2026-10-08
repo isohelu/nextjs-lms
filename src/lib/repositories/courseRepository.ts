@@ -124,7 +124,7 @@ export const courseRepository = {
   },
 
   findBySlug(slug: string): CourseRecord | undefined {
-    const stmt = db.prepare<[string], CourseRecord>(
+    const stmt = db.prepare(
       `SELECT c.*, cat.title as category_title,
               u.name as instructor_name, u.photo as instructor_photo, u.email as instructor_email,
               (SELECT COUNT(*) FROM course_enrollments e WHERE e.course_id = c.id) as enrollments_count
@@ -134,11 +134,11 @@ export const courseRepository = {
        LEFT JOIN users u ON inst.user_id = u.id
        WHERE c.slug = ?`
     )
-    return stmt.get(slug)
+    return stmt.get<CourseRecord>(slug)
   },
 
   findById(id: number): CourseRecord | undefined {
-    const stmt = db.prepare<[number], CourseRecord>(
+    const stmt = db.prepare(
       `SELECT c.*, cat.title as category_title,
               u.name as instructor_name, u.photo as instructor_photo,
               (SELECT COUNT(*) FROM course_enrollments e WHERE e.course_id = c.id) as enrollments_count
@@ -148,36 +148,36 @@ export const courseRepository = {
        LEFT JOIN users u ON inst.user_id = u.id
        WHERE c.id = ?`
     )
-    return stmt.get(id)
+    return stmt.get<CourseRecord>(id)
   },
 
   getCurriculum(courseId: number): (SectionRecord & { section_lessons?: any[]; section_quizzes?: any[] })[] {
-    const sectionsStmt = db.prepare<[number], SectionRecord>(
+    const sectionsStmt = db.prepare(
       'SELECT id, title, sort, course_id FROM course_sections WHERE course_id = ? ORDER BY sort ASC, id ASC'
     )
-    const sections = sectionsStmt.all(courseId)
+    const sections = sectionsStmt.all<SectionRecord>(courseId)
 
-    const lessonsStmt = db.prepare<[number], LessonRecord & { resources?: any[] }>(
+    const lessonsStmt = db.prepare(
       'SELECT id, title, sort, status, lesson_type, lesson_provider, lesson_src, duration, is_free, summary, description, course_section_id, course_id FROM section_lessons WHERE course_section_id = ? ORDER BY sort ASC, id ASC'
     )
-    const quizzesStmt = db.prepare<[number], any>(
+    const quizzesStmt = db.prepare(
       'SELECT id, title, total_mark as total_marks, pass_mark, duration, hours, minutes, seconds, retake, summary, course_section_id, course_id FROM section_quizzes WHERE course_section_id = ? ORDER BY id ASC'
     )
-    const resourcesStmt = db.prepare<[number], any>(
+    const resourcesStmt = db.prepare(
       'SELECT id, title, type, resource, section_lesson_id, created_at, updated_at FROM lesson_resources WHERE section_lesson_id = ? ORDER BY id ASC'
     )
-    const questionsStmt = db.prepare<[number], any>(
+    const questionsStmt = db.prepare(
       'SELECT id, title, type, options, answer, sort, section_quiz_id, created_at, updated_at FROM quiz_questions WHERE section_quiz_id = ? ORDER BY sort ASC, id ASC'
     )
 
     for (const sec of sections) {
-      const lessons = lessonsStmt.all(sec.id)
+      const lessons = lessonsStmt.all<LessonRecord & { resources?: any[] }>(sec.id)
       for (const les of lessons) {
-        les.resources = resourcesStmt.all(les.id)
+        les.resources = resourcesStmt.all<any>(les.id)
       }
-      const quizzes = quizzesStmt.all(sec.id)
+      const quizzes = quizzesStmt.all<any>(sec.id)
       for (const q of quizzes) {
-        q.questions = questionsStmt.all(q.id)
+        q.questions = questionsStmt.all<any>(q.id)
       }
 
       sec.lessons = lessons

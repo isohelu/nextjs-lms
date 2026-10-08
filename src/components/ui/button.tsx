@@ -4,32 +4,34 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:ring-0 focus-visible:border-transparent aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer",
   {
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
+          'bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-semibold shadow-xs transition-colors active:scale-[0.98]',
+        primary:
+          'bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-semibold shadow-xs transition-colors active:scale-[0.98]',
         defaultBlack:
-          'bg-zinc-900 text-zinc-50 shadow-xs hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90',
+          'bg-zinc-900 text-zinc-50 shadow-xs hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 active:scale-[0.98]',
         destructive:
-          'bg-destructive text-white shadow-xs hover:bg-destructive/90',
+          'bg-destructive text-white shadow-xs hover:bg-destructive/90 active:scale-[0.98]',
         outline:
-          'border border-border hover:border-foreground bg-background shadow-xs hover:bg-accent/60 hover:text-accent-foreground',
+          'border border-border hover:border-slate-400 bg-background shadow-xs hover:bg-accent/60 hover:text-accent-foreground active:scale-[0.98]',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
+          'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 active:scale-[0.98]',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+        link: 'text-slate-950 dark:text-white underline-offset-4 hover:underline hover:text-slate-700 dark:hover:text-slate-200',
       },
       size: {
-        default: 'h-9 px-4 py-2 has-[>svg]:px-3',
-        sm: 'h-8 rounded-md px-3 has-[>svg]:px-2.5',
-        lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
-        icon: 'size-9',
-        'icon-sm': 'size-8',
-        'icon-xs': 'size-6',
-        'icon-lg': 'size-10',
-        xs: 'h-6 px-2 text-xs',
+        default: 'h-10 px-5 py-2.5 has-[>svg]:px-3.5 text-sm sm:text-base',
+        sm: 'h-8.5 rounded-md px-3.5 has-[>svg]:px-2.5 text-xs sm:text-sm',
+        lg: 'h-11 rounded-lg px-6 has-[>svg]:px-4 text-base font-semibold',
+        icon: 'size-10',
+        'icon-sm': 'size-8.5',
+        'icon-xs': 'size-7',
+        'icon-lg': 'size-11',
+        xs: 'h-7 px-2.5 text-xs',
       },
     },
     defaultVariants: {
@@ -60,8 +62,7 @@ function Button({
   }) {
   const Comp = asChild ? Slot : 'button'
 
-  const resolvedVariant =
-    (variant === 'default' || !variant) && !change ? 'defaultBlack' : variant
+  const resolvedVariant = variant || 'default'
 
   return (
     <Comp

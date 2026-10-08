@@ -84,6 +84,7 @@ export const productRepository = {
     status?: string
     pricingType?: string
     featured?: boolean
+    sort?: string
     limit?: number
     offset?: number
     instructorId?: number
@@ -96,7 +97,7 @@ export const productRepository = {
       params.push(options.status)
     }
 
-    if (options.pricingType) {
+    if (options.pricingType && options.pricingType !== 'all') {
       whereClause += ' AND p.pricing_type = ?'
       params.push(options.pricingType)
     }
@@ -133,6 +134,17 @@ export const productRepository = {
     const limit = options.limit || 20
     const offset = options.offset || 0
 
+    let orderBy = 'p.id DESC'
+    if (options.sort === 'expensive') {
+      orderBy = 'COALESCE(p.discount_price, p.price) DESC, p.price DESC'
+    } else if (options.sort === 'inexpensive') {
+      orderBy = 'COALESCE(p.discount_price, p.price) ASC, p.price ASC'
+    } else if (options.sort === 'bestsellers') {
+      orderBy = 'orders_count DESC, p.id DESC'
+    } else if (options.sort === 'best_rates') {
+      orderBy = 'average_rating DESC, p.id DESC'
+    }
+
     const listStmt = db.prepare(
       `SELECT p.id, p.title, p.slug, p.price, p.discount, p.discount_price,
               p.pricing_type, p.thumbnail, p.summary, p.status, p.created_at,
@@ -147,12 +159,23 @@ export const productRepository = {
        LEFT JOIN instructors ins ON p.instructor_id = ins.id
        LEFT JOIN users u ON ins.user_id = u.id
        WHERE ${whereClause}
-       ORDER BY p.id DESC
+       ORDER BY ${orderBy}
        LIMIT ? OFFSET ?`
     )
 
     const rows = listStmt.all(...params, limit, offset) as ProductRecord[]
     return { products: rows, total }
+  },
+
+  listCategories(): { id: number; title: string; slug: string; icon?: string | null; description?: string | null; products_count: number }[] {
+    const rows = db.prepare(`
+      SELECT c.id, c.title, c.slug, c.icon, c.description,
+             (SELECT COUNT(*) FROM products p WHERE p.product_category_id = c.id AND p.status = 'approved') as products_count
+      FROM product_categories c
+      WHERE c.slug != 'default' AND c.status = 1
+      ORDER BY c.sort ASC, c.id ASC
+    `).all() as { id: number; title: string; slug: string; icon?: string | null; description?: string | null; products_count: number }[]
+    return rows
   },
 
   findBySlug(slug: string): (ProductRecord & {

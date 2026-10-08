@@ -16,6 +16,15 @@ export default function RegisterPage() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [redirectParam, setRedirectParam] = useState<string | null>(null)
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const r = params.get('redirect')
+      if (r) setRedirectParam(r)
+    }
+  }, [])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,8 +57,33 @@ export default function RegisterPage() {
         return
       }
 
-      router.push(data.redirect || '/student?tab=courses')
-      router.refresh()
+      const role = data.user?.role || 'student'
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('mentor_user_role', role)
+        localStorage.setItem('dashboard_role', role)
+        if (data.user) {
+          localStorage.setItem('demo_user', JSON.stringify(data.user))
+        }
+        window.dispatchEvent(new Event('mentor_user_state_changed'))
+        window.dispatchEvent(new Event('storage'))
+      }
+
+      const searchParams = new URLSearchParams(window.location.search)
+      const redirectUrl = searchParams.get('redirect')
+
+      let targetUrl = (data && data.redirect) || (role === 'admin' ? '/admin/dashboard' : role === 'instructor' ? '/instructor/dashboard' : '/student')
+      if (
+        redirectUrl &&
+        redirectUrl !== '/' &&
+        redirectUrl !== '/auth/login' &&
+        redirectUrl !== '/login' &&
+        redirectUrl !== '/register' &&
+        redirectUrl !== '/auth'
+      ) {
+        targetUrl = redirectUrl
+      }
+
+      window.location.href = targetUrl
     } catch {
       setErrorMsg('Failed to connect to registration service. Please try again.')
       setLoading(false)
@@ -156,7 +190,10 @@ export default function RegisterPage() {
 
         <div className="space-x-2 text-sm text-center md:text-left">
           <span className="text-muted-foreground">Already have an account?</span>
-          <Link href="/login" className="underline underline-offset-4 text-primary font-medium">
+          <Link
+            href={redirectParam ? `/login?redirect=${encodeURIComponent(redirectParam)}` : '/login'}
+            className="underline underline-offset-4 text-foreground font-semibold hover:text-slate-700 dark:hover:text-slate-300"
+          >
             Log in
           </Link>
         </div>

@@ -27,7 +27,7 @@ export const settingRepository = {
       sql += ' AND sub_type = ?'
       params.push(subType)
     } else {
-      sql += ' AND (sub_type IS NULL OR sub_type = "")'
+      sql += " AND (sub_type IS NULL OR sub_type = '')"
     }
     sql += ' LIMIT 1'
 
@@ -52,7 +52,7 @@ export const settingRepository = {
       sqlSelect += ' AND sub_type = ?'
       params.push(subType)
     } else {
-      sqlSelect += ' AND (sub_type IS NULL OR sub_type = "")'
+      sqlSelect += " AND (sub_type IS NULL OR sub_type = '')"
     }
 
     const row = db.prepare(sqlSelect).get(...params) as { id: number; fields: string } | undefined

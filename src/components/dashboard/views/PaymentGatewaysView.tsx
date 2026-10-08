@@ -142,15 +142,15 @@ export default function AdminPaymentGatewaysPage() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                    <div className="h-9 w-9 rounded-xl bg-[#D8FC38] text-slate-950 flex items-center justify-center shadow-xs">
                       <CreditCard className="h-5 w-5" />
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-foreground">{gw.name}</h4>
-                      <p className="text-[11px] text-muted-foreground">{gw.desc}</p>
+                      <p className="text-xs text-muted-foreground">{gw.desc}</p>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-500/30">
+                  <Badge variant="outline" className="text-xs font-semibold text-emerald-600 border-emerald-500/30">
                     {gw.status}
                   </Badge>
                 </div>

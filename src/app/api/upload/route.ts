@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import path from 'path'
-import fs from 'fs'
 import db from '@/lib/db'
+import { storageManager } from '@/lib/storage'
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,11 +10,6 @@ export async function POST(req: NextRequest) {
     const modelType = (formData.get('model_type') as string) || 'Modules\\Store\\Models\\Product'
     const modelId = formData.get('model_id') ? parseInt(formData.get('model_id') as string, 10) : null
     const collectionName = (formData.get('collection_name') as string) || 'default'
-
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads')
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true })
-    }
 
     const filesToProcess: File[] = []
     if (file && file.size > 0) {
@@ -37,14 +31,12 @@ export async function POST(req: NextRequest) {
       const bytes = await item.arrayBuffer()
       const buffer = Buffer.from(bytes)
 
-      // Generate a safe unique filename
-      const ext = path.extname(item.name) || ''
-      const baseName = path.basename(item.name, ext).replace(/[^a-zA-Z0-9_-]/g, '_')
-      const uniqueName = `${Date.now()}_${baseName}${ext}`
-      const filePath = path.join(uploadDir, uniqueName)
-
-      fs.writeFileSync(filePath, buffer)
-      const fileUrl = `/uploads/${uniqueName}`
+      // Upload via active Storage Driver (S3, R2, or Local)
+      const uploadRes = await storageManager.uploadFile(
+        buffer,
+        item.name,
+        item.type || 'application/octet-stream'
+      )
 
       let mediaId: number | null = null
 
@@ -55,16 +47,17 @@ export async function POST(req: NextRequest) {
               model_type, model_id, collection_name, name, file_name,
               mime_type, disk, size, manipulations, custom_properties,
               generated_conversions, responsive_images, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, 'local', ?, '[]', '[]', '[]', '[]', datetime('now'), datetime('now'))
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, '[]', '[]', '[]', '[]', datetime('now'), datetime('now'))
           `)
           const res = insertStmt.run(
             modelType,
             modelId,
             collectionName,
-            item.name,
-            uniqueName,
-            item.type || 'application/octet-stream',
-            item.size
+            uploadRes.name,
+            uploadRes.fileName,
+            uploadRes.mimeType,
+            uploadRes.disk,
+            uploadRes.size
           )
           mediaId = Number(res.lastInsertRowid)
         } catch (dbErr) {
@@ -74,11 +67,12 @@ export async function POST(req: NextRequest) {
 
       uploadedResults.push({
         id: mediaId,
-        url: fileUrl,
-        name: item.name,
-        fileName: uniqueName,
-        size: item.size,
-        mimeType: item.type || 'application/octet-stream',
+        url: uploadRes.url,
+        name: uploadRes.name,
+        fileName: uploadRes.fileName,
+        size: uploadRes.size,
+        mimeType: uploadRes.mimeType,
+        disk: uploadRes.disk,
       })
     }
 

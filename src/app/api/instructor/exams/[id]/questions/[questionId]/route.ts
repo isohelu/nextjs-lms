@@ -57,7 +57,7 @@ export async function PUT(
     }
 
     const body = await req.json()
-    const { title, marks, question_type, options } = body
+    const { title, description, marks, question_type, options } = body
 
     const question = db.prepare('SELECT id FROM exam_questions WHERE id = ? AND exam_id = ?').get(questionId, examId)
     if (!question) {
@@ -65,16 +65,15 @@ export async function PUT(
     }
 
     const runTransaction = db.transaction(() => {
-      if (title || marks !== undefined || question_type) {
-        db.prepare(`
-          UPDATE exam_questions SET
-            title = COALESCE(?, title),
-            marks = COALESCE(?, marks),
-            question_type = COALESCE(?, question_type),
-            updated_at = datetime('now')
-          WHERE id = ?
-        `).run(title, marks, question_type, questionId)
-      }
+      db.prepare(`
+        UPDATE exam_questions SET
+          title = COALESCE(?, title),
+          description = ?,
+          marks = COALESCE(?, marks),
+          question_type = COALESCE(?, question_type),
+          updated_at = datetime('now')
+        WHERE id = ?
+      `).run(title, description !== undefined ? description : null, marks, question_type, questionId)
 
       if (Array.isArray(options)) {
         db.prepare('DELETE FROM exam_question_options WHERE exam_question_id = ?').run(questionId)

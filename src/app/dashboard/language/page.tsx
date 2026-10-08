@@ -208,12 +208,12 @@ export default function DashboardLanguagePage() {
                             {lang.name} ({lang.nativeName})
                           </h4>
                           {isDefault && (
-                            <Badge className="bg-blue-600 hover:bg-blue-600 text-[10px]">
+                            <Badge className="bg-blue-600 hover:bg-blue-600 text-xs font-semibold text-white">
                               Default
                             </Badge>
                           )}
                         </div>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">Locale Code: {lang.code}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Locale Code: {lang.code}</p>
                       </div>
                     </div>
 
@@ -301,7 +301,7 @@ export default function DashboardLanguagePage() {
                   type="submit"
                   size="sm"
                   disabled={submitting}
-                  className="bg-[#007867] hover:bg-[#007867]/90 text-white"
+                  className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold rounded-xl shadow-xs"
                 >
                   {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Add Language'}
                 </Button>

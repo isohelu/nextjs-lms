@@ -66,9 +66,9 @@ export function CourseCatalog({ initialCourses, categories }: CourseCatalogProps
       <div className="flex flex-wrap items-center gap-2 mb-8 pb-2 border-b border-border/40">
         <button
           onClick={() => setSelectedCategory('all')}
-          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
             selectedCategory === 'all'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
+              ? 'bg-[#D8FC38] text-slate-950 shadow-xs'
               : 'bg-card/80 text-muted-foreground hover:text-foreground border border-border/60 hover:bg-accent'
           }`}
         >
@@ -78,9 +78,9 @@ export function CourseCatalog({ initialCourses, categories }: CourseCatalogProps
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               selectedCategory === cat.id
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
+                ? 'bg-[#D8FC38] text-slate-950 shadow-xs'
                 : 'bg-card/80 text-muted-foreground hover:text-foreground border border-border/60 hover:bg-accent'
             }`}
           >
@@ -94,9 +94,9 @@ export function CourseCatalog({ initialCourses, categories }: CourseCatalogProps
             <button
               key={lvl}
               onClick={() => setSelectedLevel(lvl)}
-              className={`text-[11px] px-2.5 py-1 rounded-md transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-lg transition-colors font-semibold ${
                 selectedLevel === lvl
-                  ? 'bg-accent text-foreground font-bold'
+                  ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >

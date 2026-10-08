@@ -6,14 +6,15 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
     const category = searchParams.get('category') || undefined
-    const search = searchParams.get('search') || undefined
-    const pricingType = searchParams.get('pricing_type') || undefined
+    const search = searchParams.get('products_search') || searchParams.get('search') || undefined
+    const pricingType = searchParams.get('price') || searchParams.get('pricing_type') || undefined
+    const sort = searchParams.get('sort') || undefined
     const featuredParam = searchParams.get('featured')
     const featured = featuredParam !== null ? featuredParam === 'true' || featuredParam === '1' : undefined
     const statusParam = searchParams.get('status')
     const status = statusParam === 'all' ? undefined : (statusParam || 'approved')
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '12', 10)))
+    const page = Math.max(1, parseInt(searchParams.get('products_page') || searchParams.get('page') || '1', 10))
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('products_per_page') || searchParams.get('limit') || '12', 10)))
     const offset = (page - 1) * limit
     const instructorId = searchParams.get('instructor_id') ? parseInt(searchParams.get('instructor_id')!, 10) : undefined
 
@@ -22,6 +23,7 @@ export async function GET(req: NextRequest) {
       search,
       pricingType,
       featured,
+      sort,
       status,
       limit,
       offset,

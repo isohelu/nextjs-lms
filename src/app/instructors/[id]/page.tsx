@@ -190,7 +190,7 @@ export default async function InstructorProfilePage({ params, searchParams }: In
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
-              <Avatar className="h-20 w-20 border-2 border-primary/30">
+              <Avatar className="h-20 w-20 border-2 border-[#D8FC38]/60">
                 <AvatarImage src={instructor.avatar} alt={instructor.name} />
                 <AvatarFallback>{instructor.name.charAt(0)}</AvatarFallback>
               </Avatar>
@@ -200,7 +200,7 @@ export default async function InstructorProfilePage({ params, searchParams }: In
                   <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                     {instructor.name}
                   </h1>
-                  <ShieldCheck className="h-5 w-5 text-primary" />
+                  <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <p className="text-sm font-medium text-muted-foreground">
                   {instructor.designation}
@@ -219,7 +219,7 @@ export default async function InstructorProfilePage({ params, searchParams }: In
               </span>
               <div>
                 <RatingStars rating={instructor.rating} starClass="h-4 w-4" />
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {instructor.reviews_count.toLocaleString()} reviews
                 </p>
               </div>

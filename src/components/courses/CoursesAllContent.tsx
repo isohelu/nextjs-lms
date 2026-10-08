@@ -346,12 +346,13 @@ export default function CoursesAllContent() {
             <div className="rounded-2xl border border-border bg-card p-6 shadow-xs">
               <div className="flex items-center justify-between pb-4 border-b border-border/40 mb-6">
                 <h3 className="font-semibold text-foreground flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-primary" /> Filter Courses
+                  <span className="h-2 w-2 rounded-full bg-[#D8FC38]" />
+                  <Filter className="h-4 w-4 text-foreground" /> Filter Courses
                 </h3>
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
+                  className="text-xs font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
                 >
                   <RotateCcw className="h-3 w-3" /> Reset
                 </button>
@@ -371,11 +372,11 @@ export default function CoursesAllContent() {
                           checked={selectedCategories.includes(cat.name)}
                           onCheckedChange={() => toggleCategory(cat.name)}
                         />
-                        <Label htmlFor={`cat-${cat.name}`} className="text-sm cursor-pointer">
+                        <Label htmlFor={`cat-${cat.name}`} className="text-sm cursor-pointer font-medium">
                           {cat.name}
                         </Label>
                       </div>
-                      <span className="text-xs text-muted-foreground">({cat.count})</span>
+                      <span className="text-xs font-medium text-muted-foreground">({cat.count})</span>
                     </div>
                   ))}
                 </div>
@@ -393,10 +394,10 @@ export default function CoursesAllContent() {
                       type="button"
                       onClick={() => setPriceFilter(p)}
                       className={cn(
-                        'w-full text-left px-3 py-1.5 rounded-lg text-sm font-medium transition-colors capitalize',
+                        'w-full text-left px-3.5 py-2 rounded-xl text-sm font-medium transition-all capitalize',
                         priceFilter === p
-                          ? 'bg-primary/10 text-primary font-semibold'
-                          : 'text-foreground/70 hover:bg-muted'
+                          ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs'
+                          : 'text-foreground/80 hover:bg-muted'
                       )}
                     >
                       {p === 'all' ? 'All Prices' : p}
@@ -417,14 +418,14 @@ export default function CoursesAllContent() {
                       type="button"
                       onClick={() => setMinRating(minRating === rating ? 0 : rating)}
                       className={cn(
-                        'w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-sm transition-colors',
+                        'w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-sm transition-all',
                         minRating === rating
-                          ? 'bg-primary/10 text-primary font-semibold'
-                          : 'text-foreground/70 hover:bg-muted'
+                          ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs'
+                          : 'text-foreground/80 hover:bg-muted'
                       )}
                     >
                       <div className="flex items-center gap-1.5">
-                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        <Star className={cn("h-4 w-4", minRating === rating ? "fill-slate-950 text-slate-950" : "fill-amber-400 text-amber-400")} />
                         <span>{rating.toFixed(1)} & above</span>
                       </div>
                     </button>
@@ -460,7 +461,7 @@ export default function CoursesAllContent() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="h-10 rounded-xl border border-border bg-background px-3 text-xs font-medium text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
+                  className="h-10 rounded-xl border border-border bg-background px-3 text-xs font-semibold text-foreground focus:outline-hidden focus:ring-2 focus:ring-[#D8FC38]"
                 >
                   <option value="popular">Most Popular</option>
                   <option value="newest">Newest First</option>

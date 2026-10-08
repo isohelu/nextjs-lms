@@ -1,17 +1,19 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { Eye, Edit, ArrowUpDown, Loader2, FileText, Download } from 'lucide-react'
+import { Eye, Edit, ArrowUpDown, Loader2, FileText } from 'lucide-react'
 import Breadcrumbs from '@/components/breadcrumbs'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import TableFilter from '@/components/table/table-filter'
 import TableFooter from '@/components/table/table-footer'
+import DocumentViewer from '@/components/document-viewer'
+import { Editor } from '@/components/rich-editor'
+import LoadingButton from '@/components/loading-button'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Table,
   TableBody,
@@ -25,7 +27,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog'
 import {
   Select,
@@ -58,11 +59,11 @@ export default function DashboardInstructorApplicationsPage() {
   const [pageSize, setPageSize] = useState(10)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
-  // Resume Modal
+  // Resume Modal (1:1 with Laravel DocumentViewer dialog)
   const [resumeModalOpen, setResumeModalOpen] = useState(false)
   const [viewingApp, setViewingApp] = useState<ApplicationItem | null>(null)
 
-  // Status Approval Modal
+  // Status Approval Modal (1:1 with Laravel ApplicationApproval)
   const [approvalModalOpen, setApprovalModalOpen] = useState(false)
   const [selectedApp, setSelectedApp] = useState<ApplicationItem | null>(null)
   const [newStatus, setNewStatus] = useState<'approved' | 'pending' | 'rejected'>('approved')
@@ -118,11 +119,10 @@ export default function DashboardInstructorApplicationsPage() {
 
   const handleOpenApproval = (app: ApplicationItem) => {
     setSelectedApp(app)
-    setNewStatus(
-      app.status === 'approved'
-        ? 'pending'
-        : ('approved' as 'approved' | 'pending' | 'rejected')
+    const availableStatuses = ['pending', 'approved', 'rejected'].filter(
+      (s) => s !== app.status
     )
+    setNewStatus((availableStatuses[0] as 'approved' | 'pending' | 'rejected') || 'approved')
     setFeedback('')
     setApprovalModalOpen(true)
   }
@@ -235,19 +235,19 @@ export default function DashboardInstructorApplicationsPage() {
                       <p className="font-medium text-foreground">{app.name}</p>
                       <p className="text-xs text-muted-foreground">{app.email}</p>
                       {app.designation && (
-                        <p className="text-[11px] text-muted-foreground/80 mt-0.5">
+                        <p className="text-xs text-muted-foreground/80 mt-0.5">
                           {app.designation}
                         </p>
                       )}
                     </div>
                   </TableCell>
 
-                  {/* Resume */}
+                  {/* Resume (exact match with Laravel View Resume dialog) */}
                   <TableCell className="px-6 py-3 capitalize">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-8 gap-1.5 text-xs"
+                      className="h-8 gap-1.5 text-xs font-normal"
                       onClick={() => handleOpenResume(app)}
                     >
                       <Eye className="h-3.5 w-3.5" />
@@ -300,152 +300,83 @@ export default function DashboardInstructorApplicationsPage() {
         />
       </Card>
 
-      {/* View Resume Modal */}
+      {/* ── VIEW RESUME MODAL (1:1 with Laravel DocumentViewer in Dialog) ── */}
       <Dialog open={resumeModalOpen} onOpenChange={setResumeModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Resume & Profile: {viewingApp?.name}</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-2xl p-0 overflow-hidden">
+          <ScrollArea className="min-h-[85vh] max-h-[90vh]">
+            <DialogHeader className="p-6 pb-2">
+              <DialogTitle className="text-lg font-semibold">Resume</DialogTitle>
+            </DialogHeader>
 
-          {viewingApp && (
-            <div className="space-y-4 py-2">
-              <div className="grid grid-cols-2 gap-4 rounded-lg bg-muted/40 p-4 text-xs">
-                <div>
-                  <span className="font-semibold text-foreground block">Email:</span>
-                  <span className="text-muted-foreground">{viewingApp.email}</span>
-                </div>
-                <div>
-                  <span className="font-semibold text-foreground block">Designation:</span>
-                  <span className="text-muted-foreground">{viewingApp.designation || 'Not specified'}</span>
-                </div>
-                <div>
-                  <span className="font-semibold text-foreground block">Status:</span>
-                  <span className="capitalize text-muted-foreground">{viewingApp.status}</span>
-                </div>
-                <div>
-                  <span className="font-semibold text-foreground block">Applied At:</span>
-                  <span className="text-muted-foreground">
-                    {viewingApp.created_at ? new Date(viewingApp.created_at).toLocaleDateString() : 'N/A'}
-                  </span>
-                </div>
-              </div>
-
-              {viewingApp.skills && (
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Skills & Expertise</Label>
-                  <p className="text-xs text-muted-foreground bg-card border rounded-lg p-3">
-                    {viewingApp.skills}
-                  </p>
-                </div>
-              )}
-
-              {viewingApp.biography && (
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Professional Biography</Label>
-                  <p className="text-xs text-muted-foreground bg-card border rounded-lg p-3 whitespace-pre-wrap">
-                    {viewingApp.biography}
-                  </p>
-                </div>
-              )}
-
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Resume Document</Label>
-                <div className="border rounded-lg p-4 flex items-center justify-between bg-muted/20">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="text-xs font-medium text-foreground">
-                        {viewingApp.resume || 'resume.pdf'}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground">Verified Document Portfolio</p>
-                    </div>
-                  </div>
-                  {viewingApp.resume ? (
-                    <Button asChild size="sm" variant="outline" className="h-8 gap-1.5 text-xs">
-                      <a href={viewingApp.resume.startsWith('/') ? viewingApp.resume : `/${viewingApp.resume}`} target="_blank" rel="noreferrer">
-                        <Download className="h-3.5 w-3.5" />
-                        Download
-                      </a>
-                    </Button>
-                  ) : (
-                    <span className="text-xs text-muted-foreground italic">No document attached</span>
-                  )}
-                </div>
-              </div>
+            <div className="p-2">
+              <DocumentViewer
+                src={viewingApp?.resume || ''}
+                applicantName={viewingApp?.name}
+                className="min-h-[75vh]"
+              />
             </div>
-          )}
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setResumeModalOpen(false)}>
-              Close
-            </Button>
-            {viewingApp && (
-              <Button
-                onClick={() => {
-                  setResumeModalOpen(false)
-                  handleOpenApproval(viewingApp)
-                }}
-              >
-                Change Status
-              </Button>
-            )}
-          </DialogFooter>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
-      {/* Approval Status Modal */}
+      {/* ── APPROVAL STATUS MODAL (1:1 with Laravel ApplicationApproval) ── */}
       <Dialog open={approvalModalOpen} onOpenChange={setApprovalModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleSaveApproval} className="space-y-4 py-2">
-            <div className="space-y-2">
-              <Label htmlFor="app-status">Approval Status *</Label>
+          <form onSubmit={handleSaveApproval} className="space-y-4 pt-2">
+            <div>
+              <Label htmlFor="approval_status">Approval Status *</Label>
               <Select
                 value={newStatus}
                 onValueChange={(val: 'approved' | 'pending' | 'rejected') =>
                   setNewStatus(val)
                 }
               >
-                <SelectTrigger id="app-status">
-                  <SelectValue placeholder="Select approval status" />
+                <SelectTrigger id="approval_status" className="mt-1">
+                  <SelectValue placeholder="Select the approval status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
+                  {['pending', 'approved', 'rejected']
+                    .filter((s) => s !== selectedApp?.status)
+                    .map((status) => (
+                      <SelectItem
+                        key={status}
+                        value={status}
+                        className="capitalize"
+                      >
+                        {status}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="app-feedback">Feedback (Optional)</Label>
-              <Textarea
-                id="app-feedback"
+            <div className="pb-2">
+              <Label htmlFor="approval_feedback" className="mb-1.5 block">Feedback</Label>
+              <Editor
+                ssr={true}
+                output="html"
+                placeholder={{
+                  paragraph: 'Enter feedback...',
+                  imageCaption: 'Enter image URL...',
+                }}
+                contentMinHeight={200}
+                contentMaxHeight={360}
                 value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Optional feedback or notes to the applicant..."
-                rows={3}
+                onContentChange={(val) => setFeedback(val)}
               />
             </div>
 
-            <DialogFooter className="pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setApprovalModalOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={savingStatus}>
-                {savingStatus ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
-                Save Changes
-              </Button>
-            </DialogFooter>
+            <LoadingButton
+              type="submit"
+              loading={savingStatus}
+              className="w-full"
+            >
+              Submit
+            </LoadingButton>
           </form>
         </DialogContent>
       </Dialog>

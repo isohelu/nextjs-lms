@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
       discount: body.discount ? 1 : 0,
       discount_price: body.discount && body.discount_price ? Number(body.discount_price) : null,
       thumbnail: finalThumbnail,
-      status: 'approved',
+      status: body.status || 'published',
       instructor_id: instructorId,
       expiry_type: body.expiry_type || 'lifetime',
       expiry_duration: body.expiry_duration || null,

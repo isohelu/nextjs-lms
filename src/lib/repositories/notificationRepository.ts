@@ -73,7 +73,7 @@ export const notificationRepository = {
       'UPDATE notifications SET read_at = ?, updated_at = ? WHERE notifiable_id = ? AND notifiable_type = ? AND read_at IS NULL'
     )
     const res = stmt.run(now, now, userId, 'App\\Models\\User')
-    return res.changes
+    return Number(res.changes)
   },
 
   create(userId: number, type: string, data: Record<string, unknown>): NotificationRecord {

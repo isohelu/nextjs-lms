@@ -80,7 +80,7 @@ export default function Notification() {
         >
           <Bell className="h-5! w-5!" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white shadow-sm">
+            <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-rose-600 text-xs font-bold text-white shadow-xs">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -91,7 +91,7 @@ export default function Notification() {
           <div className="flex items-center gap-2">
             <h4 className="font-semibold text-sm">Notifications</h4>
             {unreadCount > 0 && (
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+              <span className="rounded-full bg-[#D8FC38] px-2 py-0.5 text-xs font-bold text-slate-950">
                 {unreadCount} new
               </span>
             )}
@@ -123,19 +123,19 @@ export default function Notification() {
                     }}
                     className={cn(
                       'flex flex-col gap-1 px-4 py-2.5 transition-colors border-b border-border/40 last:border-0 hover:bg-accent/60',
-                      isUnread && 'bg-primary/5 font-medium'
+                      isUnread && 'bg-[#D8FC38]/5 font-medium'
                     )}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-xs font-medium text-foreground leading-snug">
+                      <p className="text-xs font-semibold text-foreground leading-snug">
                         {data?.title || 'System Notification'}
                       </p>
                       {isUnread && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1 shrink-0" />
+                        <span className="h-2 w-2 rounded-full bg-[#D8FC38] ring-2 ring-[#D8FC38]/40 mt-1 shrink-0" />
                       )}
                     </div>
                     {data?.message && (
-                      <p className="text-[11px] text-muted-foreground line-clamp-2">
+                      <p className="text-xs text-muted-foreground line-clamp-2">
                         {data.message}
                       </p>
                     )}

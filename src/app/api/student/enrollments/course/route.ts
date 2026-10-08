@@ -46,10 +46,10 @@ export async function POST(req: NextRequest) {
       enrolled: true
     }, { status: 201 })
   } catch (error: unknown) {
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json({ success: false, message: 'Unauthorized. Please log in.' }, { status: 401 })
+    if (error instanceof Error && (error.message.toUpperCase().includes('UNAUTHORIZED') || error.message.includes('Unauthorized'))) {
+      return NextResponse.json({ success: false, message: 'You must be logged in to enroll.' }, { status: 401 })
     }
-    if (error instanceof Error && error.message.includes('Forbidden')) {
+    if (error instanceof Error && (error.message.toUpperCase().includes('FORBIDDEN') || error.message.includes('Forbidden'))) {
       return NextResponse.json({ success: false, message: 'Forbidden. Students only.' }, { status: 403 })
     }
     console.error('Course enrollment error:', error)

@@ -178,14 +178,14 @@ export default function ExamsPage() {
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={cn(
-                      'w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-between',
+                      'w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors flex items-center justify-between',
                       selectedCategory === cat
-                        ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                        ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     )}
                   >
                     <span>{cat}</span>
-                    <span className="text-xs opacity-75">
+                    <span className="text-xs opacity-80">
                       {cat === 'All' ? EXAMS_DATA.length : EXAMS_DATA.filter(e => e.category_name === cat).length}
                     </span>
                   </button>
@@ -247,13 +247,13 @@ export default function ExamsPage() {
             {/* Top Toolbar */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
               <div className="relative w-full sm:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Search exams by title or skill..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 bg-card border-border"
+                  className="pl-10 bg-card border-border rounded-xl"
                 />
               </div>
 
@@ -261,13 +261,13 @@ export default function ExamsPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="lg:hidden flex items-center gap-1.5 border-border"
+                  className="lg:hidden flex items-center gap-1.5 border-border rounded-xl"
                   onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
                 >
                   <Filter className="h-4 w-4" />
                   <span>Filters</span>
                   {(selectedCategory !== 'All' || selectedLevels.length > 0 || selectedPricing.length > 0) && (
-                    <span className="ml-1 h-2 w-2 rounded-full bg-primary" />
+                    <span className="ml-1 h-2 w-2 rounded-full bg-[#D8FC38]" />
                   )}
                 </Button>
 
@@ -275,12 +275,12 @@ export default function ExamsPage() {
                   Showing <span className="font-semibold text-foreground">{filteredExams.length}</span> exams
                 </div>
 
-                <div className="flex items-center border border-border rounded-lg p-0.5 bg-card">
+                <div className="flex items-center border border-border rounded-xl p-1 bg-card">
                   <button
                     onClick={() => setViewType('grid')}
                     className={cn(
-                      'p-1.5 rounded-md transition-colors',
-                      viewType === 'grid' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                      'p-1.5 rounded-lg transition-colors',
+                      viewType === 'grid' ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs' : 'text-muted-foreground hover:text-foreground'
                     )}
                     title="Grid view"
                   >
@@ -289,8 +289,8 @@ export default function ExamsPage() {
                   <button
                     onClick={() => setViewType('list')}
                     className={cn(
-                      'p-1.5 rounded-md transition-colors',
-                      viewType === 'list' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                      'p-1.5 rounded-lg transition-colors',
+                      viewType === 'list' ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs' : 'text-muted-foreground hover:text-foreground'
                     )}
                     title="List view"
                   >
@@ -317,8 +317,8 @@ export default function ExamsPage() {
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
                         className={cn(
-                          'px-2.5 py-1 text-xs rounded-full font-medium',
-                          selectedCategory === cat ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                          'px-3 py-1 text-xs rounded-full font-semibold',
+                          selectedCategory === cat ? 'bg-[#D8FC38] text-slate-950' : 'bg-muted text-muted-foreground'
                         )}
                       >
                         {cat}

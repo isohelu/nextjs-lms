@@ -2,7 +2,7 @@
 
 import React, { Fragment, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import {
   Bell,
   Check,
@@ -63,10 +63,14 @@ export default function MobileMenuDrawer({
   language = true,
 }: MobileMenuDrawerProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const { appearance, updateAppearance } = useAppearance()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userRole, setUserRole] = useState<'admin' | 'instructor' | 'student'>('student')
   const supabase = createClient()
+
+  const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register') || pathname?.startsWith('/auth')
+  const redirectQuery = pathname && pathname !== '/' && !isAuthPage ? `?redirect=${encodeURIComponent(pathname)}` : ''
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -91,15 +95,23 @@ export default function MobileMenuDrawer({
   const close = () => onOpenChange(false)
 
   const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } catch {
+      // ignore
+    }
     if (typeof window !== 'undefined') {
       localStorage.removeItem('demo_user')
+      localStorage.setItem('mentor_user_role', 'guest')
       document.cookie = 'demo_user=; path=/; max-age=0'
+      document.cookie = 'mentor_session=; path=/; max-age=0'
+      document.cookie = 'lms_session=; path=/; max-age=0'
+      window.dispatchEvent(new Event('mentor_user_state_changed'))
+      window.dispatchEvent(new Event('storage'))
+      window.location.assign('/login')
     }
-    await supabase.auth.signOut()
     setIsLoggedIn(false)
     close()
-    router.push('/login')
-    router.refresh()
   }
 
   const renderNavItems = (item: NavItem) => {
@@ -294,7 +306,7 @@ export default function MobileMenuDrawer({
                   variant="outline"
                   className="w-full rounded-sm shadow-none"
                 >
-                  <Link href="/register" onClick={close}>
+                  <Link href={`/register${redirectQuery}`} onClick={close}>
                     Sign up
                   </Link>
                 </Button>
@@ -302,7 +314,7 @@ export default function MobileMenuDrawer({
                   asChild
                   className="w-full rounded-sm shadow-none"
                 >
-                  <Link href="/login" onClick={close}>
+                  <Link href={`/login${redirectQuery}`} onClick={close}>
                     Log in
                   </Link>
                 </Button>

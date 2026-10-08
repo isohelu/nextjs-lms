@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     const listQuery = `
       SELECT i.id, i.user_id, i.skills, i.biography, i.resume, i.designation, i.status, i.created_at,
              u.name, u.email, u.photo,
-             (SELECT COUNT(*) FROM courses c WHERE c.instructor_id = i.id OR c.user_id = i.user_id) as courses_count
+             (SELECT COUNT(*) FROM courses c WHERE c.instructor_id = i.id OR c.instructor_id = i.user_id) as courses_count
       FROM instructors i
       JOIN users u ON i.user_id = u.id
       ${whereClause}
@@ -59,6 +59,47 @@ export async function GET(req: NextRequest) {
     }
     console.error('Fetch admin instructors error:', error)
     return NextResponse.json({ success: false, message: 'Failed to retrieve instructors.' }, { status: 500 })
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    await requireRole(['admin'])
+    const body = await req.json()
+    const { user_id, designation, skills, biography, resume } = body
+
+    if (!user_id) {
+      return NextResponse.json({ success: false, message: 'User is required.' }, { status: 422 })
+    }
+
+    const userIdNum = Number(user_id)
+    const existing = db.prepare('SELECT id FROM instructors WHERE user_id = ?').get(userIdNum) as { id: number } | undefined
+
+    const skillsJson = Array.isArray(skills) ? JSON.stringify(skills) : typeof skills === 'string' ? JSON.stringify(skills.split(',').map((s: string) => s.trim()).filter(Boolean)) : '[]'
+
+    if (existing) {
+      db.prepare(`
+        UPDATE instructors
+        SET designation = ?, skills = ?, biography = ?, resume = COALESCE(?, resume), status = 'approved', updated_at = datetime('now')
+        WHERE id = ?
+      `).run(designation || '', skillsJson, biography || '', resume || null, existing.id)
+
+      db.prepare(`UPDATE users SET role = 'instructor', updated_at = datetime('now') WHERE id = ?`).run(userIdNum)
+
+      return NextResponse.json({ success: true, message: 'Instructor updated successfully.', id: existing.id })
+    }
+
+    const info = db.prepare(`
+      INSERT INTO instructors (user_id, designation, skills, biography, resume, status, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 'approved', datetime('now'), datetime('now'))
+    `).run(userIdNum, designation || '', skillsJson, biography || '', resume || 'resume.pdf')
+
+    db.prepare(`UPDATE users SET role = 'instructor', updated_at = datetime('now') WHERE id = ?`).run(userIdNum)
+
+    return NextResponse.json({ success: true, message: 'Instructor created successfully.', id: Number(info.lastInsertRowid) })
+  } catch (error: unknown) {
+    console.error('Create instructor error:', error)
+    return NextResponse.json({ success: false, message: 'Failed to create instructor.' }, { status: 500 })
   }
 }
 

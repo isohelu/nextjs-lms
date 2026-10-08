@@ -8,10 +8,11 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import TableFilter from '@/components/table/table-filter'
 import TableFooter from '@/components/table/table-footer'
 import ActionsDropdown from '@/components/actions-dropdown'
+import { Editor } from '@/components/rich-editor'
+import LoadingButton from '@/components/loading-button'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Table,
@@ -26,7 +27,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog'
 import {
   Select,
@@ -106,11 +106,10 @@ export default function DashboardManageInstructorsPage() {
 
   const handleOpenApproval = (inst: InstructorItem) => {
     setSelectedInstructor(inst)
-    setNewStatus(
-      inst.status === 'approved'
-        ? 'pending'
-        : ('approved' as 'approved' | 'pending' | 'rejected')
+    const availableStatuses = ['pending', 'approved', 'rejected'].filter(
+      (s) => s !== inst.status
     )
+    setNewStatus((availableStatuses[0] as 'approved' | 'pending' | 'rejected') || 'approved')
     setFeedback('')
     setApprovalModalOpen(true)
   }
@@ -302,59 +301,64 @@ export default function DashboardManageInstructorsPage() {
         />
       </Card>
 
-      {/* Approval Status Modal */}
+      {/* ── APPROVAL STATUS MODAL (1:1 with Laravel ApplicationApproval) ── */}
       <Dialog open={approvalModalOpen} onOpenChange={setApprovalModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleSaveApproval} className="space-y-4 py-2">
-            <div className="space-y-2">
-              <Label htmlFor="approval-status">Approval Status *</Label>
+          <form onSubmit={handleSaveApproval} className="space-y-4 pt-2">
+            <div>
+              <Label htmlFor="approval_status">Approval Status *</Label>
               <Select
                 value={newStatus}
                 onValueChange={(val: 'approved' | 'pending' | 'rejected') =>
                   setNewStatus(val)
                 }
               >
-                <SelectTrigger id="approval-status">
-                  <SelectValue placeholder="Select approval status" />
+                <SelectTrigger id="approval_status" className="mt-1">
+                  <SelectValue placeholder="Select the approval status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
+                  {['pending', 'approved', 'rejected']
+                    .filter((s) => s !== selectedInstructor?.status)
+                    .map((status) => (
+                      <SelectItem
+                        key={status}
+                        value={status}
+                        className="capitalize"
+                      >
+                        {status}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="approval-feedback">Feedback (Optional)</Label>
-              <Textarea
-                id="approval-feedback"
+            <div className="pb-2">
+              <Label htmlFor="approval_feedback" className="mb-1.5 block">Feedback</Label>
+              <Editor
+                ssr={true}
+                output="html"
+                placeholder={{
+                  paragraph: 'Enter feedback...',
+                  imageCaption: 'Enter image URL...',
+                }}
+                contentMinHeight={200}
+                contentMaxHeight={360}
                 value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Optional feedback or notes to the applicant..."
-                rows={3}
+                onContentChange={(val) => setFeedback(val)}
               />
             </div>
 
-            <DialogFooter className="pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setApprovalModalOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={savingStatus}>
-                {savingStatus ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
-                Save Changes
-              </Button>
-            </DialogFooter>
+            <LoadingButton
+              type="submit"
+              loading={savingStatus}
+              className="w-full"
+            >
+              Submit
+            </LoadingButton>
           </form>
         </DialogContent>
       </Dialog>

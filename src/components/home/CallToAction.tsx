@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import Image from 'next/image'
+import { ArrowUpRight, CheckCircle2 } from 'lucide-react'
 
 export default function CallToAction() {
   const [email, setEmail] = useState('')
@@ -17,68 +17,79 @@ export default function CallToAction() {
   }
 
   const avatars = [
-    { name: 'User 1', image: '/assets/avatars/avatar-1.png' },
-    { name: 'User 2', image: '/assets/avatars/avatar-2.png' },
-    { name: 'User 3', image: '/assets/avatars/avatar-3.png' },
-    { name: 'User 4', image: '/assets/avatars/avatar-4.png' },
-    { name: 'User 5', image: '/assets/avatars/avatar-5.png' },
+    { name: 'Student 1', image: '/assets/avatars/avatar-1.png' },
+    { name: 'Student 2', image: '/assets/avatars/avatar-2.png' },
+    { name: 'Student 3', image: '/assets/avatars/avatar-3.png' },
+    { name: 'Student 4', image: '/assets/avatars/avatar-4.png' },
   ]
 
   return (
-    <div className="bg-secondary-100er py-20">
-      <section className="container bg-[rgba(0,114,98,1)] rounded-4xl">
-        <div className="text-white text-center space-y-5 px-6 py-14 bg-[url('/assets/images/intro/home-1/cta-bg-vector.png')] bg-cover bg-center">
-          <h1 className="text-2xl leading-tight font-bold md:text-3xl md:leading-9">
-            Subscribe Our Newsletter
-          </h1>
+    <section className="relative py-8 sm:py-10 lg:py-12">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        {/* Main CTA Card: Clean Institutional Dark Slate with Electric Lime */}
+        <div className="relative overflow-hidden rounded-[26px] sm:rounded-[32px] bg-slate-950 border border-slate-800/90 px-6 py-10 sm:px-10 sm:py-14 text-center text-white shadow-2xl">
+          <div className="relative z-10 max-w-2xl mx-auto space-y-4 sm:space-y-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-white leading-tight">
+              Ready to Advance Your Technical Career?
+            </h2>
 
-          <div className="mx-auto w-full max-w-105 text-center">
-            <p className="mb-3 text-white/90 text-sm">
-              Subscribe to our newsletter to get latest courses and discounts.
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl mx-auto">
+              Join over 108,000 students and gain access to comprehensive courses, hands-on projects, and verified certificates.
             </p>
 
-            {subscribed ? (
-              <div className="rounded-lg bg-white/20 p-3 text-sm font-semibold text-white">
-                ✓ Thank you for subscribing!
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="relative z-10">
-                <div className="flex items-center justify-between rounded-lg border border-gray-400 bg-background text-foreground overflow-hidden">
+            {/* Newsletter / Action Form */}
+            <div className="mx-auto w-full max-w-md pt-2">
+              {subscribed ? (
+                <div className="flex items-center justify-center gap-2 rounded-full bg-slate-900 border border-[#D8FC38]/40 p-3.5 text-sm font-semibold text-white">
+                  <CheckCircle2 className="h-5 w-5 text-[#D8FC38]" />
+                  <span>Thank you! We&apos;ve sent your exclusive welcome guide.</span>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="relative flex items-center rounded-full bg-white p-1 sm:p-1.5 shadow-lg">
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12.5 w-full px-4 text-sm text-foreground focus:outline-0 bg-transparent"
-                    placeholder="name@example.com"
+                    className="w-full bg-transparent px-4 sm:px-5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
+                    placeholder="Enter your email address..."
                   />
-                  <Button type="submit" className="mr-0.75 h-11 rounded-lg px-6 font-medium">
-                    Subscribe
-                  </Button>
-                </div>
-              </form>
-            )}
-          </div>
-
-          <div className="flex items-center justify-center gap-3">
-            <div className="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:grayscale">
-              {avatars.map((item, index) => (
-                <Avatar key={index} className="h-8 w-8">
-                  <AvatarImage
-                    src={item.image}
-                    alt={item.name}
-                    className="object-cover"
-                  />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-              ))}
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-[#D8FC38] hover:bg-[#CBF128] px-5 sm:px-6 py-2.5 text-sm font-bold text-slate-950 shadow-xs transition-colors duration-200 active:scale-[0.98] cursor-pointer shrink-0"
+                  >
+                    <span>Get Started</span>
+                    <ArrowUpRight className="h-4 w-4 stroke-[2.5]" />
+                  </button>
+                </form>
+              )}
             </div>
-            <p className="font-medium text-sm text-white/95">
-              +2000 readers worldwide
-            </p>
+
+            {/* Student Social Proof Bottom */}
+            <div className="flex flex-wrap items-center justify-center gap-2.5 pt-3">
+              <div className="flex -space-x-2">
+                {avatars.map((item, index) => (
+                  <div key={index} className="inline-block h-7 w-7 rounded-full ring-2 ring-slate-950 overflow-hidden bg-slate-200">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      width={28}
+                      height={28}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs sm:text-sm font-medium text-slate-300">
+                Over <span className="text-white font-bold">100,000+</span> 5-star student reviews worldwide
+              </p>
+            </div>
+
           </div>
         </div>
-      </section>
-    </div>
+
+      </div>
+    </section>
   )
 }

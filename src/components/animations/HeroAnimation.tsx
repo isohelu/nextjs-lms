@@ -183,25 +183,25 @@ export function HeroAnimation() {
                   <div className="size-3 rounded-full bg-rose-500/80" />
                   <div className="size-3 rounded-full bg-amber-500/80" />
                   <div className="size-3 rounded-full bg-emerald-500/80" />
-                  <span className="text-[11px] font-mono text-muted-foreground ml-2">
+                  <span className="text-xs font-mono text-muted-foreground ml-2">
                     classroom.stream.tsx
                   </span>
                 </div>
-                <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-wider">
+                <Badge variant="secondary" className="text-xs uppercase font-bold tracking-wider">
                   Live Lab
                 </Badge>
               </div>
 
               {/* Mock Player / Lab Preview */}
               <div className="mt-4 rounded-xl overflow-hidden border border-border/40 bg-zinc-950 p-4 space-y-3 font-mono text-xs text-indigo-300">
-                <div className="flex items-center justify-between text-zinc-400 text-[11px]">
+                <div className="flex items-center justify-between text-zinc-400 text-xs">
                   <span>{`// Supabase Realtime Stream`}</span>
                   <span className="text-emerald-400 flex items-center gap-1">
                     <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" />
                     Connected
                   </span>
                 </div>
-                <div className="bg-zinc-900/90 rounded-lg p-3 text-[12px] space-y-1 text-zinc-300">
+                <div className="bg-zinc-900/90 rounded-lg p-3 text-xs space-y-1 text-zinc-300">
                   <p><span className="text-purple-400">const</span> supabase = <span className="text-blue-400">createClient</span>()</p>
                   <p><span className="text-purple-400">const</span> &#123; data: session &#125; = <span className="text-purple-400">await</span> supabase.auth.<span className="text-amber-300">getUser</span>()</p>
                   <p className="text-emerald-400">{`// Row Level Security Verified ✓`}</p>
@@ -215,7 +215,7 @@ export function HeroAnimation() {
                 </div>
                 <div>
                   <p className="text-xs font-bold">App Router</p>
-                  <p className="text-[10px] text-muted-foreground">Next.js 15 Ready</p>
+                  <p className="text-xs text-muted-foreground">Next.js 15 Ready</p>
                 </div>
               </div>
 
@@ -225,7 +225,7 @@ export function HeroAnimation() {
                 </div>
                 <div>
                   <p className="text-xs font-bold">PostgreSQL RLS</p>
-                  <p className="text-[10px] text-muted-foreground">Supabase Live DB</p>
+                  <p className="text-xs text-muted-foreground">Supabase Live DB</p>
                 </div>
               </div>
             </div>

@@ -15,14 +15,18 @@ import {
   Share2,
   Bookmark,
   MessageSquare,
-  CheckCircle2
 } from 'lucide-react'
 import { BLOG_POSTS } from '../page'
-
 import { blogRepository } from '@/lib/repositories/blogRepository'
 import BlogCommentsSection from '@/components/blogs/BlogCommentsSection'
+import '@/components/rich-editor/style/editor.css'
 
 export const dynamic = 'force-dynamic'
+
+function stripHtml(html?: string | null): string {
+  if (!html) return ''
+  return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()
+}
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -35,22 +39,22 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const dbBlog = blogRepository.findBySlug(slug) || blogRepository.findByUuid(slug)
   const fallback = BLOG_POSTS.find((p) => p.slug === slug || p.uuid === slug) || BLOG_POSTS[0]
   const title = dbBlog?.title || fallback.title
-  const description = dbBlog?.description ? dbBlog.description.slice(0, 160) : fallback.summary
+  const cleanDescription = stripHtml(dbBlog?.description) || fallback.summary || ''
   const thumbnail = dbBlog?.thumbnail || fallback.thumbnail
 
   return {
     title: `${title} | Mentor LMS Blog`,
-    description,
+    description: cleanDescription.slice(0, 160),
     openGraph: {
       title,
-      description,
+      description: cleanDescription.slice(0, 160),
       images: [{ url: thumbnail || '', width: 1200, height: 630, alt: title }],
       type: 'article',
     },
     twitter: {
       card: 'summary_large_image',
       title,
-      description,
+      description: cleanDescription.slice(0, 160),
     },
   }
 }
@@ -74,6 +78,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     slug,
   }
 
+  const cleanDbSummary = stripHtml(dbBlog?.description)
+
   const post = dbBlog
     ? {
         ...fallback,
@@ -81,15 +87,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         uuid: dbBlog.uuid,
         slug: dbBlog.slug,
         title: dbBlog.title,
-        summary: dbBlog.description ? dbBlog.description.slice(0, 180) + '...' : fallback.summary,
+        summary: cleanDbSummary ? cleanDbSummary.slice(0, 180) + '...' : fallback.summary,
         description: dbBlog.description || fallback.description,
         thumbnail: dbBlog.thumbnail || fallback.thumbnail,
         author_name: dbBlog.author_name || fallback.author_name,
         author_avatar: dbBlog.author_photo || fallback.author_avatar,
+        category: dbBlog.category_name || fallback.category || 'Technology',
+        published_at: dbBlog.created_at
+          ? new Date(dbBlog.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          : fallback.published_at,
       }
     : fallback
 
-  const relatedPosts = BLOG_POSTS.filter((p) => p.id !== post.id).slice(0, 3)
+  const relatedPosts = BLOG_POSTS.filter((p) => p.id !== post.id && p.slug !== post.slug).slice(0, 3)
 
   const schemaJson = {
     '@context': 'https://schema.org',
@@ -126,10 +136,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           Back to all articles
         </Link>
 
-        {/* Article Header */}
+        {/* Article Header: Category, Date, Read Time & Title */}
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className="bg-primary/10 text-primary border-primary/20 font-semibold">
+            <Badge className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold border-transparent">
               {post.category}
             </Badge>
             <span className="text-xs text-muted-foreground">•</span>
@@ -140,40 +150,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <span className="text-xs text-muted-foreground">•</span>
             <span className="text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              {post.read_time}
+              {post.read_time || '5 min read'}
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground leading-tight">
             {post.title}
           </h1>
-
-          {/* Author Bar */}
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10 border border-border">
-                <AvatarImage src={post.author_avatar} alt={post.author_name} />
-                <AvatarFallback>{post.author_name?.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm font-bold text-foreground">{post.author_name}</p>
-                <p className="text-xs text-muted-foreground">Lead Technical Specialist</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="h-8 text-xs">
-                <Share2 className="h-3.5 w-3.5 mr-1.5" />
-                Share
-              </Button>
-              <Button variant="outline" size="sm" className="h-8 text-xs">
-                <Bookmark className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          </div>
         </div>
 
-        {/* Hero Image */}
+        {/* Hero Image / Thumbnail */}
         {post.thumbnail && (
           <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border shadow-md">
             <img
@@ -184,42 +170,39 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
         )}
 
-        {/* Prose Body Content */}
-        <div className="prose dark:prose-invert max-w-none text-foreground/90 space-y-6 leading-relaxed">
-          <p className="text-lg font-medium text-muted-foreground leading-relaxed">
-            {post.summary}
-          </p>
-
-          <h2 className="text-2xl font-bold tracking-tight text-foreground pt-4">
-            1. The Evolution of Full-Stack Architecture
-          </h2>
-          <p>
-            Modern applications require performance guarantees that legacy client-side SPAs struggle to deliver. By shifting the computational load closer to data stores through React Server Components and Edge runtimes, round-trip latency is reduced dramatically.
-          </p>
-
-          <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 text-sm space-y-2">
-            <h4 className="font-bold text-primary flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4" />
-              Core Architectural Principle
-            </h4>
-            <p className="text-muted-foreground text-xs leading-relaxed">
-              Always isolate client interactivity to leaf components while orchestrating data queries in async Server Components. This keeps the client JavaScript bundle minimal and eliminates waterfall network requests.
-            </p>
+        {/* Author Bar & Actions (Positioned directly below the thumbnail) */}
+        <div className="flex items-center justify-between py-3 border-y border-border/60">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10 border border-border">
+              <AvatarImage src={post.author_avatar} alt={post.author_name} />
+              <AvatarFallback>{post.author_name?.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-bold text-foreground">{post.author_name}</p>
+              <p className="text-xs text-muted-foreground">Author & Contributor</p>
+            </div>
           </div>
 
-          <h2 className="text-2xl font-bold tracking-tight text-foreground pt-4">
-            2. Hardening Security: Nonce CSP and OWASP Best Practices
-          </h2>
-          <p>
-            Zero-trust application security mandates strict Content Security Policies. Using static hash headers is insufficient when scripts need dynamic runtime hydration. Generating cryptographically random nonces inside Next.js edge middleware prevents any unauthorized script execution or cross-site scripting vulnerabilities.
-          </p>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="h-8 text-xs">
+              <Share2 className="h-3.5 w-3.5 mr-1.5" />
+              Share
+            </Button>
+            <Button variant="outline" size="sm" className="h-8 text-xs">
+              <Bookmark className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
 
-          <h2 className="text-2xl font-bold tracking-tight text-foreground pt-4">
-            3. Summary and Key Takeaways
-          </h2>
-          <p>
-            Building production-ready systems is an exercise in managing trade-offs. By combining Next.js 15, PostgreSQL, and strict design token systems, teams can deliver applications that are fast, accessible, and resilient against modern attack surfaces.
-          </p>
+        {/* Dynamic Rich HTML Article Content */}
+        <div className="rte-renderer prose prose-lg dark:prose-invert max-w-none text-foreground/90 space-y-4 leading-relaxed pt-2 [&_img]:rounded-xl [&_img]:my-4 [&_img]:shadow-sm">
+          {post.description ? (
+            <div
+              dangerouslySetInnerHTML={{ __html: post.description }}
+            />
+          ) : (
+            <p className="text-muted-foreground italic">No article content provided.</p>
+          )}
         </div>
 
         <Separator />
@@ -255,18 +238,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <Link
                 key={related.id}
                 href={`/blogs/${related.slug}`}
-                className="group rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-all flex flex-col justify-between"
+                className="group rounded-2xl border border-border/80 bg-card p-5 hover:border-[#D8FC38]/60 transition-all shadow-xs flex flex-col justify-between"
               >
                 <div>
-                  <Badge variant="secondary" className="text-[10px] mb-2">
+                  <Badge variant="secondary" className="text-xs mb-2">
                     {related.category}
                   </Badge>
-                  <h4 className="text-xs font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                  <h4 className="text-sm font-bold text-foreground group-hover:text-foreground transition-colors line-clamp-2 leading-snug">
                     {related.title}
                   </h4>
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-3 flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
+                <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1">
+                  <Clock className="h-3.5 w-3.5" />
                   {related.read_time}
                 </p>
               </Link>

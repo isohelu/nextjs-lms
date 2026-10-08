@@ -307,8 +307,8 @@ export default function DashboardSettingsTabRoute({
                 onClick={() => handleTabChange(tab.id)}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#007867] text-white shadow-xs'
-                    : 'text-muted-foreground hover:bg-white hover:text-foreground'
+                    ? 'bg-[#D8FC38] text-slate-950 font-bold shadow-xs'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0" />
@@ -469,14 +469,14 @@ export default function DashboardSettingsTabRoute({
                         onClick={() => setPagesForm({ page_slug: preset.slug, page_name: preset.name })}
                         className={`p-4 rounded-xl border cursor-pointer transition-all ${
                           pagesForm.page_slug === preset.slug
-                            ? 'border-[#007867] bg-[#007867]/5 shadow-xs'
+                            ? 'border-[#D8FC38] bg-[#D8FC38]/15 shadow-xs font-bold'
                             : 'border-border/80 hover:border-slate-300'
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <h4 className="font-bold text-sm text-foreground">{preset.name}</h4>
                           {pagesForm.page_slug === preset.slug && (
-                            <Badge className="bg-[#007867] text-[10px]">Active</Badge>
+                            <Badge className="bg-[#D8FC38] text-slate-950 font-bold text-xs">Active</Badge>
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">{preset.desc}</p>
@@ -625,7 +625,7 @@ export default function DashboardSettingsTabRoute({
                           <h4 className="font-bold text-sm text-foreground">{p.title}</h4>
                           <p className="text-xs text-muted-foreground">{p.desc}</p>
                         </div>
-                        <Badge className="bg-emerald-600 text-white text-[10px]">Enabled</Badge>
+                        <Badge className="bg-emerald-600 text-white text-xs font-semibold">Enabled</Badge>
                       </div>
                     ))}
                   </div>
@@ -775,7 +775,7 @@ export default function DashboardSettingsTabRoute({
                         onChange={(e) => setMaintenanceForm({ ...maintenanceForm, bypass_secret: e.target.value })}
                         className="mt-1 text-xs bg-white"
                       />
-                      <p className="text-[11px] text-amber-700/80 mt-1">
+                      <p className="text-xs text-amber-700/80 mt-1">
                         Admins can append <code className="font-mono bg-amber-100 px-1 py-0.5 rounded">?secret={maintenanceForm.bypass_secret}</code> to access the platform.
                       </p>
                     </div>
@@ -788,7 +788,7 @@ export default function DashboardSettingsTabRoute({
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="bg-[#007867] hover:bg-[#007867]/90 text-white font-medium text-xs h-9 px-5 gap-2 rounded-xl"
+                  className="bg-[#D8FC38] hover:bg-[#CBF128] text-slate-950 font-bold text-xs sm:text-sm h-9 px-5 gap-2 rounded-xl shadow-xs"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   <span>Save Changes</span>

@@ -2,19 +2,26 @@
 
 import React, { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { User } from 'lucide-react'
 import Appearance from '@/components/common/Appearance'
 import Language from '@/components/common/Language'
 import ProfileToggle from '@/components/common/ProfileToggle'
 import Notification from '@/components/common/Notification'
-import { Button } from '@/components/ui/button'
 
 interface ActionsProps {
   language?: boolean
 }
 
 export default function Actions({ language = true }: ActionsProps) {
+  const pathname = usePathname()
   const [user, setUser] = useState<{ id?: number; name?: string; photo?: string; role?: 'admin' | 'instructor' | 'student' } | null>(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register') || pathname?.startsWith('/auth')
+  const loginHref = pathname && pathname !== '/' && !isAuthPage
+    ? `/login?redirect=${encodeURIComponent(pathname)}`
+    : '/login'
 
   const checkAuth = useCallback(async () => {
     try {
@@ -71,8 +78,13 @@ export default function Actions({ language = true }: ActionsProps) {
     }
     if (typeof window !== 'undefined') {
       localStorage.removeItem('demo_user')
+      localStorage.setItem('mentor_user_role', 'guest')
       document.cookie = 'demo_user=; path=/; max-age=0'
+      document.cookie = 'mentor_session=; path=/; max-age=0'
       document.cookie = 'lms_session=; path=/; max-age=0'
+      window.dispatchEvent(new Event('mentor_user_state_changed'))
+      window.dispatchEvent(new Event('storage'))
+      window.location.assign('/login')
     }
     setIsLoggedIn(false)
     setUser(null)
@@ -91,14 +103,14 @@ export default function Actions({ language = true }: ActionsProps) {
           <ProfileToggle user={user} onLogout={handleLogout} />
         </div>
       ) : (
-        <div className="space-x-2">
-          <Button asChild variant="outline">
-            <Link href="/register">Sign up</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/login">Log in</Link>
-          </Button>
-        </div>
+        /* Single Iconic User Account Action matching Pinterest Reference */
+        <Link
+          href={loginHref}
+          className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card px-4 py-2 text-xs sm:text-sm font-semibold text-foreground shadow-xs transition-all duration-200 hover:bg-accent hover:border-foreground/30 hover:shadow-sm active:scale-[0.98] cursor-pointer"
+        >
+          <User className="size-4 text-muted-foreground" />
+          <span>Sign In</span>
+        </Link>
       )}
     </div>
   )
